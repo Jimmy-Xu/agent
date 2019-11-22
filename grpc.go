@@ -365,6 +365,7 @@ func buildProcess(agentProcess *pb.Process, procID string, init bool) (*process,
 }
 
 func (a *agentGRPC) Check(ctx context.Context, req *pb.CheckRequest) (*pb.HealthCheckResponse, error) {
+	agentLog.Info("received check request!")
 	return &pb.HealthCheckResponse{Status: pb.HealthCheckResponse_SERVING}, nil
 }
 

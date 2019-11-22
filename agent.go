@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+//	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/kata-containers/agent/pkg/uevent"
 	pb "github.com/kata-containers/agent/protocols/grpc"
 	"github.com/mdlayher/vsock"
@@ -39,6 +39,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	grpcStatus "google.golang.org/grpc/status"
+	"github.com/containerd/ttrpc"
 )
 
 const (
@@ -127,7 +128,7 @@ type sandbox struct {
 	sharedPidNs       namespace
 	mounts            []string
 	subreaper         reaper
-	server            *grpc.Server
+	server            *ttrpc.Server
 	pciDeviceMap      map[string]string
 	deviceWatchers    map[string](chan string)
 	sharedUTSNs       namespace
@@ -673,7 +674,7 @@ func (s *sandbox) waitForStopServer() {
 	timeout := time.Minute
 	done := make(chan struct{})
 	go func() {
-		s.server.GracefulStop()
+		s.server.Shutdown(getGRPCContext())
 		close(done)
 	}()
 
@@ -1092,6 +1093,71 @@ func makeUnaryInterceptor() grpc.UnaryServerInterceptor {
 	}
 }
 
+func serverInterceptor(origCtx context.Context, um ttrpc.Unmarshaler, i *ttrpc.UnaryServerInfo, m ttrpc.Method) (resp interface {}, err error) {
+		var start time.Time
+		var elapsed time.Duration
+		var message proto.Message
+
+		grpcCall := i.FullMethod
+		var ctx context.Context
+		var span *agentSpan
+
+		if tracing {
+			ctx = getGRPCContext()
+			span, _ = trace(ctx, "gRPC", grpcCall)
+			span.setTag("grpc-method-type", "unary")
+
+			if strings.HasSuffix(grpcCall, "/ReadStdout") || strings.HasSuffix(grpcCall, "/WriteStdin") {
+				// Add a tag to allow filtering of those calls dealing
+				// input and output. These tend to be very long and
+				// being able to filter them out allows the
+				// performance of "core" calls to be determined
+				// without the "noise" of these calls.
+				span.setTag("api-category", "interactive")
+			}
+		} else {
+			// Just log call details
+			// don't know how to get the request, ignore...
+			// message = req.(proto.Message)
+
+			agentLog.WithFields(logrus.Fields{
+				"request": grpcCall}).Debug("new request")
+			start = time.Now()
+		}
+
+		// Use the context which will provide the correct trace
+		// ordering, *NOT* the context provided to the function
+		// returned by this function.
+		resp, err = m(origCtx, um)
+
+		if !tracing {
+			// Just log call details
+			elapsed = time.Since(start)
+			message = resp.(proto.Message)
+
+			logger := agentLog.WithFields(logrus.Fields{
+				"request":  i.FullMethod,
+				"duration": elapsed.String(),
+				"resp": message.String()})
+			logger.Debug("request end")
+		}
+
+		// Handle the following scenarios:
+		//
+		// - Tracing was (and still is) enabled.
+		// - Tracing was enabled but the handler (StopTracing()) disabled it.
+		// - Tracing was disabled but the handler (StartTracing()) enabled it.
+		if span != nil {
+			span.finish()
+		}
+
+		if stopTracingCalled {
+			stopTracing(ctx)
+		}
+
+		return resp, err
+}
+
 func (s *sandbox) startGRPC() {
 	span, _ := s.trace("startGRPC")
 	defer span.finish()
@@ -1106,17 +1172,17 @@ func (s *sandbox) startGRPC() {
 		version: version,
 	}
 
-	var grpcServer *grpc.Server
+	var ttrpcServer *ttrpc.Server
 
-	var serverOpts []grpc.ServerOption
+	var serverOpts []ttrpc.ServerOpt
 
-	if collatedTrace {
+	// if collatedTrace {
 		// "collated" tracing (allow agent traces to be
 		// associated with runtime-initiated traces.
-		tracer := span.tracer()
+		// tracer := span.tracer()
 
-		serverOpts = append(serverOpts, grpc.UnaryInterceptor(otgrpc.OpenTracingServerInterceptor(tracer.tracer)))
-	} else {
+		// serverOpts = append(serverOpts, ttrpc.WithUnaryServerInterceptor(otgrpc.OpenTracingServerInterceptor(tracer.tracer)))
+	// } else {
 		// Enable interceptor whether tracing is enabled or not. This
 		// is necessary to support StartTracing() and StopTracing()
 		// since they require the interceptors to change their
@@ -1125,14 +1191,19 @@ func (s *sandbox) startGRPC() {
 		// When tracing is enabled, the interceptor handles "isolated"
 		// tracing (agent traces are not associated with runtime-initiated
 		// traces).
-		serverOpts = append(serverOpts, grpc.UnaryInterceptor(makeUnaryInterceptor()))
+		serverOpts = append(serverOpts, ttrpc.WithUnaryServerInterceptor(serverInterceptor))
+	// }
+
+	ttrpcServer, err := ttrpc.NewServer(serverOpts...)
+
+	if err != nil {
+		agentLog.Error("Cannot start ttrpc server")
+		return
 	}
 
-	grpcServer = grpc.NewServer(serverOpts...)
-
-	pb.RegisterAgentServiceServer(grpcServer, grpcImpl)
-	pb.RegisterHealthServer(grpcServer, grpcImpl)
-	s.server = grpcServer
+	pb.RegisterAgentServiceService(ttrpcServer, grpcImpl)
+	pb.RegisterHealthService(ttrpcServer, grpcImpl)
+	s.server = ttrpcServer
 
 	s.wg.Add(1)
 	go func() {
@@ -1163,7 +1234,8 @@ func (s *sandbox) startGRPC() {
 			}
 
 			// l is closed when Serve() returns
-			servErr = grpcServer.Serve(l)
+			agentLog.Info("start serving vsock")
+			servErr = ttrpcServer.Serve(getGRPCContext(), l)
 			if servErr != nil {
 				agentLog.WithError(servErr).Warn("agent grpc server quits")
 			}
@@ -1199,7 +1271,7 @@ func getGRPCContext() context.Context {
 
 func (s *sandbox) stopGRPC() {
 	if s.server != nil {
-		s.server.Stop()
+		s.server.Shutdown(getGRPCContext())
 		s.server = nil
 	}
 }
