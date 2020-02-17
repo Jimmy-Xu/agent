@@ -3,46 +3,86 @@
 
 package grpc
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/protobuf/gogoproto"
-import _ "github.com/gogo/protobuf/types"
-
-import io "io"
+import (
+	bytes "bytes"
+	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	_ "github.com/gogo/protobuf/types"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
+
 type Spec struct {
 	// Version of the Open Container Initiative Runtime Specification with which the bundle complies.
 	Version string `protobuf:"bytes,1,opt,name=Version,proto3" json:"Version,omitempty"`
 	// Process configures the container process.
-	Process *Process `protobuf:"bytes,2,opt,name=Process" json:"Process,omitempty"`
+	Process *Process `protobuf:"bytes,2,opt,name=Process,proto3" json:"Process,omitempty"`
 	// Root configures the container's root filesystem.
-	Root *Root `protobuf:"bytes,3,opt,name=Root" json:"Root,omitempty"`
+	Root *Root `protobuf:"bytes,3,opt,name=Root,proto3" json:"Root,omitempty"`
 	// Hostname configures the container's hostname.
 	Hostname string `protobuf:"bytes,4,opt,name=Hostname,proto3" json:"Hostname,omitempty"`
 	// Mounts configures additional mounts (on top of Root).
-	Mounts []Mount `protobuf:"bytes,5,rep,name=Mounts" json:"Mounts"`
+	Mounts []Mount `protobuf:"bytes,5,rep,name=Mounts,proto3" json:"Mounts"`
 	// Hooks configures callbacks for container lifecycle events.
-	Hooks *Hooks `protobuf:"bytes,6,opt,name=Hooks" json:"Hooks,omitempty"`
+	Hooks *Hooks `protobuf:"bytes,6,opt,name=Hooks,proto3" json:"Hooks,omitempty"`
 	// Annotations contains arbitrary metadata for the container.
-	Annotations map[string]string `protobuf:"bytes,7,rep,name=Annotations" json:"Annotations,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Annotations map[string]string `protobuf:"bytes,7,rep,name=Annotations,proto3" json:"Annotations,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Linux is platform-specific configuration for Linux based containers.
-	Linux *Linux `protobuf:"bytes,8,opt,name=Linux" json:"Linux,omitempty"`
+	Linux *Linux `protobuf:"bytes,8,opt,name=Linux,proto3" json:"Linux,omitempty"`
 	// Solaris is platform-specific configuration for Solaris based containers.
-	Solaris *Solaris `protobuf:"bytes,9,opt,name=Solaris" json:"Solaris,omitempty"`
+	Solaris *Solaris `protobuf:"bytes,9,opt,name=Solaris,proto3" json:"Solaris,omitempty"`
 	// Windows is platform-specific configuration for Windows based containers.
-	Windows *Windows `protobuf:"bytes,10,opt,name=Windows" json:"Windows,omitempty"`
+	Windows              *Windows `protobuf:"bytes,10,opt,name=Windows,proto3" json:"Windows,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Spec) Reset()                    { *m = Spec{} }
-func (m *Spec) String() string            { return proto.CompactTextString(m) }
-func (*Spec) ProtoMessage()               {}
-func (*Spec) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{0} }
+func (m *Spec) Reset()         { *m = Spec{} }
+func (m *Spec) String() string { return proto.CompactTextString(m) }
+func (*Spec) ProtoMessage()    {}
+func (*Spec) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{0}
+}
+func (m *Spec) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Spec) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Spec.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Spec) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Spec.Merge(m, src)
+}
+func (m *Spec) XXX_Size() int {
+	return m.Size()
+}
+func (m *Spec) XXX_DiscardUnknown() {
+	xxx_messageInfo_Spec.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Spec proto.InternalMessageInfo
 
 func (m *Spec) GetVersion() string {
 	if m != nil {
@@ -118,20 +158,20 @@ type Process struct {
 	// Terminal creates an interactive terminal for the container.
 	Terminal bool `protobuf:"varint,1,opt,name=Terminal,proto3" json:"Terminal,omitempty"`
 	// ConsoleSize specifies the size of the console.
-	ConsoleSize *Box `protobuf:"bytes,2,opt,name=ConsoleSize" json:"ConsoleSize,omitempty"`
+	ConsoleSize *Box `protobuf:"bytes,2,opt,name=ConsoleSize,proto3" json:"ConsoleSize,omitempty"`
 	// User specifies user information for the process.
-	User User `protobuf:"bytes,3,opt,name=User" json:"User"`
+	User User `protobuf:"bytes,3,opt,name=User,proto3" json:"User"`
 	// Args specifies the binary and arguments for the application to execute.
-	Args []string `protobuf:"bytes,4,rep,name=Args" json:"Args,omitempty"`
+	Args []string `protobuf:"bytes,4,rep,name=Args,proto3" json:"Args,omitempty"`
 	// Env populates the process environment for the process.
-	Env []string `protobuf:"bytes,5,rep,name=Env" json:"Env,omitempty"`
+	Env []string `protobuf:"bytes,5,rep,name=Env,proto3" json:"Env,omitempty"`
 	// Cwd is the current working directory for the process and must be
 	// relative to the container's root.
 	Cwd string `protobuf:"bytes,6,opt,name=Cwd,proto3" json:"Cwd,omitempty"`
 	// Capabilities are Linux capabilities that are kept for the process.
-	Capabilities *LinuxCapabilities `protobuf:"bytes,7,opt,name=Capabilities" json:"Capabilities,omitempty"`
+	Capabilities *LinuxCapabilities `protobuf:"bytes,7,opt,name=Capabilities,proto3" json:"Capabilities,omitempty"`
 	// Rlimits specifies rlimit options to apply to the process.
-	Rlimits []POSIXRlimit `protobuf:"bytes,8,rep,name=Rlimits" json:"Rlimits"`
+	Rlimits []POSIXRlimit `protobuf:"bytes,8,rep,name=Rlimits,proto3" json:"Rlimits"`
 	// NoNewPrivileges controls whether additional privileges could be gained by processes in the container.
 	NoNewPrivileges bool `protobuf:"varint,9,opt,name=NoNewPrivileges,proto3" json:"NoNewPrivileges,omitempty"`
 	// ApparmorProfile specifies the apparmor profile for the container.
@@ -139,13 +179,44 @@ type Process struct {
 	// Specify an oom_score_adj for the container.
 	OOMScoreAdj int64 `protobuf:"varint,11,opt,name=OOMScoreAdj,proto3" json:"OOMScoreAdj,omitempty"`
 	// SelinuxLabel specifies the selinux context that the container process is run as.
-	SelinuxLabel string `protobuf:"bytes,12,opt,name=SelinuxLabel,proto3" json:"SelinuxLabel,omitempty"`
+	SelinuxLabel         string   `protobuf:"bytes,12,opt,name=SelinuxLabel,proto3" json:"SelinuxLabel,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Process) Reset()                    { *m = Process{} }
-func (m *Process) String() string            { return proto.CompactTextString(m) }
-func (*Process) ProtoMessage()               {}
-func (*Process) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{1} }
+func (m *Process) Reset()         { *m = Process{} }
+func (m *Process) String() string { return proto.CompactTextString(m) }
+func (*Process) ProtoMessage()    {}
+func (*Process) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{1}
+}
+func (m *Process) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Process) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Process.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Process) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Process.Merge(m, src)
+}
+func (m *Process) XXX_Size() int {
+	return m.Size()
+}
+func (m *Process) XXX_DiscardUnknown() {
+	xxx_messageInfo_Process.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Process proto.InternalMessageInfo
 
 func (m *Process) GetTerminal() bool {
 	if m != nil {
@@ -235,13 +306,44 @@ type Box struct {
 	// Height is the vertical dimension of a box.
 	Height uint32 `protobuf:"varint,1,opt,name=Height,proto3" json:"Height,omitempty"`
 	// Width is the horizontal dimension of a box.
-	Width uint32 `protobuf:"varint,2,opt,name=Width,proto3" json:"Width,omitempty"`
+	Width                uint32   `protobuf:"varint,2,opt,name=Width,proto3" json:"Width,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Box) Reset()                    { *m = Box{} }
-func (m *Box) String() string            { return proto.CompactTextString(m) }
-func (*Box) ProtoMessage()               {}
-func (*Box) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{2} }
+func (m *Box) Reset()         { *m = Box{} }
+func (m *Box) String() string { return proto.CompactTextString(m) }
+func (*Box) ProtoMessage()    {}
+func (*Box) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{2}
+}
+func (m *Box) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Box) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Box.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Box) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Box.Merge(m, src)
+}
+func (m *Box) XXX_Size() int {
+	return m.Size()
+}
+func (m *Box) XXX_DiscardUnknown() {
+	xxx_messageInfo_Box.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Box proto.InternalMessageInfo
 
 func (m *Box) GetHeight() uint32 {
 	if m != nil {
@@ -263,15 +365,46 @@ type User struct {
 	// GID is the group id.
 	GID uint32 `protobuf:"varint,2,opt,name=GID,proto3" json:"GID,omitempty"`
 	// AdditionalGids are additional group ids set for the container's process.
-	AdditionalGids []uint32 `protobuf:"varint,3,rep,packed,name=AdditionalGids" json:"AdditionalGids,omitempty"`
+	AdditionalGids []uint32 `protobuf:"varint,3,rep,packed,name=AdditionalGids,proto3" json:"AdditionalGids,omitempty"`
 	// Username is the user name.
-	Username string `protobuf:"bytes,4,opt,name=Username,proto3" json:"Username,omitempty"`
+	Username             string   `protobuf:"bytes,4,opt,name=Username,proto3" json:"Username,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *User) Reset()                    { *m = User{} }
-func (m *User) String() string            { return proto.CompactTextString(m) }
-func (*User) ProtoMessage()               {}
-func (*User) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{3} }
+func (m *User) Reset()         { *m = User{} }
+func (m *User) String() string { return proto.CompactTextString(m) }
+func (*User) ProtoMessage()    {}
+func (*User) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{3}
+}
+func (m *User) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *User) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_User.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *User) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_User.Merge(m, src)
+}
+func (m *User) XXX_Size() int {
+	return m.Size()
+}
+func (m *User) XXX_DiscardUnknown() {
+	xxx_messageInfo_User.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_User proto.InternalMessageInfo
 
 func (m *User) GetUID() uint32 {
 	if m != nil {
@@ -303,21 +436,52 @@ func (m *User) GetUsername() string {
 
 type LinuxCapabilities struct {
 	// Bounding is the set of capabilities checked by the kernel.
-	Bounding []string `protobuf:"bytes,1,rep,name=Bounding" json:"Bounding,omitempty"`
+	Bounding []string `protobuf:"bytes,1,rep,name=Bounding,proto3" json:"Bounding,omitempty"`
 	// Effective is the set of capabilities checked by the kernel.
-	Effective []string `protobuf:"bytes,2,rep,name=Effective" json:"Effective,omitempty"`
+	Effective []string `protobuf:"bytes,2,rep,name=Effective,proto3" json:"Effective,omitempty"`
 	// Inheritable is the capabilities preserved across execve.
-	Inheritable []string `protobuf:"bytes,3,rep,name=Inheritable" json:"Inheritable,omitempty"`
+	Inheritable []string `protobuf:"bytes,3,rep,name=Inheritable,proto3" json:"Inheritable,omitempty"`
 	// Permitted is the limiting superset for effective capabilities.
-	Permitted []string `protobuf:"bytes,4,rep,name=Permitted" json:"Permitted,omitempty"`
+	Permitted []string `protobuf:"bytes,4,rep,name=Permitted,proto3" json:"Permitted,omitempty"`
 	// Ambient is the ambient set of capabilities that are kept.
-	Ambient []string `protobuf:"bytes,5,rep,name=Ambient" json:"Ambient,omitempty"`
+	Ambient              []string `protobuf:"bytes,5,rep,name=Ambient,proto3" json:"Ambient,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxCapabilities) Reset()                    { *m = LinuxCapabilities{} }
-func (m *LinuxCapabilities) String() string            { return proto.CompactTextString(m) }
-func (*LinuxCapabilities) ProtoMessage()               {}
-func (*LinuxCapabilities) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{4} }
+func (m *LinuxCapabilities) Reset()         { *m = LinuxCapabilities{} }
+func (m *LinuxCapabilities) String() string { return proto.CompactTextString(m) }
+func (*LinuxCapabilities) ProtoMessage()    {}
+func (*LinuxCapabilities) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{4}
+}
+func (m *LinuxCapabilities) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxCapabilities) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxCapabilities.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxCapabilities) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxCapabilities.Merge(m, src)
+}
+func (m *LinuxCapabilities) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxCapabilities) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxCapabilities.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxCapabilities proto.InternalMessageInfo
 
 func (m *LinuxCapabilities) GetBounding() []string {
 	if m != nil {
@@ -360,13 +524,44 @@ type POSIXRlimit struct {
 	// Hard is the hard limit for the specified type
 	Hard uint64 `protobuf:"varint,2,opt,name=Hard,proto3" json:"Hard,omitempty"`
 	// Soft is the soft limit for the specified type
-	Soft uint64 `protobuf:"varint,3,opt,name=Soft,proto3" json:"Soft,omitempty"`
+	Soft                 uint64   `protobuf:"varint,3,opt,name=Soft,proto3" json:"Soft,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *POSIXRlimit) Reset()                    { *m = POSIXRlimit{} }
-func (m *POSIXRlimit) String() string            { return proto.CompactTextString(m) }
-func (*POSIXRlimit) ProtoMessage()               {}
-func (*POSIXRlimit) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{5} }
+func (m *POSIXRlimit) Reset()         { *m = POSIXRlimit{} }
+func (m *POSIXRlimit) String() string { return proto.CompactTextString(m) }
+func (*POSIXRlimit) ProtoMessage()    {}
+func (*POSIXRlimit) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{5}
+}
+func (m *POSIXRlimit) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *POSIXRlimit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_POSIXRlimit.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *POSIXRlimit) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_POSIXRlimit.Merge(m, src)
+}
+func (m *POSIXRlimit) XXX_Size() int {
+	return m.Size()
+}
+func (m *POSIXRlimit) XXX_DiscardUnknown() {
+	xxx_messageInfo_POSIXRlimit.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_POSIXRlimit proto.InternalMessageInfo
 
 func (m *POSIXRlimit) GetType() string {
 	if m != nil {
@@ -396,15 +591,46 @@ type Mount struct {
 	// the path which starts with "vm:/dev/" refers the guest vm's "/dev",
 	// especially, "vm:/dev/hostfs/" refers to the shared filesystem.
 	// "tmp:/" is a temporary directory which is used for temporary mounts.
-	Source  string   `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
-	Type    string   `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	Options []string `protobuf:"bytes,4,rep,name=options" json:"options,omitempty"`
+	Source               string   `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
+	Type                 string   `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Options              []string `protobuf:"bytes,4,rep,name=options,proto3" json:"options,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mount) Reset()                    { *m = Mount{} }
-func (m *Mount) String() string            { return proto.CompactTextString(m) }
-func (*Mount) ProtoMessage()               {}
-func (*Mount) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{6} }
+func (m *Mount) Reset()         { *m = Mount{} }
+func (m *Mount) String() string { return proto.CompactTextString(m) }
+func (*Mount) ProtoMessage()    {}
+func (*Mount) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{6}
+}
+func (m *Mount) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Mount) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Mount.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Mount) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Mount.Merge(m, src)
+}
+func (m *Mount) XXX_Size() int {
+	return m.Size()
+}
+func (m *Mount) XXX_DiscardUnknown() {
+	xxx_messageInfo_Mount.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Mount proto.InternalMessageInfo
 
 func (m *Mount) GetDestination() string {
 	if m != nil {
@@ -438,13 +664,44 @@ type Root struct {
 	// Path is the absolute path to the container's root filesystem.
 	Path string `protobuf:"bytes,1,opt,name=Path,proto3" json:"Path,omitempty"`
 	// Readonly makes the root filesystem for the container readonly before the process is executed.
-	Readonly bool `protobuf:"varint,2,opt,name=Readonly,proto3" json:"Readonly,omitempty"`
+	Readonly             bool     `protobuf:"varint,2,opt,name=Readonly,proto3" json:"Readonly,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Root) Reset()                    { *m = Root{} }
-func (m *Root) String() string            { return proto.CompactTextString(m) }
-func (*Root) ProtoMessage()               {}
-func (*Root) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{7} }
+func (m *Root) Reset()         { *m = Root{} }
+func (m *Root) String() string { return proto.CompactTextString(m) }
+func (*Root) ProtoMessage()    {}
+func (*Root) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{7}
+}
+func (m *Root) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Root) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Root.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Root) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Root.Merge(m, src)
+}
+func (m *Root) XXX_Size() int {
+	return m.Size()
+}
+func (m *Root) XXX_DiscardUnknown() {
+	xxx_messageInfo_Root.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Root proto.InternalMessageInfo
 
 func (m *Root) GetPath() string {
 	if m != nil {
@@ -462,17 +719,48 @@ func (m *Root) GetReadonly() bool {
 
 type Hooks struct {
 	// Prestart is a list of hooks to be run before the container process is executed.
-	Prestart []Hook `protobuf:"bytes,1,rep,name=Prestart" json:"Prestart"`
+	Prestart []Hook `protobuf:"bytes,1,rep,name=Prestart,proto3" json:"Prestart"`
 	// Poststart is a list of hooks to be run after the container process is started.
-	Poststart []Hook `protobuf:"bytes,2,rep,name=Poststart" json:"Poststart"`
+	Poststart []Hook `protobuf:"bytes,2,rep,name=Poststart,proto3" json:"Poststart"`
 	// Poststop is a list of hooks to be run after the container process exits.
-	Poststop []Hook `protobuf:"bytes,3,rep,name=Poststop" json:"Poststop"`
+	Poststop             []Hook   `protobuf:"bytes,3,rep,name=Poststop,proto3" json:"Poststop"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Hooks) Reset()                    { *m = Hooks{} }
-func (m *Hooks) String() string            { return proto.CompactTextString(m) }
-func (*Hooks) ProtoMessage()               {}
-func (*Hooks) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{8} }
+func (m *Hooks) Reset()         { *m = Hooks{} }
+func (m *Hooks) String() string { return proto.CompactTextString(m) }
+func (*Hooks) ProtoMessage()    {}
+func (*Hooks) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{8}
+}
+func (m *Hooks) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Hooks) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Hooks.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Hooks) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Hooks.Merge(m, src)
+}
+func (m *Hooks) XXX_Size() int {
+	return m.Size()
+}
+func (m *Hooks) XXX_DiscardUnknown() {
+	xxx_messageInfo_Hooks.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Hooks proto.InternalMessageInfo
 
 func (m *Hooks) GetPrestart() []Hook {
 	if m != nil {
@@ -496,16 +784,47 @@ func (m *Hooks) GetPoststop() []Hook {
 }
 
 type Hook struct {
-	Path    string   `protobuf:"bytes,1,opt,name=Path,proto3" json:"Path,omitempty"`
-	Args    []string `protobuf:"bytes,2,rep,name=Args" json:"Args,omitempty"`
-	Env     []string `protobuf:"bytes,3,rep,name=Env" json:"Env,omitempty"`
-	Timeout int64    `protobuf:"varint,4,opt,name=Timeout,proto3" json:"Timeout,omitempty"`
+	Path                 string   `protobuf:"bytes,1,opt,name=Path,proto3" json:"Path,omitempty"`
+	Args                 []string `protobuf:"bytes,2,rep,name=Args,proto3" json:"Args,omitempty"`
+	Env                  []string `protobuf:"bytes,3,rep,name=Env,proto3" json:"Env,omitempty"`
+	Timeout              int64    `protobuf:"varint,4,opt,name=Timeout,proto3" json:"Timeout,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Hook) Reset()                    { *m = Hook{} }
-func (m *Hook) String() string            { return proto.CompactTextString(m) }
-func (*Hook) ProtoMessage()               {}
-func (*Hook) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{9} }
+func (m *Hook) Reset()         { *m = Hook{} }
+func (m *Hook) String() string { return proto.CompactTextString(m) }
+func (*Hook) ProtoMessage()    {}
+func (*Hook) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{9}
+}
+func (m *Hook) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Hook) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Hook.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Hook) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Hook.Merge(m, src)
+}
+func (m *Hook) XXX_Size() int {
+	return m.Size()
+}
+func (m *Hook) XXX_DiscardUnknown() {
+	xxx_messageInfo_Hook.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Hook proto.InternalMessageInfo
 
 func (m *Hook) GetPath() string {
 	if m != nil {
@@ -537,41 +856,72 @@ func (m *Hook) GetTimeout() int64 {
 
 type Linux struct {
 	// UIDMapping specifies user mappings for supporting user namespaces.
-	UIDMappings []LinuxIDMapping `protobuf:"bytes,1,rep,name=UIDMappings" json:"UIDMappings"`
+	UIDMappings []LinuxIDMapping `protobuf:"bytes,1,rep,name=UIDMappings,proto3" json:"UIDMappings"`
 	// GIDMapping specifies group mappings for supporting user namespaces.
-	GIDMappings []LinuxIDMapping `protobuf:"bytes,2,rep,name=GIDMappings" json:"GIDMappings"`
+	GIDMappings []LinuxIDMapping `protobuf:"bytes,2,rep,name=GIDMappings,proto3" json:"GIDMappings"`
 	// Sysctl are a set of key value pairs that are set for the container on start
-	Sysctl map[string]string `protobuf:"bytes,3,rep,name=Sysctl" json:"Sysctl,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Sysctl map[string]string `protobuf:"bytes,3,rep,name=Sysctl,proto3" json:"Sysctl,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Resources contain cgroup information for handling resource constraints
 	// for the container
-	Resources *LinuxResources `protobuf:"bytes,4,opt,name=Resources" json:"Resources,omitempty"`
+	Resources *LinuxResources `protobuf:"bytes,4,opt,name=Resources,proto3" json:"Resources,omitempty"`
 	// CgroupsPath specifies the path to cgroups that are created and/or joined by the container.
 	// The path is expected to be relative to the cgroups mountpoint.
 	// If resources are specified, the cgroups at CgroupsPath will be updated based on resources.
 	CgroupsPath string `protobuf:"bytes,5,opt,name=CgroupsPath,proto3" json:"CgroupsPath,omitempty"`
 	// Namespaces contains the namespaces that are created and/or joined by the container
-	Namespaces []LinuxNamespace `protobuf:"bytes,6,rep,name=Namespaces" json:"Namespaces"`
+	Namespaces []LinuxNamespace `protobuf:"bytes,6,rep,name=Namespaces,proto3" json:"Namespaces"`
 	// Devices are a list of device nodes that are created for the container
-	Devices []LinuxDevice `protobuf:"bytes,7,rep,name=Devices" json:"Devices"`
+	Devices []LinuxDevice `protobuf:"bytes,7,rep,name=Devices,proto3" json:"Devices"`
 	// Seccomp specifies the seccomp security settings for the container.
-	Seccomp *LinuxSeccomp `protobuf:"bytes,8,opt,name=Seccomp" json:"Seccomp,omitempty"`
+	Seccomp *LinuxSeccomp `protobuf:"bytes,8,opt,name=Seccomp,proto3" json:"Seccomp,omitempty"`
 	// RootfsPropagation is the rootfs mount propagation mode for the container.
 	RootfsPropagation string `protobuf:"bytes,9,opt,name=RootfsPropagation,proto3" json:"RootfsPropagation,omitempty"`
 	// MaskedPaths masks over the provided paths inside the container.
-	MaskedPaths []string `protobuf:"bytes,10,rep,name=MaskedPaths" json:"MaskedPaths,omitempty"`
+	MaskedPaths []string `protobuf:"bytes,10,rep,name=MaskedPaths,proto3" json:"MaskedPaths,omitempty"`
 	// ReadonlyPaths sets the provided paths as RO inside the container.
-	ReadonlyPaths []string `protobuf:"bytes,11,rep,name=ReadonlyPaths" json:"ReadonlyPaths,omitempty"`
+	ReadonlyPaths []string `protobuf:"bytes,11,rep,name=ReadonlyPaths,proto3" json:"ReadonlyPaths,omitempty"`
 	// MountLabel specifies the selinux context for the mounts in the container.
 	MountLabel string `protobuf:"bytes,12,opt,name=MountLabel,proto3" json:"MountLabel,omitempty"`
 	// IntelRdt contains Intel Resource Director Technology (RDT) information
 	// for handling resource constraints (e.g., L3 cache) for the container
-	IntelRdt *LinuxIntelRdt `protobuf:"bytes,13,opt,name=IntelRdt" json:"IntelRdt,omitempty"`
+	IntelRdt             *LinuxIntelRdt `protobuf:"bytes,13,opt,name=IntelRdt,proto3" json:"IntelRdt,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *Linux) Reset()                    { *m = Linux{} }
-func (m *Linux) String() string            { return proto.CompactTextString(m) }
-func (*Linux) ProtoMessage()               {}
-func (*Linux) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{10} }
+func (m *Linux) Reset()         { *m = Linux{} }
+func (m *Linux) String() string { return proto.CompactTextString(m) }
+func (*Linux) ProtoMessage()    {}
+func (*Linux) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{10}
+}
+func (m *Linux) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Linux) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Linux.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Linux) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Linux.Merge(m, src)
+}
+func (m *Linux) XXX_Size() int {
+	return m.Size()
+}
+func (m *Linux) XXX_DiscardUnknown() {
+	xxx_messageInfo_Linux.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Linux proto.InternalMessageInfo
 
 func (m *Linux) GetUIDMappings() []LinuxIDMapping {
 	if m != nil {
@@ -666,13 +1016,44 @@ func (m *Linux) GetIntelRdt() *LinuxIntelRdt {
 
 type Windows struct {
 	// Dummy string, never used.
-	Dummy string `protobuf:"bytes,1,opt,name=dummy,proto3" json:"dummy,omitempty"`
+	Dummy                string   `protobuf:"bytes,1,opt,name=dummy,proto3" json:"dummy,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Windows) Reset()                    { *m = Windows{} }
-func (m *Windows) String() string            { return proto.CompactTextString(m) }
-func (*Windows) ProtoMessage()               {}
-func (*Windows) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{11} }
+func (m *Windows) Reset()         { *m = Windows{} }
+func (m *Windows) String() string { return proto.CompactTextString(m) }
+func (*Windows) ProtoMessage()    {}
+func (*Windows) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{11}
+}
+func (m *Windows) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Windows) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Windows.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Windows) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Windows.Merge(m, src)
+}
+func (m *Windows) XXX_Size() int {
+	return m.Size()
+}
+func (m *Windows) XXX_DiscardUnknown() {
+	xxx_messageInfo_Windows.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Windows proto.InternalMessageInfo
 
 func (m *Windows) GetDummy() string {
 	if m != nil {
@@ -683,13 +1064,44 @@ func (m *Windows) GetDummy() string {
 
 type Solaris struct {
 	// Dummy string, never used.
-	Dummy string `protobuf:"bytes,1,opt,name=dummy,proto3" json:"dummy,omitempty"`
+	Dummy                string   `protobuf:"bytes,1,opt,name=dummy,proto3" json:"dummy,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Solaris) Reset()                    { *m = Solaris{} }
-func (m *Solaris) String() string            { return proto.CompactTextString(m) }
-func (*Solaris) ProtoMessage()               {}
-func (*Solaris) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{12} }
+func (m *Solaris) Reset()         { *m = Solaris{} }
+func (m *Solaris) String() string { return proto.CompactTextString(m) }
+func (*Solaris) ProtoMessage()    {}
+func (*Solaris) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{12}
+}
+func (m *Solaris) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Solaris) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Solaris.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Solaris) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Solaris.Merge(m, src)
+}
+func (m *Solaris) XXX_Size() int {
+	return m.Size()
+}
+func (m *Solaris) XXX_DiscardUnknown() {
+	xxx_messageInfo_Solaris.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Solaris proto.InternalMessageInfo
 
 func (m *Solaris) GetDummy() string {
 	if m != nil {
@@ -704,13 +1116,44 @@ type LinuxIDMapping struct {
 	// ContainerID is the starting UID/GID in the container
 	ContainerID uint32 `protobuf:"varint,2,opt,name=ContainerID,proto3" json:"ContainerID,omitempty"`
 	// Size is the number of IDs to be mapped
-	Size_ uint32 `protobuf:"varint,3,opt,name=Size,proto3" json:"Size,omitempty"`
+	Size_                uint32   `protobuf:"varint,3,opt,name=Size,proto3" json:"Size,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxIDMapping) Reset()                    { *m = LinuxIDMapping{} }
-func (m *LinuxIDMapping) String() string            { return proto.CompactTextString(m) }
-func (*LinuxIDMapping) ProtoMessage()               {}
-func (*LinuxIDMapping) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{13} }
+func (m *LinuxIDMapping) Reset()         { *m = LinuxIDMapping{} }
+func (m *LinuxIDMapping) String() string { return proto.CompactTextString(m) }
+func (*LinuxIDMapping) ProtoMessage()    {}
+func (*LinuxIDMapping) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{13}
+}
+func (m *LinuxIDMapping) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxIDMapping) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxIDMapping.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxIDMapping) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxIDMapping.Merge(m, src)
+}
+func (m *LinuxIDMapping) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxIDMapping) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxIDMapping.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxIDMapping proto.InternalMessageInfo
 
 func (m *LinuxIDMapping) GetHostID() uint32 {
 	if m != nil {
@@ -738,13 +1181,44 @@ type LinuxNamespace struct {
 	Type string `protobuf:"bytes,1,opt,name=Type,proto3" json:"Type,omitempty"`
 	// Path is a path to an existing namespace persisted on disk that can be joined
 	// and is of the same type
-	Path string `protobuf:"bytes,2,opt,name=Path,proto3" json:"Path,omitempty"`
+	Path                 string   `protobuf:"bytes,2,opt,name=Path,proto3" json:"Path,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxNamespace) Reset()                    { *m = LinuxNamespace{} }
-func (m *LinuxNamespace) String() string            { return proto.CompactTextString(m) }
-func (*LinuxNamespace) ProtoMessage()               {}
-func (*LinuxNamespace) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{14} }
+func (m *LinuxNamespace) Reset()         { *m = LinuxNamespace{} }
+func (m *LinuxNamespace) String() string { return proto.CompactTextString(m) }
+func (*LinuxNamespace) ProtoMessage()    {}
+func (*LinuxNamespace) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{14}
+}
+func (m *LinuxNamespace) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxNamespace) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxNamespace.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxNamespace) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxNamespace.Merge(m, src)
+}
+func (m *LinuxNamespace) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxNamespace) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxNamespace.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxNamespace proto.InternalMessageInfo
 
 func (m *LinuxNamespace) GetType() string {
 	if m != nil {
@@ -774,13 +1248,44 @@ type LinuxDevice struct {
 	// UID of the device.
 	UID uint32 `protobuf:"varint,6,opt,name=UID,proto3" json:"UID,omitempty"`
 	// Gid of the device.
-	GID uint32 `protobuf:"varint,7,opt,name=GID,proto3" json:"GID,omitempty"`
+	GID                  uint32   `protobuf:"varint,7,opt,name=GID,proto3" json:"GID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxDevice) Reset()                    { *m = LinuxDevice{} }
-func (m *LinuxDevice) String() string            { return proto.CompactTextString(m) }
-func (*LinuxDevice) ProtoMessage()               {}
-func (*LinuxDevice) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{15} }
+func (m *LinuxDevice) Reset()         { *m = LinuxDevice{} }
+func (m *LinuxDevice) String() string { return proto.CompactTextString(m) }
+func (*LinuxDevice) ProtoMessage()    {}
+func (*LinuxDevice) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{15}
+}
+func (m *LinuxDevice) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxDevice) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxDevice.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxDevice) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxDevice.Merge(m, src)
+}
+func (m *LinuxDevice) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxDevice) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxDevice.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxDevice proto.InternalMessageInfo
 
 func (m *LinuxDevice) GetPath() string {
 	if m != nil {
@@ -833,25 +1338,56 @@ func (m *LinuxDevice) GetGID() uint32 {
 
 type LinuxResources struct {
 	// Devices configures the device whitelist.
-	Devices []LinuxDeviceCgroup `protobuf:"bytes,1,rep,name=Devices" json:"Devices"`
+	Devices []LinuxDeviceCgroup `protobuf:"bytes,1,rep,name=Devices,proto3" json:"Devices"`
 	// Memory restriction configuration
-	Memory *LinuxMemory `protobuf:"bytes,2,opt,name=Memory" json:"Memory,omitempty"`
+	Memory *LinuxMemory `protobuf:"bytes,2,opt,name=Memory,proto3" json:"Memory,omitempty"`
 	// CPU resource restriction configuration
-	CPU *LinuxCPU `protobuf:"bytes,3,opt,name=CPU" json:"CPU,omitempty"`
+	CPU *LinuxCPU `protobuf:"bytes,3,opt,name=CPU,proto3" json:"CPU,omitempty"`
 	// Task resource restriction configuration.
-	Pids *LinuxPids `protobuf:"bytes,4,opt,name=Pids" json:"Pids,omitempty"`
+	Pids *LinuxPids `protobuf:"bytes,4,opt,name=Pids,proto3" json:"Pids,omitempty"`
 	// BlockIO restriction configuration
-	BlockIO *LinuxBlockIO `protobuf:"bytes,5,opt,name=BlockIO" json:"BlockIO,omitempty"`
+	BlockIO *LinuxBlockIO `protobuf:"bytes,5,opt,name=BlockIO,proto3" json:"BlockIO,omitempty"`
 	// Hugetlb limit (in bytes)
-	HugepageLimits []LinuxHugepageLimit `protobuf:"bytes,6,rep,name=HugepageLimits" json:"HugepageLimits"`
+	HugepageLimits []LinuxHugepageLimit `protobuf:"bytes,6,rep,name=HugepageLimits,proto3" json:"HugepageLimits"`
 	// Network restriction configuration
-	Network *LinuxNetwork `protobuf:"bytes,7,opt,name=Network" json:"Network,omitempty"`
+	Network              *LinuxNetwork `protobuf:"bytes,7,opt,name=Network,proto3" json:"Network,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
-func (m *LinuxResources) Reset()                    { *m = LinuxResources{} }
-func (m *LinuxResources) String() string            { return proto.CompactTextString(m) }
-func (*LinuxResources) ProtoMessage()               {}
-func (*LinuxResources) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{16} }
+func (m *LinuxResources) Reset()         { *m = LinuxResources{} }
+func (m *LinuxResources) String() string { return proto.CompactTextString(m) }
+func (*LinuxResources) ProtoMessage()    {}
+func (*LinuxResources) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{16}
+}
+func (m *LinuxResources) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxResources) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxResources.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxResources) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxResources.Merge(m, src)
+}
+func (m *LinuxResources) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxResources) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxResources.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxResources proto.InternalMessageInfo
 
 func (m *LinuxResources) GetDevices() []LinuxDeviceCgroup {
 	if m != nil {
@@ -916,13 +1452,44 @@ type LinuxMemory struct {
 	// How aggressive the kernel will swap memory pages.
 	Swappiness uint64 `protobuf:"varint,6,opt,name=Swappiness,proto3" json:"Swappiness,omitempty"`
 	// DisableOOMKiller disables the OOM killer for out of memory conditions
-	DisableOOMKiller bool `protobuf:"varint,7,opt,name=DisableOOMKiller,proto3" json:"DisableOOMKiller,omitempty"`
+	DisableOOMKiller     bool     `protobuf:"varint,7,opt,name=DisableOOMKiller,proto3" json:"DisableOOMKiller,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxMemory) Reset()                    { *m = LinuxMemory{} }
-func (m *LinuxMemory) String() string            { return proto.CompactTextString(m) }
-func (*LinuxMemory) ProtoMessage()               {}
-func (*LinuxMemory) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{17} }
+func (m *LinuxMemory) Reset()         { *m = LinuxMemory{} }
+func (m *LinuxMemory) String() string { return proto.CompactTextString(m) }
+func (*LinuxMemory) ProtoMessage()    {}
+func (*LinuxMemory) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{17}
+}
+func (m *LinuxMemory) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxMemory) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxMemory.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxMemory) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxMemory.Merge(m, src)
+}
+func (m *LinuxMemory) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxMemory) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxMemory.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxMemory proto.InternalMessageInfo
 
 func (m *LinuxMemory) GetLimit() int64 {
 	if m != nil {
@@ -987,13 +1554,44 @@ type LinuxCPU struct {
 	// CPUs to use within the cpuset. Default is to use any CPU available.
 	Cpus string `protobuf:"bytes,6,opt,name=Cpus,proto3" json:"Cpus,omitempty"`
 	// List of memory nodes in the cpuset. Default is to use any available memory node.
-	Mems string `protobuf:"bytes,7,opt,name=Mems,proto3" json:"Mems,omitempty"`
+	Mems                 string   `protobuf:"bytes,7,opt,name=Mems,proto3" json:"Mems,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxCPU) Reset()                    { *m = LinuxCPU{} }
-func (m *LinuxCPU) String() string            { return proto.CompactTextString(m) }
-func (*LinuxCPU) ProtoMessage()               {}
-func (*LinuxCPU) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{18} }
+func (m *LinuxCPU) Reset()         { *m = LinuxCPU{} }
+func (m *LinuxCPU) String() string { return proto.CompactTextString(m) }
+func (*LinuxCPU) ProtoMessage()    {}
+func (*LinuxCPU) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{18}
+}
+func (m *LinuxCPU) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxCPU) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxCPU.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxCPU) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxCPU.Merge(m, src)
+}
+func (m *LinuxCPU) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxCPU) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxCPU.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxCPU proto.InternalMessageInfo
 
 func (m *LinuxCPU) GetShares() uint64 {
 	if m != nil {
@@ -1052,13 +1650,44 @@ type LinuxWeightDevice struct {
 	// Weight is the bandwidth rate for the device.
 	Weight uint32 `protobuf:"varint,3,opt,name=Weight,proto3" json:"Weight,omitempty"`
 	// LeafWeight is the bandwidth rate for the device while competing with the cgroup's child cgroups, CFQ scheduler only
-	LeafWeight uint32 `protobuf:"varint,4,opt,name=LeafWeight,proto3" json:"LeafWeight,omitempty"`
+	LeafWeight           uint32   `protobuf:"varint,4,opt,name=LeafWeight,proto3" json:"LeafWeight,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxWeightDevice) Reset()                    { *m = LinuxWeightDevice{} }
-func (m *LinuxWeightDevice) String() string            { return proto.CompactTextString(m) }
-func (*LinuxWeightDevice) ProtoMessage()               {}
-func (*LinuxWeightDevice) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{19} }
+func (m *LinuxWeightDevice) Reset()         { *m = LinuxWeightDevice{} }
+func (m *LinuxWeightDevice) String() string { return proto.CompactTextString(m) }
+func (*LinuxWeightDevice) ProtoMessage()    {}
+func (*LinuxWeightDevice) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{19}
+}
+func (m *LinuxWeightDevice) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxWeightDevice) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxWeightDevice.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxWeightDevice) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxWeightDevice.Merge(m, src)
+}
+func (m *LinuxWeightDevice) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxWeightDevice) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxWeightDevice.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxWeightDevice proto.InternalMessageInfo
 
 func (m *LinuxWeightDevice) GetMajor() int64 {
 	if m != nil {
@@ -1094,13 +1723,44 @@ type LinuxThrottleDevice struct {
 	// Minor is the device's minor number.
 	Minor int64 `protobuf:"varint,2,opt,name=Minor,proto3" json:"Minor,omitempty"`
 	// Rate is the IO rate limit per cgroup per device
-	Rate uint64 `protobuf:"varint,3,opt,name=Rate,proto3" json:"Rate,omitempty"`
+	Rate                 uint64   `protobuf:"varint,3,opt,name=Rate,proto3" json:"Rate,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxThrottleDevice) Reset()                    { *m = LinuxThrottleDevice{} }
-func (m *LinuxThrottleDevice) String() string            { return proto.CompactTextString(m) }
-func (*LinuxThrottleDevice) ProtoMessage()               {}
-func (*LinuxThrottleDevice) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{20} }
+func (m *LinuxThrottleDevice) Reset()         { *m = LinuxThrottleDevice{} }
+func (m *LinuxThrottleDevice) String() string { return proto.CompactTextString(m) }
+func (*LinuxThrottleDevice) ProtoMessage()    {}
+func (*LinuxThrottleDevice) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{20}
+}
+func (m *LinuxThrottleDevice) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxThrottleDevice) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxThrottleDevice.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxThrottleDevice) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxThrottleDevice.Merge(m, src)
+}
+func (m *LinuxThrottleDevice) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxThrottleDevice) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxThrottleDevice.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxThrottleDevice proto.InternalMessageInfo
 
 func (m *LinuxThrottleDevice) GetMajor() int64 {
 	if m != nil {
@@ -1129,21 +1789,52 @@ type LinuxBlockIO struct {
 	// Specifies tasks' weight in the given cgroup while competing with the cgroup's child cgroups, CFQ scheduler only
 	LeafWeight uint32 `protobuf:"varint,2,opt,name=LeafWeight,proto3" json:"LeafWeight,omitempty"`
 	// Weight per cgroup per device, can override BlkioWeight
-	WeightDevice []LinuxWeightDevice `protobuf:"bytes,3,rep,name=WeightDevice" json:"WeightDevice"`
+	WeightDevice []LinuxWeightDevice `protobuf:"bytes,3,rep,name=WeightDevice,proto3" json:"WeightDevice"`
 	// IO read rate limit per cgroup per device, bytes per second
-	ThrottleReadBpsDevice []LinuxThrottleDevice `protobuf:"bytes,4,rep,name=ThrottleReadBpsDevice" json:"ThrottleReadBpsDevice"`
+	ThrottleReadBpsDevice []LinuxThrottleDevice `protobuf:"bytes,4,rep,name=ThrottleReadBpsDevice,proto3" json:"ThrottleReadBpsDevice"`
 	// IO write rate limit per cgroup per device, bytes per second
-	ThrottleWriteBpsDevice []LinuxThrottleDevice `protobuf:"bytes,5,rep,name=ThrottleWriteBpsDevice" json:"ThrottleWriteBpsDevice"`
+	ThrottleWriteBpsDevice []LinuxThrottleDevice `protobuf:"bytes,5,rep,name=ThrottleWriteBpsDevice,proto3" json:"ThrottleWriteBpsDevice"`
 	// IO read rate limit per cgroup per device, IO per second
-	ThrottleReadIOPSDevice []LinuxThrottleDevice `protobuf:"bytes,6,rep,name=ThrottleReadIOPSDevice" json:"ThrottleReadIOPSDevice"`
+	ThrottleReadIOPSDevice []LinuxThrottleDevice `protobuf:"bytes,6,rep,name=ThrottleReadIOPSDevice,proto3" json:"ThrottleReadIOPSDevice"`
 	// IO write rate limit per cgroup per device, IO per second
-	ThrottleWriteIOPSDevice []LinuxThrottleDevice `protobuf:"bytes,7,rep,name=ThrottleWriteIOPSDevice" json:"ThrottleWriteIOPSDevice"`
+	ThrottleWriteIOPSDevice []LinuxThrottleDevice `protobuf:"bytes,7,rep,name=ThrottleWriteIOPSDevice,proto3" json:"ThrottleWriteIOPSDevice"`
+	XXX_NoUnkeyedLiteral    struct{}              `json:"-"`
+	XXX_unrecognized        []byte                `json:"-"`
+	XXX_sizecache           int32                 `json:"-"`
 }
 
-func (m *LinuxBlockIO) Reset()                    { *m = LinuxBlockIO{} }
-func (m *LinuxBlockIO) String() string            { return proto.CompactTextString(m) }
-func (*LinuxBlockIO) ProtoMessage()               {}
-func (*LinuxBlockIO) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{21} }
+func (m *LinuxBlockIO) Reset()         { *m = LinuxBlockIO{} }
+func (m *LinuxBlockIO) String() string { return proto.CompactTextString(m) }
+func (*LinuxBlockIO) ProtoMessage()    {}
+func (*LinuxBlockIO) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{21}
+}
+func (m *LinuxBlockIO) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxBlockIO) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxBlockIO.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxBlockIO) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxBlockIO.Merge(m, src)
+}
+func (m *LinuxBlockIO) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxBlockIO) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxBlockIO.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxBlockIO proto.InternalMessageInfo
 
 func (m *LinuxBlockIO) GetWeight() uint32 {
 	if m != nil {
@@ -1196,13 +1887,44 @@ func (m *LinuxBlockIO) GetThrottleWriteIOPSDevice() []LinuxThrottleDevice {
 
 type LinuxPids struct {
 	// Maximum number of PIDs. Default is "no limit".
-	Limit int64 `protobuf:"varint,1,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	Limit                int64    `protobuf:"varint,1,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxPids) Reset()                    { *m = LinuxPids{} }
-func (m *LinuxPids) String() string            { return proto.CompactTextString(m) }
-func (*LinuxPids) ProtoMessage()               {}
-func (*LinuxPids) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{22} }
+func (m *LinuxPids) Reset()         { *m = LinuxPids{} }
+func (m *LinuxPids) String() string { return proto.CompactTextString(m) }
+func (*LinuxPids) ProtoMessage()    {}
+func (*LinuxPids) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{22}
+}
+func (m *LinuxPids) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxPids) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxPids.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxPids) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxPids.Merge(m, src)
+}
+func (m *LinuxPids) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxPids) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxPids.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxPids proto.InternalMessageInfo
 
 func (m *LinuxPids) GetLimit() int64 {
 	if m != nil {
@@ -1221,13 +1943,44 @@ type LinuxDeviceCgroup struct {
 	// Minor is the device's minor number.
 	Minor int64 `protobuf:"varint,4,opt,name=Minor,proto3" json:"Minor,omitempty"`
 	// Cgroup access permissions format, rwm.
-	Access string `protobuf:"bytes,5,opt,name=Access,proto3" json:"Access,omitempty"`
+	Access               string   `protobuf:"bytes,5,opt,name=Access,proto3" json:"Access,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxDeviceCgroup) Reset()                    { *m = LinuxDeviceCgroup{} }
-func (m *LinuxDeviceCgroup) String() string            { return proto.CompactTextString(m) }
-func (*LinuxDeviceCgroup) ProtoMessage()               {}
-func (*LinuxDeviceCgroup) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{23} }
+func (m *LinuxDeviceCgroup) Reset()         { *m = LinuxDeviceCgroup{} }
+func (m *LinuxDeviceCgroup) String() string { return proto.CompactTextString(m) }
+func (*LinuxDeviceCgroup) ProtoMessage()    {}
+func (*LinuxDeviceCgroup) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{23}
+}
+func (m *LinuxDeviceCgroup) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxDeviceCgroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxDeviceCgroup.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxDeviceCgroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxDeviceCgroup.Merge(m, src)
+}
+func (m *LinuxDeviceCgroup) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxDeviceCgroup) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxDeviceCgroup.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxDeviceCgroup proto.InternalMessageInfo
 
 func (m *LinuxDeviceCgroup) GetAllow() bool {
 	if m != nil {
@@ -1268,13 +2021,44 @@ type LinuxNetwork struct {
 	// Set class identifier for container's network packets
 	ClassID uint32 `protobuf:"varint,1,opt,name=ClassID,proto3" json:"ClassID,omitempty"`
 	// Set priority of network traffic for container
-	Priorities []LinuxInterfacePriority `protobuf:"bytes,2,rep,name=Priorities" json:"Priorities"`
+	Priorities           []LinuxInterfacePriority `protobuf:"bytes,2,rep,name=Priorities,proto3" json:"Priorities"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
 }
 
-func (m *LinuxNetwork) Reset()                    { *m = LinuxNetwork{} }
-func (m *LinuxNetwork) String() string            { return proto.CompactTextString(m) }
-func (*LinuxNetwork) ProtoMessage()               {}
-func (*LinuxNetwork) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{24} }
+func (m *LinuxNetwork) Reset()         { *m = LinuxNetwork{} }
+func (m *LinuxNetwork) String() string { return proto.CompactTextString(m) }
+func (*LinuxNetwork) ProtoMessage()    {}
+func (*LinuxNetwork) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{24}
+}
+func (m *LinuxNetwork) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxNetwork) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxNetwork.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxNetwork) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxNetwork.Merge(m, src)
+}
+func (m *LinuxNetwork) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxNetwork) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxNetwork.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxNetwork proto.InternalMessageInfo
 
 func (m *LinuxNetwork) GetClassID() uint32 {
 	if m != nil {
@@ -1294,13 +2078,44 @@ type LinuxHugepageLimit struct {
 	// Pagesize is the hugepage size
 	Pagesize string `protobuf:"bytes,1,opt,name=Pagesize,proto3" json:"Pagesize,omitempty"`
 	// Limit is the limit of "hugepagesize" hugetlb usage
-	Limit uint64 `protobuf:"varint,2,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	Limit                uint64   `protobuf:"varint,2,opt,name=Limit,proto3" json:"Limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxHugepageLimit) Reset()                    { *m = LinuxHugepageLimit{} }
-func (m *LinuxHugepageLimit) String() string            { return proto.CompactTextString(m) }
-func (*LinuxHugepageLimit) ProtoMessage()               {}
-func (*LinuxHugepageLimit) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{25} }
+func (m *LinuxHugepageLimit) Reset()         { *m = LinuxHugepageLimit{} }
+func (m *LinuxHugepageLimit) String() string { return proto.CompactTextString(m) }
+func (*LinuxHugepageLimit) ProtoMessage()    {}
+func (*LinuxHugepageLimit) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{25}
+}
+func (m *LinuxHugepageLimit) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxHugepageLimit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxHugepageLimit.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxHugepageLimit) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxHugepageLimit.Merge(m, src)
+}
+func (m *LinuxHugepageLimit) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxHugepageLimit) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxHugepageLimit.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxHugepageLimit proto.InternalMessageInfo
 
 func (m *LinuxHugepageLimit) GetPagesize() string {
 	if m != nil {
@@ -1320,13 +2135,44 @@ type LinuxInterfacePriority struct {
 	// Name is the name of the network interface
 	Name string `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
 	// Priority for the interface
-	Priority uint32 `protobuf:"varint,2,opt,name=Priority,proto3" json:"Priority,omitempty"`
+	Priority             uint32   `protobuf:"varint,2,opt,name=Priority,proto3" json:"Priority,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxInterfacePriority) Reset()                    { *m = LinuxInterfacePriority{} }
-func (m *LinuxInterfacePriority) String() string            { return proto.CompactTextString(m) }
-func (*LinuxInterfacePriority) ProtoMessage()               {}
-func (*LinuxInterfacePriority) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{26} }
+func (m *LinuxInterfacePriority) Reset()         { *m = LinuxInterfacePriority{} }
+func (m *LinuxInterfacePriority) String() string { return proto.CompactTextString(m) }
+func (*LinuxInterfacePriority) ProtoMessage()    {}
+func (*LinuxInterfacePriority) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{26}
+}
+func (m *LinuxInterfacePriority) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxInterfacePriority) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxInterfacePriority.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxInterfacePriority) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxInterfacePriority.Merge(m, src)
+}
+func (m *LinuxInterfacePriority) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxInterfacePriority) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxInterfacePriority.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxInterfacePriority proto.InternalMessageInfo
 
 func (m *LinuxInterfacePriority) GetName() string {
 	if m != nil {
@@ -1343,15 +2189,46 @@ func (m *LinuxInterfacePriority) GetPriority() uint32 {
 }
 
 type LinuxSeccomp struct {
-	DefaultAction string         `protobuf:"bytes,1,opt,name=DefaultAction,proto3" json:"DefaultAction,omitempty"`
-	Architectures []string       `protobuf:"bytes,2,rep,name=Architectures" json:"Architectures,omitempty"`
-	Syscalls      []LinuxSyscall `protobuf:"bytes,3,rep,name=Syscalls" json:"Syscalls"`
+	DefaultAction        string         `protobuf:"bytes,1,opt,name=DefaultAction,proto3" json:"DefaultAction,omitempty"`
+	Architectures        []string       `protobuf:"bytes,2,rep,name=Architectures,proto3" json:"Architectures,omitempty"`
+	Syscalls             []LinuxSyscall `protobuf:"bytes,3,rep,name=Syscalls,proto3" json:"Syscalls"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *LinuxSeccomp) Reset()                    { *m = LinuxSeccomp{} }
-func (m *LinuxSeccomp) String() string            { return proto.CompactTextString(m) }
-func (*LinuxSeccomp) ProtoMessage()               {}
-func (*LinuxSeccomp) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{27} }
+func (m *LinuxSeccomp) Reset()         { *m = LinuxSeccomp{} }
+func (m *LinuxSeccomp) String() string { return proto.CompactTextString(m) }
+func (*LinuxSeccomp) ProtoMessage()    {}
+func (*LinuxSeccomp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{27}
+}
+func (m *LinuxSeccomp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxSeccomp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxSeccomp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxSeccomp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxSeccomp.Merge(m, src)
+}
+func (m *LinuxSeccomp) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxSeccomp) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxSeccomp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxSeccomp proto.InternalMessageInfo
 
 func (m *LinuxSeccomp) GetDefaultAction() string {
 	if m != nil {
@@ -1375,16 +2252,47 @@ func (m *LinuxSeccomp) GetSyscalls() []LinuxSyscall {
 }
 
 type LinuxSeccompArg struct {
-	Index    uint64 `protobuf:"varint,1,opt,name=Index,proto3" json:"Index,omitempty"`
-	Value    uint64 `protobuf:"varint,2,opt,name=Value,proto3" json:"Value,omitempty"`
-	ValueTwo uint64 `protobuf:"varint,3,opt,name=ValueTwo,proto3" json:"ValueTwo,omitempty"`
-	Op       string `protobuf:"bytes,4,opt,name=Op,proto3" json:"Op,omitempty"`
+	Index                uint64   `protobuf:"varint,1,opt,name=Index,proto3" json:"Index,omitempty"`
+	Value                uint64   `protobuf:"varint,2,opt,name=Value,proto3" json:"Value,omitempty"`
+	ValueTwo             uint64   `protobuf:"varint,3,opt,name=ValueTwo,proto3" json:"ValueTwo,omitempty"`
+	Op                   string   `protobuf:"bytes,4,opt,name=Op,proto3" json:"Op,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxSeccompArg) Reset()                    { *m = LinuxSeccompArg{} }
-func (m *LinuxSeccompArg) String() string            { return proto.CompactTextString(m) }
-func (*LinuxSeccompArg) ProtoMessage()               {}
-func (*LinuxSeccompArg) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{28} }
+func (m *LinuxSeccompArg) Reset()         { *m = LinuxSeccompArg{} }
+func (m *LinuxSeccompArg) String() string { return proto.CompactTextString(m) }
+func (*LinuxSeccompArg) ProtoMessage()    {}
+func (*LinuxSeccompArg) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{28}
+}
+func (m *LinuxSeccompArg) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxSeccompArg) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxSeccompArg.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxSeccompArg) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxSeccompArg.Merge(m, src)
+}
+func (m *LinuxSeccompArg) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxSeccompArg) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxSeccompArg.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxSeccompArg proto.InternalMessageInfo
 
 func (m *LinuxSeccompArg) GetIndex() uint64 {
 	if m != nil {
@@ -1415,15 +2323,46 @@ func (m *LinuxSeccompArg) GetOp() string {
 }
 
 type LinuxSyscall struct {
-	Names  []string          `protobuf:"bytes,1,rep,name=Names" json:"Names,omitempty"`
-	Action string            `protobuf:"bytes,2,opt,name=Action,proto3" json:"Action,omitempty"`
-	Args   []LinuxSeccompArg `protobuf:"bytes,3,rep,name=Args" json:"Args"`
+	Names                []string          `protobuf:"bytes,1,rep,name=Names,proto3" json:"Names,omitempty"`
+	Action               string            `protobuf:"bytes,2,opt,name=Action,proto3" json:"Action,omitempty"`
+	Args                 []LinuxSeccompArg `protobuf:"bytes,3,rep,name=Args,proto3" json:"Args"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
-func (m *LinuxSyscall) Reset()                    { *m = LinuxSyscall{} }
-func (m *LinuxSyscall) String() string            { return proto.CompactTextString(m) }
-func (*LinuxSyscall) ProtoMessage()               {}
-func (*LinuxSyscall) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{29} }
+func (m *LinuxSyscall) Reset()         { *m = LinuxSyscall{} }
+func (m *LinuxSyscall) String() string { return proto.CompactTextString(m) }
+func (*LinuxSyscall) ProtoMessage()    {}
+func (*LinuxSyscall) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{29}
+}
+func (m *LinuxSyscall) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxSyscall) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxSyscall.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxSyscall) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxSyscall.Merge(m, src)
+}
+func (m *LinuxSyscall) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxSyscall) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxSyscall.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxSyscall proto.InternalMessageInfo
 
 func (m *LinuxSyscall) GetNames() []string {
 	if m != nil {
@@ -1449,13 +2388,44 @@ func (m *LinuxSyscall) GetArgs() []LinuxSeccompArg {
 type LinuxIntelRdt struct {
 	// The schema for L3 cache id and capacity bitmask (CBM)
 	// Format: "L3:<cache_id0>=<cbm0>;<cache_id1>=<cbm1>;..."
-	L3CacheSchema string `protobuf:"bytes,1,opt,name=L3CacheSchema,proto3" json:"L3CacheSchema,omitempty"`
+	L3CacheSchema        string   `protobuf:"bytes,1,opt,name=L3CacheSchema,proto3" json:"L3CacheSchema,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *LinuxIntelRdt) Reset()                    { *m = LinuxIntelRdt{} }
-func (m *LinuxIntelRdt) String() string            { return proto.CompactTextString(m) }
-func (*LinuxIntelRdt) ProtoMessage()               {}
-func (*LinuxIntelRdt) Descriptor() ([]byte, []int) { return fileDescriptorOci, []int{30} }
+func (m *LinuxIntelRdt) Reset()         { *m = LinuxIntelRdt{} }
+func (m *LinuxIntelRdt) String() string { return proto.CompactTextString(m) }
+func (*LinuxIntelRdt) ProtoMessage()    {}
+func (*LinuxIntelRdt) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ec5cd479a36aec97, []int{30}
+}
+func (m *LinuxIntelRdt) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LinuxIntelRdt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LinuxIntelRdt.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LinuxIntelRdt) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LinuxIntelRdt.Merge(m, src)
+}
+func (m *LinuxIntelRdt) XXX_Size() int {
+	return m.Size()
+}
+func (m *LinuxIntelRdt) XXX_DiscardUnknown() {
+	xxx_messageInfo_LinuxIntelRdt.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LinuxIntelRdt proto.InternalMessageInfo
 
 func (m *LinuxIntelRdt) GetL3CacheSchema() string {
 	if m != nil {
@@ -1466,6 +2436,7 @@ func (m *LinuxIntelRdt) GetL3CacheSchema() string {
 
 func init() {
 	proto.RegisterType((*Spec)(nil), "grpc.Spec")
+	proto.RegisterMapType((map[string]string)(nil), "grpc.Spec.AnnotationsEntry")
 	proto.RegisterType((*Process)(nil), "grpc.Process")
 	proto.RegisterType((*Box)(nil), "grpc.Box")
 	proto.RegisterType((*User)(nil), "grpc.User")
@@ -1476,6 +2447,7 @@ func init() {
 	proto.RegisterType((*Hooks)(nil), "grpc.Hooks")
 	proto.RegisterType((*Hook)(nil), "grpc.Hook")
 	proto.RegisterType((*Linux)(nil), "grpc.Linux")
+	proto.RegisterMapType((map[string]string)(nil), "grpc.Linux.SysctlEntry")
 	proto.RegisterType((*Windows)(nil), "grpc.Windows")
 	proto.RegisterType((*Solaris)(nil), "grpc.Solaris")
 	proto.RegisterType((*LinuxIDMapping)(nil), "grpc.LinuxIDMapping")
@@ -1497,9762 +2469,10 @@ func init() {
 	proto.RegisterType((*LinuxSyscall)(nil), "grpc.LinuxSyscall")
 	proto.RegisterType((*LinuxIntelRdt)(nil), "grpc.LinuxIntelRdt")
 }
-func (this *Spec) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
 
-	that1, ok := that.(*Spec)
-	if !ok {
-		that2, ok := that.(Spec)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Version != that1.Version {
-		return false
-	}
-	if !this.Process.Equal(that1.Process) {
-		return false
-	}
-	if !this.Root.Equal(that1.Root) {
-		return false
-	}
-	if this.Hostname != that1.Hostname {
-		return false
-	}
-	if len(this.Mounts) != len(that1.Mounts) {
-		return false
-	}
-	for i := range this.Mounts {
-		if !this.Mounts[i].Equal(&that1.Mounts[i]) {
-			return false
-		}
-	}
-	if !this.Hooks.Equal(that1.Hooks) {
-		return false
-	}
-	if len(this.Annotations) != len(that1.Annotations) {
-		return false
-	}
-	for i := range this.Annotations {
-		if this.Annotations[i] != that1.Annotations[i] {
-			return false
-		}
-	}
-	if !this.Linux.Equal(that1.Linux) {
-		return false
-	}
-	if !this.Solaris.Equal(that1.Solaris) {
-		return false
-	}
-	if !this.Windows.Equal(that1.Windows) {
-		return false
-	}
-	return true
-}
-func (this *Process) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
+func init() { proto.RegisterFile("oci.proto", fileDescriptor_ec5cd479a36aec97) }
 
-	that1, ok := that.(*Process)
-	if !ok {
-		that2, ok := that.(Process)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Terminal != that1.Terminal {
-		return false
-	}
-	if !this.ConsoleSize.Equal(that1.ConsoleSize) {
-		return false
-	}
-	if !this.User.Equal(&that1.User) {
-		return false
-	}
-	if len(this.Args) != len(that1.Args) {
-		return false
-	}
-	for i := range this.Args {
-		if this.Args[i] != that1.Args[i] {
-			return false
-		}
-	}
-	if len(this.Env) != len(that1.Env) {
-		return false
-	}
-	for i := range this.Env {
-		if this.Env[i] != that1.Env[i] {
-			return false
-		}
-	}
-	if this.Cwd != that1.Cwd {
-		return false
-	}
-	if !this.Capabilities.Equal(that1.Capabilities) {
-		return false
-	}
-	if len(this.Rlimits) != len(that1.Rlimits) {
-		return false
-	}
-	for i := range this.Rlimits {
-		if !this.Rlimits[i].Equal(&that1.Rlimits[i]) {
-			return false
-		}
-	}
-	if this.NoNewPrivileges != that1.NoNewPrivileges {
-		return false
-	}
-	if this.ApparmorProfile != that1.ApparmorProfile {
-		return false
-	}
-	if this.OOMScoreAdj != that1.OOMScoreAdj {
-		return false
-	}
-	if this.SelinuxLabel != that1.SelinuxLabel {
-		return false
-	}
-	return true
-}
-func (this *Box) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Box)
-	if !ok {
-		that2, ok := that.(Box)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Height != that1.Height {
-		return false
-	}
-	if this.Width != that1.Width {
-		return false
-	}
-	return true
-}
-func (this *User) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*User)
-	if !ok {
-		that2, ok := that.(User)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.UID != that1.UID {
-		return false
-	}
-	if this.GID != that1.GID {
-		return false
-	}
-	if len(this.AdditionalGids) != len(that1.AdditionalGids) {
-		return false
-	}
-	for i := range this.AdditionalGids {
-		if this.AdditionalGids[i] != that1.AdditionalGids[i] {
-			return false
-		}
-	}
-	if this.Username != that1.Username {
-		return false
-	}
-	return true
-}
-func (this *LinuxCapabilities) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxCapabilities)
-	if !ok {
-		that2, ok := that.(LinuxCapabilities)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Bounding) != len(that1.Bounding) {
-		return false
-	}
-	for i := range this.Bounding {
-		if this.Bounding[i] != that1.Bounding[i] {
-			return false
-		}
-	}
-	if len(this.Effective) != len(that1.Effective) {
-		return false
-	}
-	for i := range this.Effective {
-		if this.Effective[i] != that1.Effective[i] {
-			return false
-		}
-	}
-	if len(this.Inheritable) != len(that1.Inheritable) {
-		return false
-	}
-	for i := range this.Inheritable {
-		if this.Inheritable[i] != that1.Inheritable[i] {
-			return false
-		}
-	}
-	if len(this.Permitted) != len(that1.Permitted) {
-		return false
-	}
-	for i := range this.Permitted {
-		if this.Permitted[i] != that1.Permitted[i] {
-			return false
-		}
-	}
-	if len(this.Ambient) != len(that1.Ambient) {
-		return false
-	}
-	for i := range this.Ambient {
-		if this.Ambient[i] != that1.Ambient[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *POSIXRlimit) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*POSIXRlimit)
-	if !ok {
-		that2, ok := that.(POSIXRlimit)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Hard != that1.Hard {
-		return false
-	}
-	if this.Soft != that1.Soft {
-		return false
-	}
-	return true
-}
-func (this *Mount) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Mount)
-	if !ok {
-		that2, ok := that.(Mount)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Destination != that1.Destination {
-		return false
-	}
-	if this.Source != that1.Source {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if len(this.Options) != len(that1.Options) {
-		return false
-	}
-	for i := range this.Options {
-		if this.Options[i] != that1.Options[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *Root) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Root)
-	if !ok {
-		that2, ok := that.(Root)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if this.Readonly != that1.Readonly {
-		return false
-	}
-	return true
-}
-func (this *Hooks) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Hooks)
-	if !ok {
-		that2, ok := that.(Hooks)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Prestart) != len(that1.Prestart) {
-		return false
-	}
-	for i := range this.Prestart {
-		if !this.Prestart[i].Equal(&that1.Prestart[i]) {
-			return false
-		}
-	}
-	if len(this.Poststart) != len(that1.Poststart) {
-		return false
-	}
-	for i := range this.Poststart {
-		if !this.Poststart[i].Equal(&that1.Poststart[i]) {
-			return false
-		}
-	}
-	if len(this.Poststop) != len(that1.Poststop) {
-		return false
-	}
-	for i := range this.Poststop {
-		if !this.Poststop[i].Equal(&that1.Poststop[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *Hook) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Hook)
-	if !ok {
-		that2, ok := that.(Hook)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if len(this.Args) != len(that1.Args) {
-		return false
-	}
-	for i := range this.Args {
-		if this.Args[i] != that1.Args[i] {
-			return false
-		}
-	}
-	if len(this.Env) != len(that1.Env) {
-		return false
-	}
-	for i := range this.Env {
-		if this.Env[i] != that1.Env[i] {
-			return false
-		}
-	}
-	if this.Timeout != that1.Timeout {
-		return false
-	}
-	return true
-}
-func (this *Linux) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Linux)
-	if !ok {
-		that2, ok := that.(Linux)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.UIDMappings) != len(that1.UIDMappings) {
-		return false
-	}
-	for i := range this.UIDMappings {
-		if !this.UIDMappings[i].Equal(&that1.UIDMappings[i]) {
-			return false
-		}
-	}
-	if len(this.GIDMappings) != len(that1.GIDMappings) {
-		return false
-	}
-	for i := range this.GIDMappings {
-		if !this.GIDMappings[i].Equal(&that1.GIDMappings[i]) {
-			return false
-		}
-	}
-	if len(this.Sysctl) != len(that1.Sysctl) {
-		return false
-	}
-	for i := range this.Sysctl {
-		if this.Sysctl[i] != that1.Sysctl[i] {
-			return false
-		}
-	}
-	if !this.Resources.Equal(that1.Resources) {
-		return false
-	}
-	if this.CgroupsPath != that1.CgroupsPath {
-		return false
-	}
-	if len(this.Namespaces) != len(that1.Namespaces) {
-		return false
-	}
-	for i := range this.Namespaces {
-		if !this.Namespaces[i].Equal(&that1.Namespaces[i]) {
-			return false
-		}
-	}
-	if len(this.Devices) != len(that1.Devices) {
-		return false
-	}
-	for i := range this.Devices {
-		if !this.Devices[i].Equal(&that1.Devices[i]) {
-			return false
-		}
-	}
-	if !this.Seccomp.Equal(that1.Seccomp) {
-		return false
-	}
-	if this.RootfsPropagation != that1.RootfsPropagation {
-		return false
-	}
-	if len(this.MaskedPaths) != len(that1.MaskedPaths) {
-		return false
-	}
-	for i := range this.MaskedPaths {
-		if this.MaskedPaths[i] != that1.MaskedPaths[i] {
-			return false
-		}
-	}
-	if len(this.ReadonlyPaths) != len(that1.ReadonlyPaths) {
-		return false
-	}
-	for i := range this.ReadonlyPaths {
-		if this.ReadonlyPaths[i] != that1.ReadonlyPaths[i] {
-			return false
-		}
-	}
-	if this.MountLabel != that1.MountLabel {
-		return false
-	}
-	if !this.IntelRdt.Equal(that1.IntelRdt) {
-		return false
-	}
-	return true
-}
-func (this *Windows) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Windows)
-	if !ok {
-		that2, ok := that.(Windows)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Dummy != that1.Dummy {
-		return false
-	}
-	return true
-}
-func (this *Solaris) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Solaris)
-	if !ok {
-		that2, ok := that.(Solaris)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Dummy != that1.Dummy {
-		return false
-	}
-	return true
-}
-func (this *LinuxIDMapping) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxIDMapping)
-	if !ok {
-		that2, ok := that.(LinuxIDMapping)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.HostID != that1.HostID {
-		return false
-	}
-	if this.ContainerID != that1.ContainerID {
-		return false
-	}
-	if this.Size_ != that1.Size_ {
-		return false
-	}
-	return true
-}
-func (this *LinuxNamespace) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxNamespace)
-	if !ok {
-		that2, ok := that.(LinuxNamespace)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	return true
-}
-func (this *LinuxDevice) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxDevice)
-	if !ok {
-		that2, ok := that.(LinuxDevice)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Path != that1.Path {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Major != that1.Major {
-		return false
-	}
-	if this.Minor != that1.Minor {
-		return false
-	}
-	if this.FileMode != that1.FileMode {
-		return false
-	}
-	if this.UID != that1.UID {
-		return false
-	}
-	if this.GID != that1.GID {
-		return false
-	}
-	return true
-}
-func (this *LinuxResources) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxResources)
-	if !ok {
-		that2, ok := that.(LinuxResources)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Devices) != len(that1.Devices) {
-		return false
-	}
-	for i := range this.Devices {
-		if !this.Devices[i].Equal(&that1.Devices[i]) {
-			return false
-		}
-	}
-	if !this.Memory.Equal(that1.Memory) {
-		return false
-	}
-	if !this.CPU.Equal(that1.CPU) {
-		return false
-	}
-	if !this.Pids.Equal(that1.Pids) {
-		return false
-	}
-	if !this.BlockIO.Equal(that1.BlockIO) {
-		return false
-	}
-	if len(this.HugepageLimits) != len(that1.HugepageLimits) {
-		return false
-	}
-	for i := range this.HugepageLimits {
-		if !this.HugepageLimits[i].Equal(&that1.HugepageLimits[i]) {
-			return false
-		}
-	}
-	if !this.Network.Equal(that1.Network) {
-		return false
-	}
-	return true
-}
-func (this *LinuxMemory) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxMemory)
-	if !ok {
-		that2, ok := that.(LinuxMemory)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Limit != that1.Limit {
-		return false
-	}
-	if this.Reservation != that1.Reservation {
-		return false
-	}
-	if this.Swap != that1.Swap {
-		return false
-	}
-	if this.Kernel != that1.Kernel {
-		return false
-	}
-	if this.KernelTCP != that1.KernelTCP {
-		return false
-	}
-	if this.Swappiness != that1.Swappiness {
-		return false
-	}
-	if this.DisableOOMKiller != that1.DisableOOMKiller {
-		return false
-	}
-	return true
-}
-func (this *LinuxCPU) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxCPU)
-	if !ok {
-		that2, ok := that.(LinuxCPU)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Shares != that1.Shares {
-		return false
-	}
-	if this.Quota != that1.Quota {
-		return false
-	}
-	if this.Period != that1.Period {
-		return false
-	}
-	if this.RealtimeRuntime != that1.RealtimeRuntime {
-		return false
-	}
-	if this.RealtimePeriod != that1.RealtimePeriod {
-		return false
-	}
-	if this.Cpus != that1.Cpus {
-		return false
-	}
-	if this.Mems != that1.Mems {
-		return false
-	}
-	return true
-}
-func (this *LinuxWeightDevice) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxWeightDevice)
-	if !ok {
-		that2, ok := that.(LinuxWeightDevice)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Major != that1.Major {
-		return false
-	}
-	if this.Minor != that1.Minor {
-		return false
-	}
-	if this.Weight != that1.Weight {
-		return false
-	}
-	if this.LeafWeight != that1.LeafWeight {
-		return false
-	}
-	return true
-}
-func (this *LinuxThrottleDevice) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxThrottleDevice)
-	if !ok {
-		that2, ok := that.(LinuxThrottleDevice)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Major != that1.Major {
-		return false
-	}
-	if this.Minor != that1.Minor {
-		return false
-	}
-	if this.Rate != that1.Rate {
-		return false
-	}
-	return true
-}
-func (this *LinuxBlockIO) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxBlockIO)
-	if !ok {
-		that2, ok := that.(LinuxBlockIO)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Weight != that1.Weight {
-		return false
-	}
-	if this.LeafWeight != that1.LeafWeight {
-		return false
-	}
-	if len(this.WeightDevice) != len(that1.WeightDevice) {
-		return false
-	}
-	for i := range this.WeightDevice {
-		if !this.WeightDevice[i].Equal(&that1.WeightDevice[i]) {
-			return false
-		}
-	}
-	if len(this.ThrottleReadBpsDevice) != len(that1.ThrottleReadBpsDevice) {
-		return false
-	}
-	for i := range this.ThrottleReadBpsDevice {
-		if !this.ThrottleReadBpsDevice[i].Equal(&that1.ThrottleReadBpsDevice[i]) {
-			return false
-		}
-	}
-	if len(this.ThrottleWriteBpsDevice) != len(that1.ThrottleWriteBpsDevice) {
-		return false
-	}
-	for i := range this.ThrottleWriteBpsDevice {
-		if !this.ThrottleWriteBpsDevice[i].Equal(&that1.ThrottleWriteBpsDevice[i]) {
-			return false
-		}
-	}
-	if len(this.ThrottleReadIOPSDevice) != len(that1.ThrottleReadIOPSDevice) {
-		return false
-	}
-	for i := range this.ThrottleReadIOPSDevice {
-		if !this.ThrottleReadIOPSDevice[i].Equal(&that1.ThrottleReadIOPSDevice[i]) {
-			return false
-		}
-	}
-	if len(this.ThrottleWriteIOPSDevice) != len(that1.ThrottleWriteIOPSDevice) {
-		return false
-	}
-	for i := range this.ThrottleWriteIOPSDevice {
-		if !this.ThrottleWriteIOPSDevice[i].Equal(&that1.ThrottleWriteIOPSDevice[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LinuxPids) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxPids)
-	if !ok {
-		that2, ok := that.(LinuxPids)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Limit != that1.Limit {
-		return false
-	}
-	return true
-}
-func (this *LinuxDeviceCgroup) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxDeviceCgroup)
-	if !ok {
-		that2, ok := that.(LinuxDeviceCgroup)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Allow != that1.Allow {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.Major != that1.Major {
-		return false
-	}
-	if this.Minor != that1.Minor {
-		return false
-	}
-	if this.Access != that1.Access {
-		return false
-	}
-	return true
-}
-func (this *LinuxNetwork) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxNetwork)
-	if !ok {
-		that2, ok := that.(LinuxNetwork)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.ClassID != that1.ClassID {
-		return false
-	}
-	if len(this.Priorities) != len(that1.Priorities) {
-		return false
-	}
-	for i := range this.Priorities {
-		if !this.Priorities[i].Equal(&that1.Priorities[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LinuxHugepageLimit) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxHugepageLimit)
-	if !ok {
-		that2, ok := that.(LinuxHugepageLimit)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Pagesize != that1.Pagesize {
-		return false
-	}
-	if this.Limit != that1.Limit {
-		return false
-	}
-	return true
-}
-func (this *LinuxInterfacePriority) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxInterfacePriority)
-	if !ok {
-		that2, ok := that.(LinuxInterfacePriority)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.Priority != that1.Priority {
-		return false
-	}
-	return true
-}
-func (this *LinuxSeccomp) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxSeccomp)
-	if !ok {
-		that2, ok := that.(LinuxSeccomp)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.DefaultAction != that1.DefaultAction {
-		return false
-	}
-	if len(this.Architectures) != len(that1.Architectures) {
-		return false
-	}
-	for i := range this.Architectures {
-		if this.Architectures[i] != that1.Architectures[i] {
-			return false
-		}
-	}
-	if len(this.Syscalls) != len(that1.Syscalls) {
-		return false
-	}
-	for i := range this.Syscalls {
-		if !this.Syscalls[i].Equal(&that1.Syscalls[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LinuxSeccompArg) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxSeccompArg)
-	if !ok {
-		that2, ok := that.(LinuxSeccompArg)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Index != that1.Index {
-		return false
-	}
-	if this.Value != that1.Value {
-		return false
-	}
-	if this.ValueTwo != that1.ValueTwo {
-		return false
-	}
-	if this.Op != that1.Op {
-		return false
-	}
-	return true
-}
-func (this *LinuxSyscall) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxSyscall)
-	if !ok {
-		that2, ok := that.(LinuxSyscall)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Names) != len(that1.Names) {
-		return false
-	}
-	for i := range this.Names {
-		if this.Names[i] != that1.Names[i] {
-			return false
-		}
-	}
-	if this.Action != that1.Action {
-		return false
-	}
-	if len(this.Args) != len(that1.Args) {
-		return false
-	}
-	for i := range this.Args {
-		if !this.Args[i].Equal(&that1.Args[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *LinuxIntelRdt) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LinuxIntelRdt)
-	if !ok {
-		that2, ok := that.(LinuxIntelRdt)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.L3CacheSchema != that1.L3CacheSchema {
-		return false
-	}
-	return true
-}
-func (m *Spec) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Spec) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Version) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Version)))
-		i += copy(dAtA[i:], m.Version)
-	}
-	if m.Process != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Process.Size()))
-		n1, err := m.Process.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	if m.Root != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Root.Size()))
-		n2, err := m.Root.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
-	if len(m.Hostname) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Hostname)))
-		i += copy(dAtA[i:], m.Hostname)
-	}
-	if len(m.Mounts) > 0 {
-		for _, msg := range m.Mounts {
-			dAtA[i] = 0x2a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.Hooks != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Hooks.Size()))
-		n3, err := m.Hooks.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
-	}
-	if len(m.Annotations) > 0 {
-		for k, _ := range m.Annotations {
-			dAtA[i] = 0x3a
-			i++
-			v := m.Annotations[k]
-			mapSize := 1 + len(k) + sovOci(uint64(len(k))) + 1 + len(v) + sovOci(uint64(len(v)))
-			i = encodeVarintOci(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(len(v)))
-			i += copy(dAtA[i:], v)
-		}
-	}
-	if m.Linux != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Linux.Size()))
-		n4, err := m.Linux.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n4
-	}
-	if m.Solaris != nil {
-		dAtA[i] = 0x4a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Solaris.Size()))
-		n5, err := m.Solaris.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n5
-	}
-	if m.Windows != nil {
-		dAtA[i] = 0x52
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Windows.Size()))
-		n6, err := m.Windows.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
-	}
-	return i, nil
-}
-
-func (m *Process) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Process) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Terminal {
-		dAtA[i] = 0x8
-		i++
-		if m.Terminal {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	if m.ConsoleSize != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.ConsoleSize.Size()))
-		n7, err := m.ConsoleSize.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n7
-	}
-	dAtA[i] = 0x1a
-	i++
-	i = encodeVarintOci(dAtA, i, uint64(m.User.Size()))
-	n8, err := m.User.MarshalTo(dAtA[i:])
-	if err != nil {
-		return 0, err
-	}
-	i += n8
-	if len(m.Args) > 0 {
-		for _, s := range m.Args {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Env) > 0 {
-		for _, s := range m.Env {
-			dAtA[i] = 0x2a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Cwd) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Cwd)))
-		i += copy(dAtA[i:], m.Cwd)
-	}
-	if m.Capabilities != nil {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Capabilities.Size()))
-		n9, err := m.Capabilities.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n9
-	}
-	if len(m.Rlimits) > 0 {
-		for _, msg := range m.Rlimits {
-			dAtA[i] = 0x42
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.NoNewPrivileges {
-		dAtA[i] = 0x48
-		i++
-		if m.NoNewPrivileges {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	if len(m.ApparmorProfile) > 0 {
-		dAtA[i] = 0x52
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.ApparmorProfile)))
-		i += copy(dAtA[i:], m.ApparmorProfile)
-	}
-	if m.OOMScoreAdj != 0 {
-		dAtA[i] = 0x58
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.OOMScoreAdj))
-	}
-	if len(m.SelinuxLabel) > 0 {
-		dAtA[i] = 0x62
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.SelinuxLabel)))
-		i += copy(dAtA[i:], m.SelinuxLabel)
-	}
-	return i, nil
-}
-
-func (m *Box) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Box) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Height != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Height))
-	}
-	if m.Width != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Width))
-	}
-	return i, nil
-}
-
-func (m *User) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *User) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.UID != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.UID))
-	}
-	if m.GID != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.GID))
-	}
-	if len(m.AdditionalGids) > 0 {
-		dAtA11 := make([]byte, len(m.AdditionalGids)*10)
-		var j10 int
-		for _, num := range m.AdditionalGids {
-			for num >= 1<<7 {
-				dAtA11[j10] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j10++
-			}
-			dAtA11[j10] = uint8(num)
-			j10++
-		}
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(j10))
-		i += copy(dAtA[i:], dAtA11[:j10])
-	}
-	if len(m.Username) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Username)))
-		i += copy(dAtA[i:], m.Username)
-	}
-	return i, nil
-}
-
-func (m *LinuxCapabilities) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxCapabilities) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Bounding) > 0 {
-		for _, s := range m.Bounding {
-			dAtA[i] = 0xa
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Effective) > 0 {
-		for _, s := range m.Effective {
-			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Inheritable) > 0 {
-		for _, s := range m.Inheritable {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Permitted) > 0 {
-		for _, s := range m.Permitted {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Ambient) > 0 {
-		for _, s := range m.Ambient {
-			dAtA[i] = 0x2a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	return i, nil
-}
-
-func (m *POSIXRlimit) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *POSIXRlimit) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Type) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
-		i += copy(dAtA[i:], m.Type)
-	}
-	if m.Hard != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Hard))
-	}
-	if m.Soft != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Soft))
-	}
-	return i, nil
-}
-
-func (m *Mount) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Mount) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Destination) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Destination)))
-		i += copy(dAtA[i:], m.Destination)
-	}
-	if len(m.Source) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Source)))
-		i += copy(dAtA[i:], m.Source)
-	}
-	if len(m.Type) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
-		i += copy(dAtA[i:], m.Type)
-	}
-	if len(m.Options) > 0 {
-		for _, s := range m.Options {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	return i, nil
-}
-
-func (m *Root) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Root) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Path) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
-		i += copy(dAtA[i:], m.Path)
-	}
-	if m.Readonly {
-		dAtA[i] = 0x10
-		i++
-		if m.Readonly {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	return i, nil
-}
-
-func (m *Hooks) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Hooks) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Prestart) > 0 {
-		for _, msg := range m.Prestart {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Poststart) > 0 {
-		for _, msg := range m.Poststart {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Poststop) > 0 {
-		for _, msg := range m.Poststop {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *Hook) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Hook) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Path) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
-		i += copy(dAtA[i:], m.Path)
-	}
-	if len(m.Args) > 0 {
-		for _, s := range m.Args {
-			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Env) > 0 {
-		for _, s := range m.Env {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if m.Timeout != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Timeout))
-	}
-	return i, nil
-}
-
-func (m *Linux) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Linux) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.UIDMappings) > 0 {
-		for _, msg := range m.UIDMappings {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.GIDMappings) > 0 {
-		for _, msg := range m.GIDMappings {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Sysctl) > 0 {
-		for k, _ := range m.Sysctl {
-			dAtA[i] = 0x1a
-			i++
-			v := m.Sysctl[k]
-			mapSize := 1 + len(k) + sovOci(uint64(len(k))) + 1 + len(v) + sovOci(uint64(len(v)))
-			i = encodeVarintOci(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(len(v)))
-			i += copy(dAtA[i:], v)
-		}
-	}
-	if m.Resources != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Resources.Size()))
-		n12, err := m.Resources.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n12
-	}
-	if len(m.CgroupsPath) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.CgroupsPath)))
-		i += copy(dAtA[i:], m.CgroupsPath)
-	}
-	if len(m.Namespaces) > 0 {
-		for _, msg := range m.Namespaces {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Devices) > 0 {
-		for _, msg := range m.Devices {
-			dAtA[i] = 0x3a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.Seccomp != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Seccomp.Size()))
-		n13, err := m.Seccomp.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n13
-	}
-	if len(m.RootfsPropagation) > 0 {
-		dAtA[i] = 0x4a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.RootfsPropagation)))
-		i += copy(dAtA[i:], m.RootfsPropagation)
-	}
-	if len(m.MaskedPaths) > 0 {
-		for _, s := range m.MaskedPaths {
-			dAtA[i] = 0x52
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.ReadonlyPaths) > 0 {
-		for _, s := range m.ReadonlyPaths {
-			dAtA[i] = 0x5a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.MountLabel) > 0 {
-		dAtA[i] = 0x62
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.MountLabel)))
-		i += copy(dAtA[i:], m.MountLabel)
-	}
-	if m.IntelRdt != nil {
-		dAtA[i] = 0x6a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.IntelRdt.Size()))
-		n14, err := m.IntelRdt.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n14
-	}
-	return i, nil
-}
-
-func (m *Windows) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Windows) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Dummy) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Dummy)))
-		i += copy(dAtA[i:], m.Dummy)
-	}
-	return i, nil
-}
-
-func (m *Solaris) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Solaris) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Dummy) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Dummy)))
-		i += copy(dAtA[i:], m.Dummy)
-	}
-	return i, nil
-}
-
-func (m *LinuxIDMapping) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxIDMapping) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.HostID != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.HostID))
-	}
-	if m.ContainerID != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.ContainerID))
-	}
-	if m.Size_ != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Size_))
-	}
-	return i, nil
-}
-
-func (m *LinuxNamespace) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxNamespace) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Type) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
-		i += copy(dAtA[i:], m.Type)
-	}
-	if len(m.Path) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
-		i += copy(dAtA[i:], m.Path)
-	}
-	return i, nil
-}
-
-func (m *LinuxDevice) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxDevice) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Path) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
-		i += copy(dAtA[i:], m.Path)
-	}
-	if len(m.Type) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
-		i += copy(dAtA[i:], m.Type)
-	}
-	if m.Major != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
-	}
-	if m.FileMode != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.FileMode))
-	}
-	if m.UID != 0 {
-		dAtA[i] = 0x30
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.UID))
-	}
-	if m.GID != 0 {
-		dAtA[i] = 0x38
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.GID))
-	}
-	return i, nil
-}
-
-func (m *LinuxResources) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxResources) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Devices) > 0 {
-		for _, msg := range m.Devices {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.Memory != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Memory.Size()))
-		n15, err := m.Memory.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n15
-	}
-	if m.CPU != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.CPU.Size()))
-		n16, err := m.CPU.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n16
-	}
-	if m.Pids != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Pids.Size()))
-		n17, err := m.Pids.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n17
-	}
-	if m.BlockIO != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.BlockIO.Size()))
-		n18, err := m.BlockIO.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n18
-	}
-	if len(m.HugepageLimits) > 0 {
-		for _, msg := range m.HugepageLimits {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.Network != nil {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Network.Size()))
-		n19, err := m.Network.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n19
-	}
-	return i, nil
-}
-
-func (m *LinuxMemory) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxMemory) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Limit != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Limit))
-	}
-	if m.Reservation != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Reservation))
-	}
-	if m.Swap != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Swap))
-	}
-	if m.Kernel != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Kernel))
-	}
-	if m.KernelTCP != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.KernelTCP))
-	}
-	if m.Swappiness != 0 {
-		dAtA[i] = 0x30
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Swappiness))
-	}
-	if m.DisableOOMKiller {
-		dAtA[i] = 0x38
-		i++
-		if m.DisableOOMKiller {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	return i, nil
-}
-
-func (m *LinuxCPU) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxCPU) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Shares != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Shares))
-	}
-	if m.Quota != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Quota))
-	}
-	if m.Period != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Period))
-	}
-	if m.RealtimeRuntime != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.RealtimeRuntime))
-	}
-	if m.RealtimePeriod != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.RealtimePeriod))
-	}
-	if len(m.Cpus) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Cpus)))
-		i += copy(dAtA[i:], m.Cpus)
-	}
-	if len(m.Mems) > 0 {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Mems)))
-		i += copy(dAtA[i:], m.Mems)
-	}
-	return i, nil
-}
-
-func (m *LinuxWeightDevice) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxWeightDevice) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Major != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
-	}
-	if m.Weight != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Weight))
-	}
-	if m.LeafWeight != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.LeafWeight))
-	}
-	return i, nil
-}
-
-func (m *LinuxThrottleDevice) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxThrottleDevice) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Major != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
-	}
-	if m.Rate != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Rate))
-	}
-	return i, nil
-}
-
-func (m *LinuxBlockIO) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxBlockIO) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Weight != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Weight))
-	}
-	if m.LeafWeight != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.LeafWeight))
-	}
-	if len(m.WeightDevice) > 0 {
-		for _, msg := range m.WeightDevice {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.ThrottleReadBpsDevice) > 0 {
-		for _, msg := range m.ThrottleReadBpsDevice {
-			dAtA[i] = 0x22
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.ThrottleWriteBpsDevice) > 0 {
-		for _, msg := range m.ThrottleWriteBpsDevice {
-			dAtA[i] = 0x2a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.ThrottleReadIOPSDevice) > 0 {
-		for _, msg := range m.ThrottleReadIOPSDevice {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.ThrottleWriteIOPSDevice) > 0 {
-		for _, msg := range m.ThrottleWriteIOPSDevice {
-			dAtA[i] = 0x3a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *LinuxPids) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxPids) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Limit != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Limit))
-	}
-	return i, nil
-}
-
-func (m *LinuxDeviceCgroup) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxDeviceCgroup) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Allow {
-		dAtA[i] = 0x8
-		i++
-		if m.Allow {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	if len(m.Type) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
-		i += copy(dAtA[i:], m.Type)
-	}
-	if m.Major != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
-	}
-	if len(m.Access) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Access)))
-		i += copy(dAtA[i:], m.Access)
-	}
-	return i, nil
-}
-
-func (m *LinuxNetwork) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxNetwork) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.ClassID != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.ClassID))
-	}
-	if len(m.Priorities) > 0 {
-		for _, msg := range m.Priorities {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *LinuxHugepageLimit) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxHugepageLimit) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Pagesize) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Pagesize)))
-		i += copy(dAtA[i:], m.Pagesize)
-	}
-	if m.Limit != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Limit))
-	}
-	return i, nil
-}
-
-func (m *LinuxInterfacePriority) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxInterfacePriority) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if m.Priority != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Priority))
-	}
-	return i, nil
-}
-
-func (m *LinuxSeccomp) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxSeccomp) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.DefaultAction) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.DefaultAction)))
-		i += copy(dAtA[i:], m.DefaultAction)
-	}
-	if len(m.Architectures) > 0 {
-		for _, s := range m.Architectures {
-			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Syscalls) > 0 {
-		for _, msg := range m.Syscalls {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *LinuxSeccompArg) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxSeccompArg) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Index != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Index))
-	}
-	if m.Value != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.Value))
-	}
-	if m.ValueTwo != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(m.ValueTwo))
-	}
-	if len(m.Op) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Op)))
-		i += copy(dAtA[i:], m.Op)
-	}
-	return i, nil
-}
-
-func (m *LinuxSyscall) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxSyscall) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Names) > 0 {
-		for _, s := range m.Names {
-			dAtA[i] = 0xa
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.Action) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.Action)))
-		i += copy(dAtA[i:], m.Action)
-	}
-	if len(m.Args) > 0 {
-		for _, msg := range m.Args {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintOci(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *LinuxIntelRdt) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LinuxIntelRdt) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.L3CacheSchema) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintOci(dAtA, i, uint64(len(m.L3CacheSchema)))
-		i += copy(dAtA[i:], m.L3CacheSchema)
-	}
-	return i, nil
-}
-
-func encodeVarintOci(dAtA []byte, offset int, v uint64) int {
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return offset + 1
-}
-func NewPopulatedSpec(r randyOci, easy bool) *Spec {
-	this := &Spec{}
-	this.Version = string(randStringOci(r))
-	if r.Intn(10) != 0 {
-		this.Process = NewPopulatedProcess(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		this.Root = NewPopulatedRoot(r, easy)
-	}
-	this.Hostname = string(randStringOci(r))
-	if r.Intn(10) != 0 {
-		v1 := r.Intn(5)
-		this.Mounts = make([]Mount, v1)
-		for i := 0; i < v1; i++ {
-			v2 := NewPopulatedMount(r, easy)
-			this.Mounts[i] = *v2
-		}
-	}
-	if r.Intn(10) != 0 {
-		this.Hooks = NewPopulatedHooks(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		v3 := r.Intn(10)
-		this.Annotations = make(map[string]string)
-		for i := 0; i < v3; i++ {
-			this.Annotations[randStringOci(r)] = randStringOci(r)
-		}
-	}
-	if r.Intn(10) != 0 {
-		this.Linux = NewPopulatedLinux(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		this.Solaris = NewPopulatedSolaris(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		this.Windows = NewPopulatedWindows(r, easy)
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedProcess(r randyOci, easy bool) *Process {
-	this := &Process{}
-	this.Terminal = bool(bool(r.Intn(2) == 0))
-	if r.Intn(10) != 0 {
-		this.ConsoleSize = NewPopulatedBox(r, easy)
-	}
-	v4 := NewPopulatedUser(r, easy)
-	this.User = *v4
-	v5 := r.Intn(10)
-	this.Args = make([]string, v5)
-	for i := 0; i < v5; i++ {
-		this.Args[i] = string(randStringOci(r))
-	}
-	v6 := r.Intn(10)
-	this.Env = make([]string, v6)
-	for i := 0; i < v6; i++ {
-		this.Env[i] = string(randStringOci(r))
-	}
-	this.Cwd = string(randStringOci(r))
-	if r.Intn(10) != 0 {
-		this.Capabilities = NewPopulatedLinuxCapabilities(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		v7 := r.Intn(5)
-		this.Rlimits = make([]POSIXRlimit, v7)
-		for i := 0; i < v7; i++ {
-			v8 := NewPopulatedPOSIXRlimit(r, easy)
-			this.Rlimits[i] = *v8
-		}
-	}
-	this.NoNewPrivileges = bool(bool(r.Intn(2) == 0))
-	this.ApparmorProfile = string(randStringOci(r))
-	this.OOMScoreAdj = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.OOMScoreAdj *= -1
-	}
-	this.SelinuxLabel = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedBox(r randyOci, easy bool) *Box {
-	this := &Box{}
-	this.Height = uint32(r.Uint32())
-	this.Width = uint32(r.Uint32())
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedUser(r randyOci, easy bool) *User {
-	this := &User{}
-	this.UID = uint32(r.Uint32())
-	this.GID = uint32(r.Uint32())
-	v9 := r.Intn(10)
-	this.AdditionalGids = make([]uint32, v9)
-	for i := 0; i < v9; i++ {
-		this.AdditionalGids[i] = uint32(r.Uint32())
-	}
-	this.Username = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxCapabilities(r randyOci, easy bool) *LinuxCapabilities {
-	this := &LinuxCapabilities{}
-	v10 := r.Intn(10)
-	this.Bounding = make([]string, v10)
-	for i := 0; i < v10; i++ {
-		this.Bounding[i] = string(randStringOci(r))
-	}
-	v11 := r.Intn(10)
-	this.Effective = make([]string, v11)
-	for i := 0; i < v11; i++ {
-		this.Effective[i] = string(randStringOci(r))
-	}
-	v12 := r.Intn(10)
-	this.Inheritable = make([]string, v12)
-	for i := 0; i < v12; i++ {
-		this.Inheritable[i] = string(randStringOci(r))
-	}
-	v13 := r.Intn(10)
-	this.Permitted = make([]string, v13)
-	for i := 0; i < v13; i++ {
-		this.Permitted[i] = string(randStringOci(r))
-	}
-	v14 := r.Intn(10)
-	this.Ambient = make([]string, v14)
-	for i := 0; i < v14; i++ {
-		this.Ambient[i] = string(randStringOci(r))
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedPOSIXRlimit(r randyOci, easy bool) *POSIXRlimit {
-	this := &POSIXRlimit{}
-	this.Type = string(randStringOci(r))
-	this.Hard = uint64(uint64(r.Uint32()))
-	this.Soft = uint64(uint64(r.Uint32()))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedMount(r randyOci, easy bool) *Mount {
-	this := &Mount{}
-	this.Destination = string(randStringOci(r))
-	this.Source = string(randStringOci(r))
-	this.Type = string(randStringOci(r))
-	v15 := r.Intn(10)
-	this.Options = make([]string, v15)
-	for i := 0; i < v15; i++ {
-		this.Options[i] = string(randStringOci(r))
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedRoot(r randyOci, easy bool) *Root {
-	this := &Root{}
-	this.Path = string(randStringOci(r))
-	this.Readonly = bool(bool(r.Intn(2) == 0))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedHooks(r randyOci, easy bool) *Hooks {
-	this := &Hooks{}
-	if r.Intn(10) != 0 {
-		v16 := r.Intn(5)
-		this.Prestart = make([]Hook, v16)
-		for i := 0; i < v16; i++ {
-			v17 := NewPopulatedHook(r, easy)
-			this.Prestart[i] = *v17
-		}
-	}
-	if r.Intn(10) != 0 {
-		v18 := r.Intn(5)
-		this.Poststart = make([]Hook, v18)
-		for i := 0; i < v18; i++ {
-			v19 := NewPopulatedHook(r, easy)
-			this.Poststart[i] = *v19
-		}
-	}
-	if r.Intn(10) != 0 {
-		v20 := r.Intn(5)
-		this.Poststop = make([]Hook, v20)
-		for i := 0; i < v20; i++ {
-			v21 := NewPopulatedHook(r, easy)
-			this.Poststop[i] = *v21
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedHook(r randyOci, easy bool) *Hook {
-	this := &Hook{}
-	this.Path = string(randStringOci(r))
-	v22 := r.Intn(10)
-	this.Args = make([]string, v22)
-	for i := 0; i < v22; i++ {
-		this.Args[i] = string(randStringOci(r))
-	}
-	v23 := r.Intn(10)
-	this.Env = make([]string, v23)
-	for i := 0; i < v23; i++ {
-		this.Env[i] = string(randStringOci(r))
-	}
-	this.Timeout = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Timeout *= -1
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinux(r randyOci, easy bool) *Linux {
-	this := &Linux{}
-	if r.Intn(10) != 0 {
-		v24 := r.Intn(5)
-		this.UIDMappings = make([]LinuxIDMapping, v24)
-		for i := 0; i < v24; i++ {
-			v25 := NewPopulatedLinuxIDMapping(r, easy)
-			this.UIDMappings[i] = *v25
-		}
-	}
-	if r.Intn(10) != 0 {
-		v26 := r.Intn(5)
-		this.GIDMappings = make([]LinuxIDMapping, v26)
-		for i := 0; i < v26; i++ {
-			v27 := NewPopulatedLinuxIDMapping(r, easy)
-			this.GIDMappings[i] = *v27
-		}
-	}
-	if r.Intn(10) != 0 {
-		v28 := r.Intn(10)
-		this.Sysctl = make(map[string]string)
-		for i := 0; i < v28; i++ {
-			this.Sysctl[randStringOci(r)] = randStringOci(r)
-		}
-	}
-	if r.Intn(10) != 0 {
-		this.Resources = NewPopulatedLinuxResources(r, easy)
-	}
-	this.CgroupsPath = string(randStringOci(r))
-	if r.Intn(10) != 0 {
-		v29 := r.Intn(5)
-		this.Namespaces = make([]LinuxNamespace, v29)
-		for i := 0; i < v29; i++ {
-			v30 := NewPopulatedLinuxNamespace(r, easy)
-			this.Namespaces[i] = *v30
-		}
-	}
-	if r.Intn(10) != 0 {
-		v31 := r.Intn(5)
-		this.Devices = make([]LinuxDevice, v31)
-		for i := 0; i < v31; i++ {
-			v32 := NewPopulatedLinuxDevice(r, easy)
-			this.Devices[i] = *v32
-		}
-	}
-	if r.Intn(10) != 0 {
-		this.Seccomp = NewPopulatedLinuxSeccomp(r, easy)
-	}
-	this.RootfsPropagation = string(randStringOci(r))
-	v33 := r.Intn(10)
-	this.MaskedPaths = make([]string, v33)
-	for i := 0; i < v33; i++ {
-		this.MaskedPaths[i] = string(randStringOci(r))
-	}
-	v34 := r.Intn(10)
-	this.ReadonlyPaths = make([]string, v34)
-	for i := 0; i < v34; i++ {
-		this.ReadonlyPaths[i] = string(randStringOci(r))
-	}
-	this.MountLabel = string(randStringOci(r))
-	if r.Intn(10) != 0 {
-		this.IntelRdt = NewPopulatedLinuxIntelRdt(r, easy)
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedWindows(r randyOci, easy bool) *Windows {
-	this := &Windows{}
-	this.Dummy = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedSolaris(r randyOci, easy bool) *Solaris {
-	this := &Solaris{}
-	this.Dummy = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxIDMapping(r randyOci, easy bool) *LinuxIDMapping {
-	this := &LinuxIDMapping{}
-	this.HostID = uint32(r.Uint32())
-	this.ContainerID = uint32(r.Uint32())
-	this.Size_ = uint32(r.Uint32())
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxNamespace(r randyOci, easy bool) *LinuxNamespace {
-	this := &LinuxNamespace{}
-	this.Type = string(randStringOci(r))
-	this.Path = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxDevice(r randyOci, easy bool) *LinuxDevice {
-	this := &LinuxDevice{}
-	this.Path = string(randStringOci(r))
-	this.Type = string(randStringOci(r))
-	this.Major = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Major *= -1
-	}
-	this.Minor = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Minor *= -1
-	}
-	this.FileMode = uint32(r.Uint32())
-	this.UID = uint32(r.Uint32())
-	this.GID = uint32(r.Uint32())
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxResources(r randyOci, easy bool) *LinuxResources {
-	this := &LinuxResources{}
-	if r.Intn(10) != 0 {
-		v35 := r.Intn(5)
-		this.Devices = make([]LinuxDeviceCgroup, v35)
-		for i := 0; i < v35; i++ {
-			v36 := NewPopulatedLinuxDeviceCgroup(r, easy)
-			this.Devices[i] = *v36
-		}
-	}
-	if r.Intn(10) != 0 {
-		this.Memory = NewPopulatedLinuxMemory(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		this.CPU = NewPopulatedLinuxCPU(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		this.Pids = NewPopulatedLinuxPids(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		this.BlockIO = NewPopulatedLinuxBlockIO(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		v37 := r.Intn(5)
-		this.HugepageLimits = make([]LinuxHugepageLimit, v37)
-		for i := 0; i < v37; i++ {
-			v38 := NewPopulatedLinuxHugepageLimit(r, easy)
-			this.HugepageLimits[i] = *v38
-		}
-	}
-	if r.Intn(10) != 0 {
-		this.Network = NewPopulatedLinuxNetwork(r, easy)
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxMemory(r randyOci, easy bool) *LinuxMemory {
-	this := &LinuxMemory{}
-	this.Limit = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Limit *= -1
-	}
-	this.Reservation = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Reservation *= -1
-	}
-	this.Swap = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Swap *= -1
-	}
-	this.Kernel = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Kernel *= -1
-	}
-	this.KernelTCP = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.KernelTCP *= -1
-	}
-	this.Swappiness = uint64(uint64(r.Uint32()))
-	this.DisableOOMKiller = bool(bool(r.Intn(2) == 0))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxCPU(r randyOci, easy bool) *LinuxCPU {
-	this := &LinuxCPU{}
-	this.Shares = uint64(uint64(r.Uint32()))
-	this.Quota = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Quota *= -1
-	}
-	this.Period = uint64(uint64(r.Uint32()))
-	this.RealtimeRuntime = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.RealtimeRuntime *= -1
-	}
-	this.RealtimePeriod = uint64(uint64(r.Uint32()))
-	this.Cpus = string(randStringOci(r))
-	this.Mems = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxWeightDevice(r randyOci, easy bool) *LinuxWeightDevice {
-	this := &LinuxWeightDevice{}
-	this.Major = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Major *= -1
-	}
-	this.Minor = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Minor *= -1
-	}
-	this.Weight = uint32(r.Uint32())
-	this.LeafWeight = uint32(r.Uint32())
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxThrottleDevice(r randyOci, easy bool) *LinuxThrottleDevice {
-	this := &LinuxThrottleDevice{}
-	this.Major = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Major *= -1
-	}
-	this.Minor = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Minor *= -1
-	}
-	this.Rate = uint64(uint64(r.Uint32()))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxBlockIO(r randyOci, easy bool) *LinuxBlockIO {
-	this := &LinuxBlockIO{}
-	this.Weight = uint32(r.Uint32())
-	this.LeafWeight = uint32(r.Uint32())
-	if r.Intn(10) != 0 {
-		v39 := r.Intn(5)
-		this.WeightDevice = make([]LinuxWeightDevice, v39)
-		for i := 0; i < v39; i++ {
-			v40 := NewPopulatedLinuxWeightDevice(r, easy)
-			this.WeightDevice[i] = *v40
-		}
-	}
-	if r.Intn(10) != 0 {
-		v41 := r.Intn(5)
-		this.ThrottleReadBpsDevice = make([]LinuxThrottleDevice, v41)
-		for i := 0; i < v41; i++ {
-			v42 := NewPopulatedLinuxThrottleDevice(r, easy)
-			this.ThrottleReadBpsDevice[i] = *v42
-		}
-	}
-	if r.Intn(10) != 0 {
-		v43 := r.Intn(5)
-		this.ThrottleWriteBpsDevice = make([]LinuxThrottleDevice, v43)
-		for i := 0; i < v43; i++ {
-			v44 := NewPopulatedLinuxThrottleDevice(r, easy)
-			this.ThrottleWriteBpsDevice[i] = *v44
-		}
-	}
-	if r.Intn(10) != 0 {
-		v45 := r.Intn(5)
-		this.ThrottleReadIOPSDevice = make([]LinuxThrottleDevice, v45)
-		for i := 0; i < v45; i++ {
-			v46 := NewPopulatedLinuxThrottleDevice(r, easy)
-			this.ThrottleReadIOPSDevice[i] = *v46
-		}
-	}
-	if r.Intn(10) != 0 {
-		v47 := r.Intn(5)
-		this.ThrottleWriteIOPSDevice = make([]LinuxThrottleDevice, v47)
-		for i := 0; i < v47; i++ {
-			v48 := NewPopulatedLinuxThrottleDevice(r, easy)
-			this.ThrottleWriteIOPSDevice[i] = *v48
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxPids(r randyOci, easy bool) *LinuxPids {
-	this := &LinuxPids{}
-	this.Limit = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Limit *= -1
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxDeviceCgroup(r randyOci, easy bool) *LinuxDeviceCgroup {
-	this := &LinuxDeviceCgroup{}
-	this.Allow = bool(bool(r.Intn(2) == 0))
-	this.Type = string(randStringOci(r))
-	this.Major = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Major *= -1
-	}
-	this.Minor = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Minor *= -1
-	}
-	this.Access = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxNetwork(r randyOci, easy bool) *LinuxNetwork {
-	this := &LinuxNetwork{}
-	this.ClassID = uint32(r.Uint32())
-	if r.Intn(10) != 0 {
-		v49 := r.Intn(5)
-		this.Priorities = make([]LinuxInterfacePriority, v49)
-		for i := 0; i < v49; i++ {
-			v50 := NewPopulatedLinuxInterfacePriority(r, easy)
-			this.Priorities[i] = *v50
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxHugepageLimit(r randyOci, easy bool) *LinuxHugepageLimit {
-	this := &LinuxHugepageLimit{}
-	this.Pagesize = string(randStringOci(r))
-	this.Limit = uint64(uint64(r.Uint32()))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxInterfacePriority(r randyOci, easy bool) *LinuxInterfacePriority {
-	this := &LinuxInterfacePriority{}
-	this.Name = string(randStringOci(r))
-	this.Priority = uint32(r.Uint32())
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxSeccomp(r randyOci, easy bool) *LinuxSeccomp {
-	this := &LinuxSeccomp{}
-	this.DefaultAction = string(randStringOci(r))
-	v51 := r.Intn(10)
-	this.Architectures = make([]string, v51)
-	for i := 0; i < v51; i++ {
-		this.Architectures[i] = string(randStringOci(r))
-	}
-	if r.Intn(10) != 0 {
-		v52 := r.Intn(5)
-		this.Syscalls = make([]LinuxSyscall, v52)
-		for i := 0; i < v52; i++ {
-			v53 := NewPopulatedLinuxSyscall(r, easy)
-			this.Syscalls[i] = *v53
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxSeccompArg(r randyOci, easy bool) *LinuxSeccompArg {
-	this := &LinuxSeccompArg{}
-	this.Index = uint64(uint64(r.Uint32()))
-	this.Value = uint64(uint64(r.Uint32()))
-	this.ValueTwo = uint64(uint64(r.Uint32()))
-	this.Op = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxSyscall(r randyOci, easy bool) *LinuxSyscall {
-	this := &LinuxSyscall{}
-	v54 := r.Intn(10)
-	this.Names = make([]string, v54)
-	for i := 0; i < v54; i++ {
-		this.Names[i] = string(randStringOci(r))
-	}
-	this.Action = string(randStringOci(r))
-	if r.Intn(10) != 0 {
-		v55 := r.Intn(5)
-		this.Args = make([]LinuxSeccompArg, v55)
-		for i := 0; i < v55; i++ {
-			v56 := NewPopulatedLinuxSeccompArg(r, easy)
-			this.Args[i] = *v56
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLinuxIntelRdt(r randyOci, easy bool) *LinuxIntelRdt {
-	this := &LinuxIntelRdt{}
-	this.L3CacheSchema = string(randStringOci(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-type randyOci interface {
-	Float32() float32
-	Float64() float64
-	Int63() int64
-	Int31() int32
-	Uint32() uint32
-	Intn(n int) int
-}
-
-func randUTF8RuneOci(r randyOci) rune {
-	ru := r.Intn(62)
-	if ru < 10 {
-		return rune(ru + 48)
-	} else if ru < 36 {
-		return rune(ru + 55)
-	}
-	return rune(ru + 61)
-}
-func randStringOci(r randyOci) string {
-	v57 := r.Intn(100)
-	tmps := make([]rune, v57)
-	for i := 0; i < v57; i++ {
-		tmps[i] = randUTF8RuneOci(r)
-	}
-	return string(tmps)
-}
-func randUnrecognizedOci(r randyOci, maxFieldNumber int) (dAtA []byte) {
-	l := r.Intn(5)
-	for i := 0; i < l; i++ {
-		wire := r.Intn(4)
-		if wire == 3 {
-			wire = 5
-		}
-		fieldNumber := maxFieldNumber + r.Intn(100)
-		dAtA = randFieldOci(dAtA, r, fieldNumber, wire)
-	}
-	return dAtA
-}
-func randFieldOci(dAtA []byte, r randyOci, fieldNumber int, wire int) []byte {
-	key := uint32(fieldNumber)<<3 | uint32(wire)
-	switch wire {
-	case 0:
-		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
-		v58 := r.Int63()
-		if r.Intn(2) == 0 {
-			v58 *= -1
-		}
-		dAtA = encodeVarintPopulateOci(dAtA, uint64(v58))
-	case 1:
-		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
-		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
-	case 2:
-		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
-		ll := r.Intn(100)
-		dAtA = encodeVarintPopulateOci(dAtA, uint64(ll))
-		for j := 0; j < ll; j++ {
-			dAtA = append(dAtA, byte(r.Intn(256)))
-		}
-	default:
-		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
-		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
-	}
-	return dAtA
-}
-func encodeVarintPopulateOci(dAtA []byte, v uint64) []byte {
-	for v >= 1<<7 {
-		dAtA = append(dAtA, uint8(uint64(v)&0x7f|0x80))
-		v >>= 7
-	}
-	dAtA = append(dAtA, uint8(v))
-	return dAtA
-}
-func (m *Spec) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Version)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Process != nil {
-		l = m.Process.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Root != nil {
-		l = m.Root.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.Hostname)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Mounts) > 0 {
-		for _, e := range m.Mounts {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if m.Hooks != nil {
-		l = m.Hooks.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Annotations) > 0 {
-		for k, v := range m.Annotations {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovOci(uint64(len(k))) + 1 + len(v) + sovOci(uint64(len(v)))
-			n += mapEntrySize + 1 + sovOci(uint64(mapEntrySize))
-		}
-	}
-	if m.Linux != nil {
-		l = m.Linux.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Solaris != nil {
-		l = m.Solaris.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Windows != nil {
-		l = m.Windows.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *Process) Size() (n int) {
-	var l int
-	_ = l
-	if m.Terminal {
-		n += 2
-	}
-	if m.ConsoleSize != nil {
-		l = m.ConsoleSize.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = m.User.Size()
-	n += 1 + l + sovOci(uint64(l))
-	if len(m.Args) > 0 {
-		for _, s := range m.Args {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Env) > 0 {
-		for _, s := range m.Env {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	l = len(m.Cwd)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Capabilities != nil {
-		l = m.Capabilities.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Rlimits) > 0 {
-		for _, e := range m.Rlimits {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if m.NoNewPrivileges {
-		n += 2
-	}
-	l = len(m.ApparmorProfile)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.OOMScoreAdj != 0 {
-		n += 1 + sovOci(uint64(m.OOMScoreAdj))
-	}
-	l = len(m.SelinuxLabel)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *Box) Size() (n int) {
-	var l int
-	_ = l
-	if m.Height != 0 {
-		n += 1 + sovOci(uint64(m.Height))
-	}
-	if m.Width != 0 {
-		n += 1 + sovOci(uint64(m.Width))
-	}
-	return n
-}
-
-func (m *User) Size() (n int) {
-	var l int
-	_ = l
-	if m.UID != 0 {
-		n += 1 + sovOci(uint64(m.UID))
-	}
-	if m.GID != 0 {
-		n += 1 + sovOci(uint64(m.GID))
-	}
-	if len(m.AdditionalGids) > 0 {
-		l = 0
-		for _, e := range m.AdditionalGids {
-			l += sovOci(uint64(e))
-		}
-		n += 1 + sovOci(uint64(l)) + l
-	}
-	l = len(m.Username)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *LinuxCapabilities) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Bounding) > 0 {
-		for _, s := range m.Bounding {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Effective) > 0 {
-		for _, s := range m.Effective {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Inheritable) > 0 {
-		for _, s := range m.Inheritable {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Permitted) > 0 {
-		for _, s := range m.Permitted {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Ambient) > 0 {
-		for _, s := range m.Ambient {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *POSIXRlimit) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Hard != 0 {
-		n += 1 + sovOci(uint64(m.Hard))
-	}
-	if m.Soft != 0 {
-		n += 1 + sovOci(uint64(m.Soft))
-	}
-	return n
-}
-
-func (m *Mount) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Destination)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.Source)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Options) > 0 {
-		for _, s := range m.Options {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *Root) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Path)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Readonly {
-		n += 2
-	}
-	return n
-}
-
-func (m *Hooks) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Prestart) > 0 {
-		for _, e := range m.Prestart {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Poststart) > 0 {
-		for _, e := range m.Poststart {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Poststop) > 0 {
-		for _, e := range m.Poststop {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *Hook) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Path)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Args) > 0 {
-		for _, s := range m.Args {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Env) > 0 {
-		for _, s := range m.Env {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if m.Timeout != 0 {
-		n += 1 + sovOci(uint64(m.Timeout))
-	}
-	return n
-}
-
-func (m *Linux) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.UIDMappings) > 0 {
-		for _, e := range m.UIDMappings {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.GIDMappings) > 0 {
-		for _, e := range m.GIDMappings {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Sysctl) > 0 {
-		for k, v := range m.Sysctl {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovOci(uint64(len(k))) + 1 + len(v) + sovOci(uint64(len(v)))
-			n += mapEntrySize + 1 + sovOci(uint64(mapEntrySize))
-		}
-	}
-	if m.Resources != nil {
-		l = m.Resources.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.CgroupsPath)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Namespaces) > 0 {
-		for _, e := range m.Namespaces {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Devices) > 0 {
-		for _, e := range m.Devices {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if m.Seccomp != nil {
-		l = m.Seccomp.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.RootfsPropagation)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.MaskedPaths) > 0 {
-		for _, s := range m.MaskedPaths {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.ReadonlyPaths) > 0 {
-		for _, s := range m.ReadonlyPaths {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	l = len(m.MountLabel)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.IntelRdt != nil {
-		l = m.IntelRdt.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *Windows) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Dummy)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *Solaris) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Dummy)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *LinuxIDMapping) Size() (n int) {
-	var l int
-	_ = l
-	if m.HostID != 0 {
-		n += 1 + sovOci(uint64(m.HostID))
-	}
-	if m.ContainerID != 0 {
-		n += 1 + sovOci(uint64(m.ContainerID))
-	}
-	if m.Size_ != 0 {
-		n += 1 + sovOci(uint64(m.Size_))
-	}
-	return n
-}
-
-func (m *LinuxNamespace) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.Path)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *LinuxDevice) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Path)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Major != 0 {
-		n += 1 + sovOci(uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		n += 1 + sovOci(uint64(m.Minor))
-	}
-	if m.FileMode != 0 {
-		n += 1 + sovOci(uint64(m.FileMode))
-	}
-	if m.UID != 0 {
-		n += 1 + sovOci(uint64(m.UID))
-	}
-	if m.GID != 0 {
-		n += 1 + sovOci(uint64(m.GID))
-	}
-	return n
-}
-
-func (m *LinuxResources) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Devices) > 0 {
-		for _, e := range m.Devices {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if m.Memory != nil {
-		l = m.Memory.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.CPU != nil {
-		l = m.CPU.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Pids != nil {
-		l = m.Pids.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.BlockIO != nil {
-		l = m.BlockIO.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.HugepageLimits) > 0 {
-		for _, e := range m.HugepageLimits {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if m.Network != nil {
-		l = m.Network.Size()
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *LinuxMemory) Size() (n int) {
-	var l int
-	_ = l
-	if m.Limit != 0 {
-		n += 1 + sovOci(uint64(m.Limit))
-	}
-	if m.Reservation != 0 {
-		n += 1 + sovOci(uint64(m.Reservation))
-	}
-	if m.Swap != 0 {
-		n += 1 + sovOci(uint64(m.Swap))
-	}
-	if m.Kernel != 0 {
-		n += 1 + sovOci(uint64(m.Kernel))
-	}
-	if m.KernelTCP != 0 {
-		n += 1 + sovOci(uint64(m.KernelTCP))
-	}
-	if m.Swappiness != 0 {
-		n += 1 + sovOci(uint64(m.Swappiness))
-	}
-	if m.DisableOOMKiller {
-		n += 2
-	}
-	return n
-}
-
-func (m *LinuxCPU) Size() (n int) {
-	var l int
-	_ = l
-	if m.Shares != 0 {
-		n += 1 + sovOci(uint64(m.Shares))
-	}
-	if m.Quota != 0 {
-		n += 1 + sovOci(uint64(m.Quota))
-	}
-	if m.Period != 0 {
-		n += 1 + sovOci(uint64(m.Period))
-	}
-	if m.RealtimeRuntime != 0 {
-		n += 1 + sovOci(uint64(m.RealtimeRuntime))
-	}
-	if m.RealtimePeriod != 0 {
-		n += 1 + sovOci(uint64(m.RealtimePeriod))
-	}
-	l = len(m.Cpus)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	l = len(m.Mems)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *LinuxWeightDevice) Size() (n int) {
-	var l int
-	_ = l
-	if m.Major != 0 {
-		n += 1 + sovOci(uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		n += 1 + sovOci(uint64(m.Minor))
-	}
-	if m.Weight != 0 {
-		n += 1 + sovOci(uint64(m.Weight))
-	}
-	if m.LeafWeight != 0 {
-		n += 1 + sovOci(uint64(m.LeafWeight))
-	}
-	return n
-}
-
-func (m *LinuxThrottleDevice) Size() (n int) {
-	var l int
-	_ = l
-	if m.Major != 0 {
-		n += 1 + sovOci(uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		n += 1 + sovOci(uint64(m.Minor))
-	}
-	if m.Rate != 0 {
-		n += 1 + sovOci(uint64(m.Rate))
-	}
-	return n
-}
-
-func (m *LinuxBlockIO) Size() (n int) {
-	var l int
-	_ = l
-	if m.Weight != 0 {
-		n += 1 + sovOci(uint64(m.Weight))
-	}
-	if m.LeafWeight != 0 {
-		n += 1 + sovOci(uint64(m.LeafWeight))
-	}
-	if len(m.WeightDevice) > 0 {
-		for _, e := range m.WeightDevice {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.ThrottleReadBpsDevice) > 0 {
-		for _, e := range m.ThrottleReadBpsDevice {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.ThrottleWriteBpsDevice) > 0 {
-		for _, e := range m.ThrottleWriteBpsDevice {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.ThrottleReadIOPSDevice) > 0 {
-		for _, e := range m.ThrottleReadIOPSDevice {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.ThrottleWriteIOPSDevice) > 0 {
-		for _, e := range m.ThrottleWriteIOPSDevice {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *LinuxPids) Size() (n int) {
-	var l int
-	_ = l
-	if m.Limit != 0 {
-		n += 1 + sovOci(uint64(m.Limit))
-	}
-	return n
-}
-
-func (m *LinuxDeviceCgroup) Size() (n int) {
-	var l int
-	_ = l
-	if m.Allow {
-		n += 2
-	}
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Major != 0 {
-		n += 1 + sovOci(uint64(m.Major))
-	}
-	if m.Minor != 0 {
-		n += 1 + sovOci(uint64(m.Minor))
-	}
-	l = len(m.Access)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *LinuxNetwork) Size() (n int) {
-	var l int
-	_ = l
-	if m.ClassID != 0 {
-		n += 1 + sovOci(uint64(m.ClassID))
-	}
-	if len(m.Priorities) > 0 {
-		for _, e := range m.Priorities {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *LinuxHugepageLimit) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Pagesize)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Limit != 0 {
-		n += 1 + sovOci(uint64(m.Limit))
-	}
-	return n
-}
-
-func (m *LinuxInterfacePriority) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Name)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if m.Priority != 0 {
-		n += 1 + sovOci(uint64(m.Priority))
-	}
-	return n
-}
-
-func (m *LinuxSeccomp) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.DefaultAction)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Architectures) > 0 {
-		for _, s := range m.Architectures {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	if len(m.Syscalls) > 0 {
-		for _, e := range m.Syscalls {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *LinuxSeccompArg) Size() (n int) {
-	var l int
-	_ = l
-	if m.Index != 0 {
-		n += 1 + sovOci(uint64(m.Index))
-	}
-	if m.Value != 0 {
-		n += 1 + sovOci(uint64(m.Value))
-	}
-	if m.ValueTwo != 0 {
-		n += 1 + sovOci(uint64(m.ValueTwo))
-	}
-	l = len(m.Op)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func (m *LinuxSyscall) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Names) > 0 {
-		for _, s := range m.Names {
-			l = len(s)
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	l = len(m.Action)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	if len(m.Args) > 0 {
-		for _, e := range m.Args {
-			l = e.Size()
-			n += 1 + l + sovOci(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *LinuxIntelRdt) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.L3CacheSchema)
-	if l > 0 {
-		n += 1 + l + sovOci(uint64(l))
-	}
-	return n
-}
-
-func sovOci(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
-}
-func sozOci(x uint64) (n int) {
-	return sovOci(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *Spec) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Spec: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Spec: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Version = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Process", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Process == nil {
-				m.Process = &Process{}
-			}
-			if err := m.Process.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Root", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Root == nil {
-				m.Root = &Root{}
-			}
-			if err := m.Root.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hostname", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Hostname = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Mounts", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Mounts = append(m.Mounts, Mount{})
-			if err := m.Mounts[len(m.Mounts)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hooks", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Hooks == nil {
-				m.Hooks = &Hooks{}
-			}
-			if err := m.Hooks.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Annotations", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Annotations == nil {
-				m.Annotations = make(map[string]string)
-			}
-			var mapkey string
-			var mapvalue string
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOci
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOci
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthOci
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var stringLenmapvalue uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOci
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapvalue := int(stringLenmapvalue)
-					if intStringLenmapvalue < 0 {
-						return ErrInvalidLengthOci
-					}
-					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-					if postStringIndexmapvalue > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
-					iNdEx = postStringIndexmapvalue
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipOci(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if skippy < 0 {
-						return ErrInvalidLengthOci
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Annotations[mapkey] = mapvalue
-			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Linux", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Linux == nil {
-				m.Linux = &Linux{}
-			}
-			if err := m.Linux.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Solaris", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Solaris == nil {
-				m.Solaris = &Solaris{}
-			}
-			if err := m.Solaris.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Windows", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Windows == nil {
-				m.Windows = &Windows{}
-			}
-			if err := m.Windows.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Process) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Process: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Process: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Terminal", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Terminal = bool(v != 0)
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ConsoleSize", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.ConsoleSize == nil {
-				m.ConsoleSize = &Box{}
-			}
-			if err := m.ConsoleSize.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.User.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Args", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Args = append(m.Args, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Env", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Env = append(m.Env, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Cwd", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Cwd = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Capabilities", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Capabilities == nil {
-				m.Capabilities = &LinuxCapabilities{}
-			}
-			if err := m.Capabilities.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Rlimits", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Rlimits = append(m.Rlimits, POSIXRlimit{})
-			if err := m.Rlimits[len(m.Rlimits)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 9:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field NoNewPrivileges", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.NoNewPrivileges = bool(v != 0)
-		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ApparmorProfile", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ApparmorProfile = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 11:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OOMScoreAdj", wireType)
-			}
-			m.OOMScoreAdj = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.OOMScoreAdj |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 12:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SelinuxLabel", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.SelinuxLabel = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Box) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Box: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Box: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
-			}
-			m.Height = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Height |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Width", wireType)
-			}
-			m.Width = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Width |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *User) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: User: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: User: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UID", wireType)
-			}
-			m.UID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UID |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GID", wireType)
-			}
-			m.GID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.GID |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType == 0 {
-				var v uint32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOci
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= (uint32(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.AdditionalGids = append(m.AdditionalGids, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOci
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthOci
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				for iNdEx < postIndex {
-					var v uint32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOci
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= (uint32(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.AdditionalGids = append(m.AdditionalGids, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field AdditionalGids", wireType)
-			}
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Username = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxCapabilities) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxCapabilities: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxCapabilities: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Bounding", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Bounding = append(m.Bounding, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Effective", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Effective = append(m.Effective, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Inheritable", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Inheritable = append(m.Inheritable, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Permitted", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Permitted = append(m.Permitted, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ambient", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Ambient = append(m.Ambient, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *POSIXRlimit) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: POSIXRlimit: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: POSIXRlimit: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hard", wireType)
-			}
-			m.Hard = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Hard |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Soft", wireType)
-			}
-			m.Soft = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Soft |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Mount) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Mount: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Mount: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Destination", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Destination = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Source", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Source = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Options", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Options = append(m.Options, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Root) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Root: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Root: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Path = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Readonly", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Readonly = bool(v != 0)
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Hooks) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Hooks: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Hooks: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Prestart", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Prestart = append(m.Prestart, Hook{})
-			if err := m.Prestart[len(m.Prestart)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Poststart", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Poststart = append(m.Poststart, Hook{})
-			if err := m.Poststart[len(m.Poststart)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Poststop", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Poststop = append(m.Poststop, Hook{})
-			if err := m.Poststop[len(m.Poststop)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Hook) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Hook: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Hook: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Path = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Args", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Args = append(m.Args, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Env", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Env = append(m.Env, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Timeout", wireType)
-			}
-			m.Timeout = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Timeout |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Linux) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Linux: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Linux: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UIDMappings", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UIDMappings = append(m.UIDMappings, LinuxIDMapping{})
-			if err := m.UIDMappings[len(m.UIDMappings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GIDMappings", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GIDMappings = append(m.GIDMappings, LinuxIDMapping{})
-			if err := m.GIDMappings[len(m.GIDMappings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sysctl", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Sysctl == nil {
-				m.Sysctl = make(map[string]string)
-			}
-			var mapkey string
-			var mapvalue string
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOci
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOci
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthOci
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var stringLenmapvalue uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOci
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapvalue := int(stringLenmapvalue)
-					if intStringLenmapvalue < 0 {
-						return ErrInvalidLengthOci
-					}
-					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-					if postStringIndexmapvalue > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
-					iNdEx = postStringIndexmapvalue
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipOci(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if skippy < 0 {
-						return ErrInvalidLengthOci
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Sysctl[mapkey] = mapvalue
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Resources", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Resources == nil {
-				m.Resources = &LinuxResources{}
-			}
-			if err := m.Resources.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CgroupsPath", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CgroupsPath = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Namespaces", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Namespaces = append(m.Namespaces, LinuxNamespace{})
-			if err := m.Namespaces[len(m.Namespaces)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Devices", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Devices = append(m.Devices, LinuxDevice{})
-			if err := m.Devices[len(m.Devices)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Seccomp", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Seccomp == nil {
-				m.Seccomp = &LinuxSeccomp{}
-			}
-			if err := m.Seccomp.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RootfsPropagation", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RootfsPropagation = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaskedPaths", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MaskedPaths = append(m.MaskedPaths, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 11:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReadonlyPaths", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ReadonlyPaths = append(m.ReadonlyPaths, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 12:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MountLabel", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MountLabel = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 13:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IntelRdt", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.IntelRdt == nil {
-				m.IntelRdt = &LinuxIntelRdt{}
-			}
-			if err := m.IntelRdt.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Windows) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Windows: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Windows: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Dummy", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Dummy = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Solaris) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Solaris: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Solaris: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Dummy", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Dummy = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxIDMapping) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxIDMapping: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxIDMapping: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field HostID", wireType)
-			}
-			m.HostID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.HostID |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ContainerID", wireType)
-			}
-			m.ContainerID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ContainerID |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Size_", wireType)
-			}
-			m.Size_ = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Size_ |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxNamespace) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxNamespace: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxNamespace: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Path = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxDevice) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxDevice: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxDevice: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Path = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
-			}
-			m.Major = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Major |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
-			}
-			m.Minor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Minor |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FileMode", wireType)
-			}
-			m.FileMode = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FileMode |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UID", wireType)
-			}
-			m.UID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UID |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GID", wireType)
-			}
-			m.GID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.GID |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxResources) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxResources: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxResources: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Devices", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Devices = append(m.Devices, LinuxDeviceCgroup{})
-			if err := m.Devices[len(m.Devices)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Memory", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Memory == nil {
-				m.Memory = &LinuxMemory{}
-			}
-			if err := m.Memory.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CPU", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.CPU == nil {
-				m.CPU = &LinuxCPU{}
-			}
-			if err := m.CPU.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pids", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pids == nil {
-				m.Pids = &LinuxPids{}
-			}
-			if err := m.Pids.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BlockIO", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.BlockIO == nil {
-				m.BlockIO = &LinuxBlockIO{}
-			}
-			if err := m.BlockIO.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field HugepageLimits", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.HugepageLimits = append(m.HugepageLimits, LinuxHugepageLimit{})
-			if err := m.HugepageLimits[len(m.HugepageLimits)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Network", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Network == nil {
-				m.Network = &LinuxNetwork{}
-			}
-			if err := m.Network.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxMemory) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxMemory: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxMemory: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
-			}
-			m.Limit = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Limit |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Reservation", wireType)
-			}
-			m.Reservation = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Reservation |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Swap", wireType)
-			}
-			m.Swap = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Swap |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Kernel", wireType)
-			}
-			m.Kernel = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Kernel |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KernelTCP", wireType)
-			}
-			m.KernelTCP = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KernelTCP |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Swappiness", wireType)
-			}
-			m.Swappiness = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Swappiness |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DisableOOMKiller", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.DisableOOMKiller = bool(v != 0)
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxCPU) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxCPU: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxCPU: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Shares", wireType)
-			}
-			m.Shares = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Shares |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Quota", wireType)
-			}
-			m.Quota = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Quota |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Period", wireType)
-			}
-			m.Period = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Period |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RealtimeRuntime", wireType)
-			}
-			m.RealtimeRuntime = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.RealtimeRuntime |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RealtimePeriod", wireType)
-			}
-			m.RealtimePeriod = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.RealtimePeriod |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Cpus", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Cpus = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Mems", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Mems = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxWeightDevice) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxWeightDevice: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxWeightDevice: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
-			}
-			m.Major = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Major |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
-			}
-			m.Minor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Minor |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Weight", wireType)
-			}
-			m.Weight = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Weight |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LeafWeight", wireType)
-			}
-			m.LeafWeight = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.LeafWeight |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxThrottleDevice) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxThrottleDevice: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxThrottleDevice: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
-			}
-			m.Major = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Major |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
-			}
-			m.Minor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Minor |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Rate", wireType)
-			}
-			m.Rate = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Rate |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxBlockIO) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxBlockIO: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxBlockIO: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Weight", wireType)
-			}
-			m.Weight = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Weight |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LeafWeight", wireType)
-			}
-			m.LeafWeight = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.LeafWeight |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field WeightDevice", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.WeightDevice = append(m.WeightDevice, LinuxWeightDevice{})
-			if err := m.WeightDevice[len(m.WeightDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleReadBpsDevice", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ThrottleReadBpsDevice = append(m.ThrottleReadBpsDevice, LinuxThrottleDevice{})
-			if err := m.ThrottleReadBpsDevice[len(m.ThrottleReadBpsDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleWriteBpsDevice", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ThrottleWriteBpsDevice = append(m.ThrottleWriteBpsDevice, LinuxThrottleDevice{})
-			if err := m.ThrottleWriteBpsDevice[len(m.ThrottleWriteBpsDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleReadIOPSDevice", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ThrottleReadIOPSDevice = append(m.ThrottleReadIOPSDevice, LinuxThrottleDevice{})
-			if err := m.ThrottleReadIOPSDevice[len(m.ThrottleReadIOPSDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleWriteIOPSDevice", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ThrottleWriteIOPSDevice = append(m.ThrottleWriteIOPSDevice, LinuxThrottleDevice{})
-			if err := m.ThrottleWriteIOPSDevice[len(m.ThrottleWriteIOPSDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxPids) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxPids: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxPids: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
-			}
-			m.Limit = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Limit |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxDeviceCgroup) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxDeviceCgroup: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxDeviceCgroup: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Allow", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Allow = bool(v != 0)
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
-			}
-			m.Major = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Major |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
-			}
-			m.Minor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Minor |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Access", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Access = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxNetwork) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxNetwork: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxNetwork: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ClassID", wireType)
-			}
-			m.ClassID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ClassID |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Priorities", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Priorities = append(m.Priorities, LinuxInterfacePriority{})
-			if err := m.Priorities[len(m.Priorities)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxHugepageLimit) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxHugepageLimit: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxHugepageLimit: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagesize", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Pagesize = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
-			}
-			m.Limit = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Limit |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxInterfacePriority) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxInterfacePriority: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxInterfacePriority: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Name = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Priority", wireType)
-			}
-			m.Priority = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Priority |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxSeccomp) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxSeccomp: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxSeccomp: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DefaultAction", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DefaultAction = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Architectures", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Architectures = append(m.Architectures, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Syscalls", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Syscalls = append(m.Syscalls, LinuxSyscall{})
-			if err := m.Syscalls[len(m.Syscalls)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxSeccompArg) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxSeccompArg: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxSeccompArg: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
-			}
-			m.Index = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Index |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
-			}
-			m.Value = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Value |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ValueTwo", wireType)
-			}
-			m.ValueTwo = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ValueTwo |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Op", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Op = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxSyscall) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxSyscall: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxSyscall: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Names", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Names = append(m.Names, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Action", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Action = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Args", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Args = append(m.Args, LinuxSeccompArg{})
-			if err := m.Args[len(m.Args)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LinuxIntelRdt) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LinuxIntelRdt: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LinuxIntelRdt: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field L3CacheSchema", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOci
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.L3CacheSchema = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOci(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOci
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipOci(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowOci
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-			return iNdEx, nil
-		case 1:
-			iNdEx += 8
-			return iNdEx, nil
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowOci
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			iNdEx += length
-			if length < 0 {
-				return 0, ErrInvalidLengthOci
-			}
-			return iNdEx, nil
-		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowOci
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipOci(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
-		case 4:
-			return iNdEx, nil
-		case 5:
-			iNdEx += 4
-			return iNdEx, nil
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-	}
-	panic("unreachable")
-}
-
-var (
-	ErrInvalidLengthOci = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowOci   = fmt.Errorf("proto: integer overflow")
-)
-
-func init() { proto.RegisterFile("oci.proto", fileDescriptorOci) }
-
-var fileDescriptorOci = []byte{
+var fileDescriptor_ec5cd479a36aec97 = []byte{
 	// 2035 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x18, 0x4b, 0x6f, 0x23, 0x49,
 	0x99, 0xb6, 0x1d, 0xc7, 0x2e, 0x27, 0x99, 0x99, 0xda, 0xd9, 0x6c, 0x13, 0x46, 0xde, 0x6c, 0x33,
@@ -11383,3 +2603,10743 @@ var fileDescriptorOci = []byte{
 	0x75, 0xf3, 0x27, 0xe1, 0xb3, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0x0e, 0x40, 0x5d, 0x0f, 0x86,
 	0x14, 0x00, 0x00,
 }
+
+func (this *Spec) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Spec)
+	if !ok {
+		that2, ok := that.(Spec)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Version != that1.Version {
+		return false
+	}
+	if !this.Process.Equal(that1.Process) {
+		return false
+	}
+	if !this.Root.Equal(that1.Root) {
+		return false
+	}
+	if this.Hostname != that1.Hostname {
+		return false
+	}
+	if len(this.Mounts) != len(that1.Mounts) {
+		return false
+	}
+	for i := range this.Mounts {
+		if !this.Mounts[i].Equal(&that1.Mounts[i]) {
+			return false
+		}
+	}
+	if !this.Hooks.Equal(that1.Hooks) {
+		return false
+	}
+	if len(this.Annotations) != len(that1.Annotations) {
+		return false
+	}
+	for i := range this.Annotations {
+		if this.Annotations[i] != that1.Annotations[i] {
+			return false
+		}
+	}
+	if !this.Linux.Equal(that1.Linux) {
+		return false
+	}
+	if !this.Solaris.Equal(that1.Solaris) {
+		return false
+	}
+	if !this.Windows.Equal(that1.Windows) {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Process) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Process)
+	if !ok {
+		that2, ok := that.(Process)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Terminal != that1.Terminal {
+		return false
+	}
+	if !this.ConsoleSize.Equal(that1.ConsoleSize) {
+		return false
+	}
+	if !this.User.Equal(&that1.User) {
+		return false
+	}
+	if len(this.Args) != len(that1.Args) {
+		return false
+	}
+	for i := range this.Args {
+		if this.Args[i] != that1.Args[i] {
+			return false
+		}
+	}
+	if len(this.Env) != len(that1.Env) {
+		return false
+	}
+	for i := range this.Env {
+		if this.Env[i] != that1.Env[i] {
+			return false
+		}
+	}
+	if this.Cwd != that1.Cwd {
+		return false
+	}
+	if !this.Capabilities.Equal(that1.Capabilities) {
+		return false
+	}
+	if len(this.Rlimits) != len(that1.Rlimits) {
+		return false
+	}
+	for i := range this.Rlimits {
+		if !this.Rlimits[i].Equal(&that1.Rlimits[i]) {
+			return false
+		}
+	}
+	if this.NoNewPrivileges != that1.NoNewPrivileges {
+		return false
+	}
+	if this.ApparmorProfile != that1.ApparmorProfile {
+		return false
+	}
+	if this.OOMScoreAdj != that1.OOMScoreAdj {
+		return false
+	}
+	if this.SelinuxLabel != that1.SelinuxLabel {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Box) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Box)
+	if !ok {
+		that2, ok := that.(Box)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Height != that1.Height {
+		return false
+	}
+	if this.Width != that1.Width {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *User) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*User)
+	if !ok {
+		that2, ok := that.(User)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.UID != that1.UID {
+		return false
+	}
+	if this.GID != that1.GID {
+		return false
+	}
+	if len(this.AdditionalGids) != len(that1.AdditionalGids) {
+		return false
+	}
+	for i := range this.AdditionalGids {
+		if this.AdditionalGids[i] != that1.AdditionalGids[i] {
+			return false
+		}
+	}
+	if this.Username != that1.Username {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxCapabilities) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxCapabilities)
+	if !ok {
+		that2, ok := that.(LinuxCapabilities)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Bounding) != len(that1.Bounding) {
+		return false
+	}
+	for i := range this.Bounding {
+		if this.Bounding[i] != that1.Bounding[i] {
+			return false
+		}
+	}
+	if len(this.Effective) != len(that1.Effective) {
+		return false
+	}
+	for i := range this.Effective {
+		if this.Effective[i] != that1.Effective[i] {
+			return false
+		}
+	}
+	if len(this.Inheritable) != len(that1.Inheritable) {
+		return false
+	}
+	for i := range this.Inheritable {
+		if this.Inheritable[i] != that1.Inheritable[i] {
+			return false
+		}
+	}
+	if len(this.Permitted) != len(that1.Permitted) {
+		return false
+	}
+	for i := range this.Permitted {
+		if this.Permitted[i] != that1.Permitted[i] {
+			return false
+		}
+	}
+	if len(this.Ambient) != len(that1.Ambient) {
+		return false
+	}
+	for i := range this.Ambient {
+		if this.Ambient[i] != that1.Ambient[i] {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *POSIXRlimit) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*POSIXRlimit)
+	if !ok {
+		that2, ok := that.(POSIXRlimit)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if this.Hard != that1.Hard {
+		return false
+	}
+	if this.Soft != that1.Soft {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Mount) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Mount)
+	if !ok {
+		that2, ok := that.(Mount)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Destination != that1.Destination {
+		return false
+	}
+	if this.Source != that1.Source {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if len(this.Options) != len(that1.Options) {
+		return false
+	}
+	for i := range this.Options {
+		if this.Options[i] != that1.Options[i] {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Root) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Root)
+	if !ok {
+		that2, ok := that.(Root)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Path != that1.Path {
+		return false
+	}
+	if this.Readonly != that1.Readonly {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Hooks) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Hooks)
+	if !ok {
+		that2, ok := that.(Hooks)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Prestart) != len(that1.Prestart) {
+		return false
+	}
+	for i := range this.Prestart {
+		if !this.Prestart[i].Equal(&that1.Prestart[i]) {
+			return false
+		}
+	}
+	if len(this.Poststart) != len(that1.Poststart) {
+		return false
+	}
+	for i := range this.Poststart {
+		if !this.Poststart[i].Equal(&that1.Poststart[i]) {
+			return false
+		}
+	}
+	if len(this.Poststop) != len(that1.Poststop) {
+		return false
+	}
+	for i := range this.Poststop {
+		if !this.Poststop[i].Equal(&that1.Poststop[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Hook) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Hook)
+	if !ok {
+		that2, ok := that.(Hook)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Path != that1.Path {
+		return false
+	}
+	if len(this.Args) != len(that1.Args) {
+		return false
+	}
+	for i := range this.Args {
+		if this.Args[i] != that1.Args[i] {
+			return false
+		}
+	}
+	if len(this.Env) != len(that1.Env) {
+		return false
+	}
+	for i := range this.Env {
+		if this.Env[i] != that1.Env[i] {
+			return false
+		}
+	}
+	if this.Timeout != that1.Timeout {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Linux) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Linux)
+	if !ok {
+		that2, ok := that.(Linux)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.UIDMappings) != len(that1.UIDMappings) {
+		return false
+	}
+	for i := range this.UIDMappings {
+		if !this.UIDMappings[i].Equal(&that1.UIDMappings[i]) {
+			return false
+		}
+	}
+	if len(this.GIDMappings) != len(that1.GIDMappings) {
+		return false
+	}
+	for i := range this.GIDMappings {
+		if !this.GIDMappings[i].Equal(&that1.GIDMappings[i]) {
+			return false
+		}
+	}
+	if len(this.Sysctl) != len(that1.Sysctl) {
+		return false
+	}
+	for i := range this.Sysctl {
+		if this.Sysctl[i] != that1.Sysctl[i] {
+			return false
+		}
+	}
+	if !this.Resources.Equal(that1.Resources) {
+		return false
+	}
+	if this.CgroupsPath != that1.CgroupsPath {
+		return false
+	}
+	if len(this.Namespaces) != len(that1.Namespaces) {
+		return false
+	}
+	for i := range this.Namespaces {
+		if !this.Namespaces[i].Equal(&that1.Namespaces[i]) {
+			return false
+		}
+	}
+	if len(this.Devices) != len(that1.Devices) {
+		return false
+	}
+	for i := range this.Devices {
+		if !this.Devices[i].Equal(&that1.Devices[i]) {
+			return false
+		}
+	}
+	if !this.Seccomp.Equal(that1.Seccomp) {
+		return false
+	}
+	if this.RootfsPropagation != that1.RootfsPropagation {
+		return false
+	}
+	if len(this.MaskedPaths) != len(that1.MaskedPaths) {
+		return false
+	}
+	for i := range this.MaskedPaths {
+		if this.MaskedPaths[i] != that1.MaskedPaths[i] {
+			return false
+		}
+	}
+	if len(this.ReadonlyPaths) != len(that1.ReadonlyPaths) {
+		return false
+	}
+	for i := range this.ReadonlyPaths {
+		if this.ReadonlyPaths[i] != that1.ReadonlyPaths[i] {
+			return false
+		}
+	}
+	if this.MountLabel != that1.MountLabel {
+		return false
+	}
+	if !this.IntelRdt.Equal(that1.IntelRdt) {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Windows) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Windows)
+	if !ok {
+		that2, ok := that.(Windows)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Dummy != that1.Dummy {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *Solaris) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Solaris)
+	if !ok {
+		that2, ok := that.(Solaris)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Dummy != that1.Dummy {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxIDMapping) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxIDMapping)
+	if !ok {
+		that2, ok := that.(LinuxIDMapping)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.HostID != that1.HostID {
+		return false
+	}
+	if this.ContainerID != that1.ContainerID {
+		return false
+	}
+	if this.Size_ != that1.Size_ {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxNamespace) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxNamespace)
+	if !ok {
+		that2, ok := that.(LinuxNamespace)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if this.Path != that1.Path {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxDevice) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxDevice)
+	if !ok {
+		that2, ok := that.(LinuxDevice)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Path != that1.Path {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if this.Major != that1.Major {
+		return false
+	}
+	if this.Minor != that1.Minor {
+		return false
+	}
+	if this.FileMode != that1.FileMode {
+		return false
+	}
+	if this.UID != that1.UID {
+		return false
+	}
+	if this.GID != that1.GID {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxResources) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxResources)
+	if !ok {
+		that2, ok := that.(LinuxResources)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Devices) != len(that1.Devices) {
+		return false
+	}
+	for i := range this.Devices {
+		if !this.Devices[i].Equal(&that1.Devices[i]) {
+			return false
+		}
+	}
+	if !this.Memory.Equal(that1.Memory) {
+		return false
+	}
+	if !this.CPU.Equal(that1.CPU) {
+		return false
+	}
+	if !this.Pids.Equal(that1.Pids) {
+		return false
+	}
+	if !this.BlockIO.Equal(that1.BlockIO) {
+		return false
+	}
+	if len(this.HugepageLimits) != len(that1.HugepageLimits) {
+		return false
+	}
+	for i := range this.HugepageLimits {
+		if !this.HugepageLimits[i].Equal(&that1.HugepageLimits[i]) {
+			return false
+		}
+	}
+	if !this.Network.Equal(that1.Network) {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxMemory) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxMemory)
+	if !ok {
+		that2, ok := that.(LinuxMemory)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Limit != that1.Limit {
+		return false
+	}
+	if this.Reservation != that1.Reservation {
+		return false
+	}
+	if this.Swap != that1.Swap {
+		return false
+	}
+	if this.Kernel != that1.Kernel {
+		return false
+	}
+	if this.KernelTCP != that1.KernelTCP {
+		return false
+	}
+	if this.Swappiness != that1.Swappiness {
+		return false
+	}
+	if this.DisableOOMKiller != that1.DisableOOMKiller {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxCPU) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxCPU)
+	if !ok {
+		that2, ok := that.(LinuxCPU)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Shares != that1.Shares {
+		return false
+	}
+	if this.Quota != that1.Quota {
+		return false
+	}
+	if this.Period != that1.Period {
+		return false
+	}
+	if this.RealtimeRuntime != that1.RealtimeRuntime {
+		return false
+	}
+	if this.RealtimePeriod != that1.RealtimePeriod {
+		return false
+	}
+	if this.Cpus != that1.Cpus {
+		return false
+	}
+	if this.Mems != that1.Mems {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxWeightDevice) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxWeightDevice)
+	if !ok {
+		that2, ok := that.(LinuxWeightDevice)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Major != that1.Major {
+		return false
+	}
+	if this.Minor != that1.Minor {
+		return false
+	}
+	if this.Weight != that1.Weight {
+		return false
+	}
+	if this.LeafWeight != that1.LeafWeight {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxThrottleDevice) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxThrottleDevice)
+	if !ok {
+		that2, ok := that.(LinuxThrottleDevice)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Major != that1.Major {
+		return false
+	}
+	if this.Minor != that1.Minor {
+		return false
+	}
+	if this.Rate != that1.Rate {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxBlockIO) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxBlockIO)
+	if !ok {
+		that2, ok := that.(LinuxBlockIO)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Weight != that1.Weight {
+		return false
+	}
+	if this.LeafWeight != that1.LeafWeight {
+		return false
+	}
+	if len(this.WeightDevice) != len(that1.WeightDevice) {
+		return false
+	}
+	for i := range this.WeightDevice {
+		if !this.WeightDevice[i].Equal(&that1.WeightDevice[i]) {
+			return false
+		}
+	}
+	if len(this.ThrottleReadBpsDevice) != len(that1.ThrottleReadBpsDevice) {
+		return false
+	}
+	for i := range this.ThrottleReadBpsDevice {
+		if !this.ThrottleReadBpsDevice[i].Equal(&that1.ThrottleReadBpsDevice[i]) {
+			return false
+		}
+	}
+	if len(this.ThrottleWriteBpsDevice) != len(that1.ThrottleWriteBpsDevice) {
+		return false
+	}
+	for i := range this.ThrottleWriteBpsDevice {
+		if !this.ThrottleWriteBpsDevice[i].Equal(&that1.ThrottleWriteBpsDevice[i]) {
+			return false
+		}
+	}
+	if len(this.ThrottleReadIOPSDevice) != len(that1.ThrottleReadIOPSDevice) {
+		return false
+	}
+	for i := range this.ThrottleReadIOPSDevice {
+		if !this.ThrottleReadIOPSDevice[i].Equal(&that1.ThrottleReadIOPSDevice[i]) {
+			return false
+		}
+	}
+	if len(this.ThrottleWriteIOPSDevice) != len(that1.ThrottleWriteIOPSDevice) {
+		return false
+	}
+	for i := range this.ThrottleWriteIOPSDevice {
+		if !this.ThrottleWriteIOPSDevice[i].Equal(&that1.ThrottleWriteIOPSDevice[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxPids) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxPids)
+	if !ok {
+		that2, ok := that.(LinuxPids)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Limit != that1.Limit {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxDeviceCgroup) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxDeviceCgroup)
+	if !ok {
+		that2, ok := that.(LinuxDeviceCgroup)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Allow != that1.Allow {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if this.Major != that1.Major {
+		return false
+	}
+	if this.Minor != that1.Minor {
+		return false
+	}
+	if this.Access != that1.Access {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxNetwork) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxNetwork)
+	if !ok {
+		that2, ok := that.(LinuxNetwork)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.ClassID != that1.ClassID {
+		return false
+	}
+	if len(this.Priorities) != len(that1.Priorities) {
+		return false
+	}
+	for i := range this.Priorities {
+		if !this.Priorities[i].Equal(&that1.Priorities[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxHugepageLimit) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxHugepageLimit)
+	if !ok {
+		that2, ok := that.(LinuxHugepageLimit)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Pagesize != that1.Pagesize {
+		return false
+	}
+	if this.Limit != that1.Limit {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxInterfacePriority) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxInterfacePriority)
+	if !ok {
+		that2, ok := that.(LinuxInterfacePriority)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Name != that1.Name {
+		return false
+	}
+	if this.Priority != that1.Priority {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxSeccomp) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxSeccomp)
+	if !ok {
+		that2, ok := that.(LinuxSeccomp)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.DefaultAction != that1.DefaultAction {
+		return false
+	}
+	if len(this.Architectures) != len(that1.Architectures) {
+		return false
+	}
+	for i := range this.Architectures {
+		if this.Architectures[i] != that1.Architectures[i] {
+			return false
+		}
+	}
+	if len(this.Syscalls) != len(that1.Syscalls) {
+		return false
+	}
+	for i := range this.Syscalls {
+		if !this.Syscalls[i].Equal(&that1.Syscalls[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxSeccompArg) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxSeccompArg)
+	if !ok {
+		that2, ok := that.(LinuxSeccompArg)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Index != that1.Index {
+		return false
+	}
+	if this.Value != that1.Value {
+		return false
+	}
+	if this.ValueTwo != that1.ValueTwo {
+		return false
+	}
+	if this.Op != that1.Op {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxSyscall) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxSyscall)
+	if !ok {
+		that2, ok := that.(LinuxSyscall)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Names) != len(that1.Names) {
+		return false
+	}
+	for i := range this.Names {
+		if this.Names[i] != that1.Names[i] {
+			return false
+		}
+	}
+	if this.Action != that1.Action {
+		return false
+	}
+	if len(this.Args) != len(that1.Args) {
+		return false
+	}
+	for i := range this.Args {
+		if !this.Args[i].Equal(&that1.Args[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (this *LinuxIntelRdt) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LinuxIntelRdt)
+	if !ok {
+		that2, ok := that.(LinuxIntelRdt)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.L3CacheSchema != that1.L3CacheSchema {
+		return false
+	}
+	if !bytes.Equal(this.XXX_unrecognized, that1.XXX_unrecognized) {
+		return false
+	}
+	return true
+}
+func (m *Spec) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Spec) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Spec) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Windows != nil {
+		{
+			size, err := m.Windows.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x52
+	}
+	if m.Solaris != nil {
+		{
+			size, err := m.Solaris.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.Linux != nil {
+		{
+			size, err := m.Linux.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Annotations) > 0 {
+		for k := range m.Annotations {
+			v := m.Annotations[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintOci(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintOci(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintOci(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x3a
+		}
+	}
+	if m.Hooks != nil {
+		{
+			size, err := m.Hooks.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Mounts) > 0 {
+		for iNdEx := len(m.Mounts) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Mounts[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.Hostname) > 0 {
+		i -= len(m.Hostname)
+		copy(dAtA[i:], m.Hostname)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Hostname)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Root != nil {
+		{
+			size, err := m.Root.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Process != nil {
+		{
+			size, err := m.Process.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Version) > 0 {
+		i -= len(m.Version)
+		copy(dAtA[i:], m.Version)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Version)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Process) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Process) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Process) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.SelinuxLabel) > 0 {
+		i -= len(m.SelinuxLabel)
+		copy(dAtA[i:], m.SelinuxLabel)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.SelinuxLabel)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if m.OOMScoreAdj != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.OOMScoreAdj))
+		i--
+		dAtA[i] = 0x58
+	}
+	if len(m.ApparmorProfile) > 0 {
+		i -= len(m.ApparmorProfile)
+		copy(dAtA[i:], m.ApparmorProfile)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.ApparmorProfile)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if m.NoNewPrivileges {
+		i--
+		if m.NoNewPrivileges {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x48
+	}
+	if len(m.Rlimits) > 0 {
+		for iNdEx := len(m.Rlimits) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Rlimits[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x42
+		}
+	}
+	if m.Capabilities != nil {
+		{
+			size, err := m.Capabilities.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.Cwd) > 0 {
+		i -= len(m.Cwd)
+		copy(dAtA[i:], m.Cwd)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Cwd)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Env) > 0 {
+		for iNdEx := len(m.Env) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Env[iNdEx])
+			copy(dAtA[i:], m.Env[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Env[iNdEx])))
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.Args) > 0 {
+		for iNdEx := len(m.Args) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Args[iNdEx])
+			copy(dAtA[i:], m.Args[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Args[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	{
+		size, err := m.User.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintOci(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x1a
+	if m.ConsoleSize != nil {
+		{
+			size, err := m.ConsoleSize.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Terminal {
+		i--
+		if m.Terminal {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Box) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Box) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Box) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Width != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Width))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Height != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Height))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *User) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *User) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *User) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Username) > 0 {
+		i -= len(m.Username)
+		copy(dAtA[i:], m.Username)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Username)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.AdditionalGids) > 0 {
+		dAtA11 := make([]byte, len(m.AdditionalGids)*10)
+		var j10 int
+		for _, num := range m.AdditionalGids {
+			for num >= 1<<7 {
+				dAtA11[j10] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j10++
+			}
+			dAtA11[j10] = uint8(num)
+			j10++
+		}
+		i -= j10
+		copy(dAtA[i:], dAtA11[:j10])
+		i = encodeVarintOci(dAtA, i, uint64(j10))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.GID != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.GID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.UID != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.UID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxCapabilities) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxCapabilities) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxCapabilities) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Ambient) > 0 {
+		for iNdEx := len(m.Ambient) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Ambient[iNdEx])
+			copy(dAtA[i:], m.Ambient[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Ambient[iNdEx])))
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.Permitted) > 0 {
+		for iNdEx := len(m.Permitted) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Permitted[iNdEx])
+			copy(dAtA[i:], m.Permitted[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Permitted[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Inheritable) > 0 {
+		for iNdEx := len(m.Inheritable) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Inheritable[iNdEx])
+			copy(dAtA[i:], m.Inheritable[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Inheritable[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Effective) > 0 {
+		for iNdEx := len(m.Effective) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Effective[iNdEx])
+			copy(dAtA[i:], m.Effective[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Effective[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Bounding) > 0 {
+		for iNdEx := len(m.Bounding) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Bounding[iNdEx])
+			copy(dAtA[i:], m.Bounding[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Bounding[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *POSIXRlimit) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *POSIXRlimit) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *POSIXRlimit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Soft != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Soft))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Hard != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Hard))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Type) > 0 {
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Mount) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Mount) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Mount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Options) > 0 {
+		for iNdEx := len(m.Options) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Options[iNdEx])
+			copy(dAtA[i:], m.Options[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Options[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Type) > 0 {
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Source) > 0 {
+		i -= len(m.Source)
+		copy(dAtA[i:], m.Source)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Source)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Destination) > 0 {
+		i -= len(m.Destination)
+		copy(dAtA[i:], m.Destination)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Destination)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Root) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Root) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Root) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Readonly {
+		i--
+		if m.Readonly {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Path) > 0 {
+		i -= len(m.Path)
+		copy(dAtA[i:], m.Path)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Hooks) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Hooks) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Hooks) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Poststop) > 0 {
+		for iNdEx := len(m.Poststop) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Poststop[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Poststart) > 0 {
+		for iNdEx := len(m.Poststart) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Poststart[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Prestart) > 0 {
+		for iNdEx := len(m.Prestart) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Prestart[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Hook) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Hook) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Hook) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Timeout != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Timeout))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Env) > 0 {
+		for iNdEx := len(m.Env) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Env[iNdEx])
+			copy(dAtA[i:], m.Env[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Env[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Args) > 0 {
+		for iNdEx := len(m.Args) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Args[iNdEx])
+			copy(dAtA[i:], m.Args[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Args[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Path) > 0 {
+		i -= len(m.Path)
+		copy(dAtA[i:], m.Path)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Linux) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Linux) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Linux) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.IntelRdt != nil {
+		{
+			size, err := m.IntelRdt.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x6a
+	}
+	if len(m.MountLabel) > 0 {
+		i -= len(m.MountLabel)
+		copy(dAtA[i:], m.MountLabel)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.MountLabel)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.ReadonlyPaths) > 0 {
+		for iNdEx := len(m.ReadonlyPaths) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.ReadonlyPaths[iNdEx])
+			copy(dAtA[i:], m.ReadonlyPaths[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.ReadonlyPaths[iNdEx])))
+			i--
+			dAtA[i] = 0x5a
+		}
+	}
+	if len(m.MaskedPaths) > 0 {
+		for iNdEx := len(m.MaskedPaths) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.MaskedPaths[iNdEx])
+			copy(dAtA[i:], m.MaskedPaths[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.MaskedPaths[iNdEx])))
+			i--
+			dAtA[i] = 0x52
+		}
+	}
+	if len(m.RootfsPropagation) > 0 {
+		i -= len(m.RootfsPropagation)
+		copy(dAtA[i:], m.RootfsPropagation)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.RootfsPropagation)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.Seccomp != nil {
+		{
+			size, err := m.Seccomp.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Devices) > 0 {
+		for iNdEx := len(m.Devices) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Devices[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x3a
+		}
+	}
+	if len(m.Namespaces) > 0 {
+		for iNdEx := len(m.Namespaces) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Namespaces[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if len(m.CgroupsPath) > 0 {
+		i -= len(m.CgroupsPath)
+		copy(dAtA[i:], m.CgroupsPath)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.CgroupsPath)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Resources != nil {
+		{
+			size, err := m.Resources.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Sysctl) > 0 {
+		for k := range m.Sysctl {
+			v := m.Sysctl[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintOci(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintOci(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintOci(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.GIDMappings) > 0 {
+		for iNdEx := len(m.GIDMappings) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.GIDMappings[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.UIDMappings) > 0 {
+		for iNdEx := len(m.UIDMappings) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.UIDMappings[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Windows) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Windows) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Windows) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Dummy) > 0 {
+		i -= len(m.Dummy)
+		copy(dAtA[i:], m.Dummy)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Dummy)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Solaris) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Solaris) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Solaris) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Dummy) > 0 {
+		i -= len(m.Dummy)
+		copy(dAtA[i:], m.Dummy)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Dummy)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxIDMapping) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxIDMapping) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxIDMapping) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Size_ != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Size_))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.ContainerID != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.ContainerID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.HostID != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.HostID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxNamespace) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxNamespace) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxNamespace) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Path) > 0 {
+		i -= len(m.Path)
+		copy(dAtA[i:], m.Path)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Type) > 0 {
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxDevice) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxDevice) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxDevice) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.GID != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.GID))
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.UID != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.UID))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.FileMode != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.FileMode))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Minor != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Major != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Major))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Type) > 0 {
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Path) > 0 {
+		i -= len(m.Path)
+		copy(dAtA[i:], m.Path)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Path)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxResources) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxResources) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxResources) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Network != nil {
+		{
+			size, err := m.Network.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.HugepageLimits) > 0 {
+		for iNdEx := len(m.HugepageLimits) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.HugepageLimits[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if m.BlockIO != nil {
+		{
+			size, err := m.BlockIO.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Pids != nil {
+		{
+			size, err := m.Pids.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.CPU != nil {
+		{
+			size, err := m.CPU.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Memory != nil {
+		{
+			size, err := m.Memory.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintOci(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Devices) > 0 {
+		for iNdEx := len(m.Devices) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Devices[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxMemory) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxMemory) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxMemory) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.DisableOOMKiller {
+		i--
+		if m.DisableOOMKiller {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.Swappiness != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Swappiness))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.KernelTCP != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.KernelTCP))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Kernel != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Kernel))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Swap != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Swap))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Reservation != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Reservation))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Limit != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxCPU) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxCPU) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxCPU) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Mems) > 0 {
+		i -= len(m.Mems)
+		copy(dAtA[i:], m.Mems)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Mems)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.Cpus) > 0 {
+		i -= len(m.Cpus)
+		copy(dAtA[i:], m.Cpus)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Cpus)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if m.RealtimePeriod != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.RealtimePeriod))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.RealtimeRuntime != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.RealtimeRuntime))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Period != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Period))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Quota != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Quota))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Shares != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Shares))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxWeightDevice) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxWeightDevice) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxWeightDevice) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.LeafWeight != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.LeafWeight))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Weight != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Weight))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Minor != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Major != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Major))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxThrottleDevice) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxThrottleDevice) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxThrottleDevice) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Rate != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Rate))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Minor != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Major != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Major))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxBlockIO) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxBlockIO) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxBlockIO) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.ThrottleWriteIOPSDevice) > 0 {
+		for iNdEx := len(m.ThrottleWriteIOPSDevice) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ThrottleWriteIOPSDevice[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x3a
+		}
+	}
+	if len(m.ThrottleReadIOPSDevice) > 0 {
+		for iNdEx := len(m.ThrottleReadIOPSDevice) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ThrottleReadIOPSDevice[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if len(m.ThrottleWriteBpsDevice) > 0 {
+		for iNdEx := len(m.ThrottleWriteBpsDevice) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ThrottleWriteBpsDevice[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.ThrottleReadBpsDevice) > 0 {
+		for iNdEx := len(m.ThrottleReadBpsDevice) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ThrottleReadBpsDevice[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.WeightDevice) > 0 {
+		for iNdEx := len(m.WeightDevice) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.WeightDevice[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.LeafWeight != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.LeafWeight))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Weight != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Weight))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxPids) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxPids) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxPids) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Limit != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxDeviceCgroup) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxDeviceCgroup) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxDeviceCgroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Access) > 0 {
+		i -= len(m.Access)
+		copy(dAtA[i:], m.Access)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Access)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Minor != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Minor))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Major != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Major))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Type) > 0 {
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Type)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Allow {
+		i--
+		if m.Allow {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxNetwork) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxNetwork) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxNetwork) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Priorities) > 0 {
+		for iNdEx := len(m.Priorities) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Priorities[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if m.ClassID != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.ClassID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxHugepageLimit) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxHugepageLimit) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxHugepageLimit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Limit != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Pagesize) > 0 {
+		i -= len(m.Pagesize)
+		copy(dAtA[i:], m.Pagesize)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Pagesize)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxInterfacePriority) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxInterfacePriority) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxInterfacePriority) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Priority != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Priority))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxSeccomp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxSeccomp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxSeccomp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Syscalls) > 0 {
+		for iNdEx := len(m.Syscalls) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Syscalls[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Architectures) > 0 {
+		for iNdEx := len(m.Architectures) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Architectures[iNdEx])
+			copy(dAtA[i:], m.Architectures[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Architectures[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.DefaultAction) > 0 {
+		i -= len(m.DefaultAction)
+		copy(dAtA[i:], m.DefaultAction)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.DefaultAction)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxSeccompArg) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxSeccompArg) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxSeccompArg) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Op) > 0 {
+		i -= len(m.Op)
+		copy(dAtA[i:], m.Op)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Op)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.ValueTwo != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.ValueTwo))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Value != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Value))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Index != 0 {
+		i = encodeVarintOci(dAtA, i, uint64(m.Index))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxSyscall) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxSyscall) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxSyscall) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Args) > 0 {
+		for iNdEx := len(m.Args) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Args[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOci(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Action) > 0 {
+		i -= len(m.Action)
+		copy(dAtA[i:], m.Action)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.Action)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Names) > 0 {
+		for iNdEx := len(m.Names) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Names[iNdEx])
+			copy(dAtA[i:], m.Names[iNdEx])
+			i = encodeVarintOci(dAtA, i, uint64(len(m.Names[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *LinuxIntelRdt) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LinuxIntelRdt) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LinuxIntelRdt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.L3CacheSchema) > 0 {
+		i -= len(m.L3CacheSchema)
+		copy(dAtA[i:], m.L3CacheSchema)
+		i = encodeVarintOci(dAtA, i, uint64(len(m.L3CacheSchema)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintOci(dAtA []byte, offset int, v uint64) int {
+	offset -= sovOci(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func NewPopulatedSpec(r randyOci, easy bool) *Spec {
+	this := &Spec{}
+	this.Version = string(randStringOci(r))
+	if r.Intn(5) != 0 {
+		this.Process = NewPopulatedProcess(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		this.Root = NewPopulatedRoot(r, easy)
+	}
+	this.Hostname = string(randStringOci(r))
+	if r.Intn(5) != 0 {
+		v1 := r.Intn(5)
+		this.Mounts = make([]Mount, v1)
+		for i := 0; i < v1; i++ {
+			v2 := NewPopulatedMount(r, easy)
+			this.Mounts[i] = *v2
+		}
+	}
+	if r.Intn(5) != 0 {
+		this.Hooks = NewPopulatedHooks(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		v3 := r.Intn(10)
+		this.Annotations = make(map[string]string)
+		for i := 0; i < v3; i++ {
+			this.Annotations[randStringOci(r)] = randStringOci(r)
+		}
+	}
+	if r.Intn(5) != 0 {
+		this.Linux = NewPopulatedLinux(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		this.Solaris = NewPopulatedSolaris(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		this.Windows = NewPopulatedWindows(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 11)
+	}
+	return this
+}
+
+func NewPopulatedProcess(r randyOci, easy bool) *Process {
+	this := &Process{}
+	this.Terminal = bool(bool(r.Intn(2) == 0))
+	if r.Intn(5) != 0 {
+		this.ConsoleSize = NewPopulatedBox(r, easy)
+	}
+	v4 := NewPopulatedUser(r, easy)
+	this.User = *v4
+	v5 := r.Intn(10)
+	this.Args = make([]string, v5)
+	for i := 0; i < v5; i++ {
+		this.Args[i] = string(randStringOci(r))
+	}
+	v6 := r.Intn(10)
+	this.Env = make([]string, v6)
+	for i := 0; i < v6; i++ {
+		this.Env[i] = string(randStringOci(r))
+	}
+	this.Cwd = string(randStringOci(r))
+	if r.Intn(5) != 0 {
+		this.Capabilities = NewPopulatedLinuxCapabilities(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		v7 := r.Intn(5)
+		this.Rlimits = make([]POSIXRlimit, v7)
+		for i := 0; i < v7; i++ {
+			v8 := NewPopulatedPOSIXRlimit(r, easy)
+			this.Rlimits[i] = *v8
+		}
+	}
+	this.NoNewPrivileges = bool(bool(r.Intn(2) == 0))
+	this.ApparmorProfile = string(randStringOci(r))
+	this.OOMScoreAdj = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.OOMScoreAdj *= -1
+	}
+	this.SelinuxLabel = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 13)
+	}
+	return this
+}
+
+func NewPopulatedBox(r randyOci, easy bool) *Box {
+	this := &Box{}
+	this.Height = uint32(r.Uint32())
+	this.Width = uint32(r.Uint32())
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedUser(r randyOci, easy bool) *User {
+	this := &User{}
+	this.UID = uint32(r.Uint32())
+	this.GID = uint32(r.Uint32())
+	v9 := r.Intn(10)
+	this.AdditionalGids = make([]uint32, v9)
+	for i := 0; i < v9; i++ {
+		this.AdditionalGids[i] = uint32(r.Uint32())
+	}
+	this.Username = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 5)
+	}
+	return this
+}
+
+func NewPopulatedLinuxCapabilities(r randyOci, easy bool) *LinuxCapabilities {
+	this := &LinuxCapabilities{}
+	v10 := r.Intn(10)
+	this.Bounding = make([]string, v10)
+	for i := 0; i < v10; i++ {
+		this.Bounding[i] = string(randStringOci(r))
+	}
+	v11 := r.Intn(10)
+	this.Effective = make([]string, v11)
+	for i := 0; i < v11; i++ {
+		this.Effective[i] = string(randStringOci(r))
+	}
+	v12 := r.Intn(10)
+	this.Inheritable = make([]string, v12)
+	for i := 0; i < v12; i++ {
+		this.Inheritable[i] = string(randStringOci(r))
+	}
+	v13 := r.Intn(10)
+	this.Permitted = make([]string, v13)
+	for i := 0; i < v13; i++ {
+		this.Permitted[i] = string(randStringOci(r))
+	}
+	v14 := r.Intn(10)
+	this.Ambient = make([]string, v14)
+	for i := 0; i < v14; i++ {
+		this.Ambient[i] = string(randStringOci(r))
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 6)
+	}
+	return this
+}
+
+func NewPopulatedPOSIXRlimit(r randyOci, easy bool) *POSIXRlimit {
+	this := &POSIXRlimit{}
+	this.Type = string(randStringOci(r))
+	this.Hard = uint64(uint64(r.Uint32()))
+	this.Soft = uint64(uint64(r.Uint32()))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 4)
+	}
+	return this
+}
+
+func NewPopulatedMount(r randyOci, easy bool) *Mount {
+	this := &Mount{}
+	this.Destination = string(randStringOci(r))
+	this.Source = string(randStringOci(r))
+	this.Type = string(randStringOci(r))
+	v15 := r.Intn(10)
+	this.Options = make([]string, v15)
+	for i := 0; i < v15; i++ {
+		this.Options[i] = string(randStringOci(r))
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 5)
+	}
+	return this
+}
+
+func NewPopulatedRoot(r randyOci, easy bool) *Root {
+	this := &Root{}
+	this.Path = string(randStringOci(r))
+	this.Readonly = bool(bool(r.Intn(2) == 0))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedHooks(r randyOci, easy bool) *Hooks {
+	this := &Hooks{}
+	if r.Intn(5) != 0 {
+		v16 := r.Intn(5)
+		this.Prestart = make([]Hook, v16)
+		for i := 0; i < v16; i++ {
+			v17 := NewPopulatedHook(r, easy)
+			this.Prestart[i] = *v17
+		}
+	}
+	if r.Intn(5) != 0 {
+		v18 := r.Intn(5)
+		this.Poststart = make([]Hook, v18)
+		for i := 0; i < v18; i++ {
+			v19 := NewPopulatedHook(r, easy)
+			this.Poststart[i] = *v19
+		}
+	}
+	if r.Intn(5) != 0 {
+		v20 := r.Intn(5)
+		this.Poststop = make([]Hook, v20)
+		for i := 0; i < v20; i++ {
+			v21 := NewPopulatedHook(r, easy)
+			this.Poststop[i] = *v21
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 4)
+	}
+	return this
+}
+
+func NewPopulatedHook(r randyOci, easy bool) *Hook {
+	this := &Hook{}
+	this.Path = string(randStringOci(r))
+	v22 := r.Intn(10)
+	this.Args = make([]string, v22)
+	for i := 0; i < v22; i++ {
+		this.Args[i] = string(randStringOci(r))
+	}
+	v23 := r.Intn(10)
+	this.Env = make([]string, v23)
+	for i := 0; i < v23; i++ {
+		this.Env[i] = string(randStringOci(r))
+	}
+	this.Timeout = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Timeout *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 5)
+	}
+	return this
+}
+
+func NewPopulatedLinux(r randyOci, easy bool) *Linux {
+	this := &Linux{}
+	if r.Intn(5) != 0 {
+		v24 := r.Intn(5)
+		this.UIDMappings = make([]LinuxIDMapping, v24)
+		for i := 0; i < v24; i++ {
+			v25 := NewPopulatedLinuxIDMapping(r, easy)
+			this.UIDMappings[i] = *v25
+		}
+	}
+	if r.Intn(5) != 0 {
+		v26 := r.Intn(5)
+		this.GIDMappings = make([]LinuxIDMapping, v26)
+		for i := 0; i < v26; i++ {
+			v27 := NewPopulatedLinuxIDMapping(r, easy)
+			this.GIDMappings[i] = *v27
+		}
+	}
+	if r.Intn(5) != 0 {
+		v28 := r.Intn(10)
+		this.Sysctl = make(map[string]string)
+		for i := 0; i < v28; i++ {
+			this.Sysctl[randStringOci(r)] = randStringOci(r)
+		}
+	}
+	if r.Intn(5) != 0 {
+		this.Resources = NewPopulatedLinuxResources(r, easy)
+	}
+	this.CgroupsPath = string(randStringOci(r))
+	if r.Intn(5) != 0 {
+		v29 := r.Intn(5)
+		this.Namespaces = make([]LinuxNamespace, v29)
+		for i := 0; i < v29; i++ {
+			v30 := NewPopulatedLinuxNamespace(r, easy)
+			this.Namespaces[i] = *v30
+		}
+	}
+	if r.Intn(5) != 0 {
+		v31 := r.Intn(5)
+		this.Devices = make([]LinuxDevice, v31)
+		for i := 0; i < v31; i++ {
+			v32 := NewPopulatedLinuxDevice(r, easy)
+			this.Devices[i] = *v32
+		}
+	}
+	if r.Intn(5) != 0 {
+		this.Seccomp = NewPopulatedLinuxSeccomp(r, easy)
+	}
+	this.RootfsPropagation = string(randStringOci(r))
+	v33 := r.Intn(10)
+	this.MaskedPaths = make([]string, v33)
+	for i := 0; i < v33; i++ {
+		this.MaskedPaths[i] = string(randStringOci(r))
+	}
+	v34 := r.Intn(10)
+	this.ReadonlyPaths = make([]string, v34)
+	for i := 0; i < v34; i++ {
+		this.ReadonlyPaths[i] = string(randStringOci(r))
+	}
+	this.MountLabel = string(randStringOci(r))
+	if r.Intn(5) != 0 {
+		this.IntelRdt = NewPopulatedLinuxIntelRdt(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 14)
+	}
+	return this
+}
+
+func NewPopulatedWindows(r randyOci, easy bool) *Windows {
+	this := &Windows{}
+	this.Dummy = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 2)
+	}
+	return this
+}
+
+func NewPopulatedSolaris(r randyOci, easy bool) *Solaris {
+	this := &Solaris{}
+	this.Dummy = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 2)
+	}
+	return this
+}
+
+func NewPopulatedLinuxIDMapping(r randyOci, easy bool) *LinuxIDMapping {
+	this := &LinuxIDMapping{}
+	this.HostID = uint32(r.Uint32())
+	this.ContainerID = uint32(r.Uint32())
+	this.Size_ = uint32(r.Uint32())
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 4)
+	}
+	return this
+}
+
+func NewPopulatedLinuxNamespace(r randyOci, easy bool) *LinuxNamespace {
+	this := &LinuxNamespace{}
+	this.Type = string(randStringOci(r))
+	this.Path = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedLinuxDevice(r randyOci, easy bool) *LinuxDevice {
+	this := &LinuxDevice{}
+	this.Path = string(randStringOci(r))
+	this.Type = string(randStringOci(r))
+	this.Major = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Major *= -1
+	}
+	this.Minor = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Minor *= -1
+	}
+	this.FileMode = uint32(r.Uint32())
+	this.UID = uint32(r.Uint32())
+	this.GID = uint32(r.Uint32())
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 8)
+	}
+	return this
+}
+
+func NewPopulatedLinuxResources(r randyOci, easy bool) *LinuxResources {
+	this := &LinuxResources{}
+	if r.Intn(5) != 0 {
+		v35 := r.Intn(5)
+		this.Devices = make([]LinuxDeviceCgroup, v35)
+		for i := 0; i < v35; i++ {
+			v36 := NewPopulatedLinuxDeviceCgroup(r, easy)
+			this.Devices[i] = *v36
+		}
+	}
+	if r.Intn(5) != 0 {
+		this.Memory = NewPopulatedLinuxMemory(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		this.CPU = NewPopulatedLinuxCPU(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		this.Pids = NewPopulatedLinuxPids(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		this.BlockIO = NewPopulatedLinuxBlockIO(r, easy)
+	}
+	if r.Intn(5) != 0 {
+		v37 := r.Intn(5)
+		this.HugepageLimits = make([]LinuxHugepageLimit, v37)
+		for i := 0; i < v37; i++ {
+			v38 := NewPopulatedLinuxHugepageLimit(r, easy)
+			this.HugepageLimits[i] = *v38
+		}
+	}
+	if r.Intn(5) != 0 {
+		this.Network = NewPopulatedLinuxNetwork(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 8)
+	}
+	return this
+}
+
+func NewPopulatedLinuxMemory(r randyOci, easy bool) *LinuxMemory {
+	this := &LinuxMemory{}
+	this.Limit = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Limit *= -1
+	}
+	this.Reservation = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Reservation *= -1
+	}
+	this.Swap = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Swap *= -1
+	}
+	this.Kernel = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Kernel *= -1
+	}
+	this.KernelTCP = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.KernelTCP *= -1
+	}
+	this.Swappiness = uint64(uint64(r.Uint32()))
+	this.DisableOOMKiller = bool(bool(r.Intn(2) == 0))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 8)
+	}
+	return this
+}
+
+func NewPopulatedLinuxCPU(r randyOci, easy bool) *LinuxCPU {
+	this := &LinuxCPU{}
+	this.Shares = uint64(uint64(r.Uint32()))
+	this.Quota = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Quota *= -1
+	}
+	this.Period = uint64(uint64(r.Uint32()))
+	this.RealtimeRuntime = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.RealtimeRuntime *= -1
+	}
+	this.RealtimePeriod = uint64(uint64(r.Uint32()))
+	this.Cpus = string(randStringOci(r))
+	this.Mems = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 8)
+	}
+	return this
+}
+
+func NewPopulatedLinuxWeightDevice(r randyOci, easy bool) *LinuxWeightDevice {
+	this := &LinuxWeightDevice{}
+	this.Major = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Major *= -1
+	}
+	this.Minor = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Minor *= -1
+	}
+	this.Weight = uint32(r.Uint32())
+	this.LeafWeight = uint32(r.Uint32())
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 5)
+	}
+	return this
+}
+
+func NewPopulatedLinuxThrottleDevice(r randyOci, easy bool) *LinuxThrottleDevice {
+	this := &LinuxThrottleDevice{}
+	this.Major = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Major *= -1
+	}
+	this.Minor = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Minor *= -1
+	}
+	this.Rate = uint64(uint64(r.Uint32()))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 4)
+	}
+	return this
+}
+
+func NewPopulatedLinuxBlockIO(r randyOci, easy bool) *LinuxBlockIO {
+	this := &LinuxBlockIO{}
+	this.Weight = uint32(r.Uint32())
+	this.LeafWeight = uint32(r.Uint32())
+	if r.Intn(5) != 0 {
+		v39 := r.Intn(5)
+		this.WeightDevice = make([]LinuxWeightDevice, v39)
+		for i := 0; i < v39; i++ {
+			v40 := NewPopulatedLinuxWeightDevice(r, easy)
+			this.WeightDevice[i] = *v40
+		}
+	}
+	if r.Intn(5) != 0 {
+		v41 := r.Intn(5)
+		this.ThrottleReadBpsDevice = make([]LinuxThrottleDevice, v41)
+		for i := 0; i < v41; i++ {
+			v42 := NewPopulatedLinuxThrottleDevice(r, easy)
+			this.ThrottleReadBpsDevice[i] = *v42
+		}
+	}
+	if r.Intn(5) != 0 {
+		v43 := r.Intn(5)
+		this.ThrottleWriteBpsDevice = make([]LinuxThrottleDevice, v43)
+		for i := 0; i < v43; i++ {
+			v44 := NewPopulatedLinuxThrottleDevice(r, easy)
+			this.ThrottleWriteBpsDevice[i] = *v44
+		}
+	}
+	if r.Intn(5) != 0 {
+		v45 := r.Intn(5)
+		this.ThrottleReadIOPSDevice = make([]LinuxThrottleDevice, v45)
+		for i := 0; i < v45; i++ {
+			v46 := NewPopulatedLinuxThrottleDevice(r, easy)
+			this.ThrottleReadIOPSDevice[i] = *v46
+		}
+	}
+	if r.Intn(5) != 0 {
+		v47 := r.Intn(5)
+		this.ThrottleWriteIOPSDevice = make([]LinuxThrottleDevice, v47)
+		for i := 0; i < v47; i++ {
+			v48 := NewPopulatedLinuxThrottleDevice(r, easy)
+			this.ThrottleWriteIOPSDevice[i] = *v48
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 8)
+	}
+	return this
+}
+
+func NewPopulatedLinuxPids(r randyOci, easy bool) *LinuxPids {
+	this := &LinuxPids{}
+	this.Limit = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Limit *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 2)
+	}
+	return this
+}
+
+func NewPopulatedLinuxDeviceCgroup(r randyOci, easy bool) *LinuxDeviceCgroup {
+	this := &LinuxDeviceCgroup{}
+	this.Allow = bool(bool(r.Intn(2) == 0))
+	this.Type = string(randStringOci(r))
+	this.Major = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Major *= -1
+	}
+	this.Minor = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Minor *= -1
+	}
+	this.Access = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 6)
+	}
+	return this
+}
+
+func NewPopulatedLinuxNetwork(r randyOci, easy bool) *LinuxNetwork {
+	this := &LinuxNetwork{}
+	this.ClassID = uint32(r.Uint32())
+	if r.Intn(5) != 0 {
+		v49 := r.Intn(5)
+		this.Priorities = make([]LinuxInterfacePriority, v49)
+		for i := 0; i < v49; i++ {
+			v50 := NewPopulatedLinuxInterfacePriority(r, easy)
+			this.Priorities[i] = *v50
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedLinuxHugepageLimit(r randyOci, easy bool) *LinuxHugepageLimit {
+	this := &LinuxHugepageLimit{}
+	this.Pagesize = string(randStringOci(r))
+	this.Limit = uint64(uint64(r.Uint32()))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedLinuxInterfacePriority(r randyOci, easy bool) *LinuxInterfacePriority {
+	this := &LinuxInterfacePriority{}
+	this.Name = string(randStringOci(r))
+	this.Priority = uint32(r.Uint32())
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 3)
+	}
+	return this
+}
+
+func NewPopulatedLinuxSeccomp(r randyOci, easy bool) *LinuxSeccomp {
+	this := &LinuxSeccomp{}
+	this.DefaultAction = string(randStringOci(r))
+	v51 := r.Intn(10)
+	this.Architectures = make([]string, v51)
+	for i := 0; i < v51; i++ {
+		this.Architectures[i] = string(randStringOci(r))
+	}
+	if r.Intn(5) != 0 {
+		v52 := r.Intn(5)
+		this.Syscalls = make([]LinuxSyscall, v52)
+		for i := 0; i < v52; i++ {
+			v53 := NewPopulatedLinuxSyscall(r, easy)
+			this.Syscalls[i] = *v53
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 4)
+	}
+	return this
+}
+
+func NewPopulatedLinuxSeccompArg(r randyOci, easy bool) *LinuxSeccompArg {
+	this := &LinuxSeccompArg{}
+	this.Index = uint64(uint64(r.Uint32()))
+	this.Value = uint64(uint64(r.Uint32()))
+	this.ValueTwo = uint64(uint64(r.Uint32()))
+	this.Op = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 5)
+	}
+	return this
+}
+
+func NewPopulatedLinuxSyscall(r randyOci, easy bool) *LinuxSyscall {
+	this := &LinuxSyscall{}
+	v54 := r.Intn(10)
+	this.Names = make([]string, v54)
+	for i := 0; i < v54; i++ {
+		this.Names[i] = string(randStringOci(r))
+	}
+	this.Action = string(randStringOci(r))
+	if r.Intn(5) != 0 {
+		v55 := r.Intn(5)
+		this.Args = make([]LinuxSeccompArg, v55)
+		for i := 0; i < v55; i++ {
+			v56 := NewPopulatedLinuxSeccompArg(r, easy)
+			this.Args[i] = *v56
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 4)
+	}
+	return this
+}
+
+func NewPopulatedLinuxIntelRdt(r randyOci, easy bool) *LinuxIntelRdt {
+	this := &LinuxIntelRdt{}
+	this.L3CacheSchema = string(randStringOci(r))
+	if !easy && r.Intn(10) != 0 {
+		this.XXX_unrecognized = randUnrecognizedOci(r, 2)
+	}
+	return this
+}
+
+type randyOci interface {
+	Float32() float32
+	Float64() float64
+	Int63() int64
+	Int31() int32
+	Uint32() uint32
+	Intn(n int) int
+}
+
+func randUTF8RuneOci(r randyOci) rune {
+	ru := r.Intn(62)
+	if ru < 10 {
+		return rune(ru + 48)
+	} else if ru < 36 {
+		return rune(ru + 55)
+	}
+	return rune(ru + 61)
+}
+func randStringOci(r randyOci) string {
+	v57 := r.Intn(100)
+	tmps := make([]rune, v57)
+	for i := 0; i < v57; i++ {
+		tmps[i] = randUTF8RuneOci(r)
+	}
+	return string(tmps)
+}
+func randUnrecognizedOci(r randyOci, maxFieldNumber int) (dAtA []byte) {
+	l := r.Intn(5)
+	for i := 0; i < l; i++ {
+		wire := r.Intn(4)
+		if wire == 3 {
+			wire = 5
+		}
+		fieldNumber := maxFieldNumber + r.Intn(100)
+		dAtA = randFieldOci(dAtA, r, fieldNumber, wire)
+	}
+	return dAtA
+}
+func randFieldOci(dAtA []byte, r randyOci, fieldNumber int, wire int) []byte {
+	key := uint32(fieldNumber)<<3 | uint32(wire)
+	switch wire {
+	case 0:
+		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
+		v58 := r.Int63()
+		if r.Intn(2) == 0 {
+			v58 *= -1
+		}
+		dAtA = encodeVarintPopulateOci(dAtA, uint64(v58))
+	case 1:
+		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
+		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
+	case 2:
+		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
+		ll := r.Intn(100)
+		dAtA = encodeVarintPopulateOci(dAtA, uint64(ll))
+		for j := 0; j < ll; j++ {
+			dAtA = append(dAtA, byte(r.Intn(256)))
+		}
+	default:
+		dAtA = encodeVarintPopulateOci(dAtA, uint64(key))
+		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
+	}
+	return dAtA
+}
+func encodeVarintPopulateOci(dAtA []byte, v uint64) []byte {
+	for v >= 1<<7 {
+		dAtA = append(dAtA, uint8(uint64(v)&0x7f|0x80))
+		v >>= 7
+	}
+	dAtA = append(dAtA, uint8(v))
+	return dAtA
+}
+func (m *Spec) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Version)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Process != nil {
+		l = m.Process.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Root != nil {
+		l = m.Root.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.Hostname)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Mounts) > 0 {
+		for _, e := range m.Mounts {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.Hooks != nil {
+		l = m.Hooks.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Annotations) > 0 {
+		for k, v := range m.Annotations {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovOci(uint64(len(k))) + 1 + len(v) + sovOci(uint64(len(v)))
+			n += mapEntrySize + 1 + sovOci(uint64(mapEntrySize))
+		}
+	}
+	if m.Linux != nil {
+		l = m.Linux.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Solaris != nil {
+		l = m.Solaris.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Windows != nil {
+		l = m.Windows.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Process) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Terminal {
+		n += 2
+	}
+	if m.ConsoleSize != nil {
+		l = m.ConsoleSize.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = m.User.Size()
+	n += 1 + l + sovOci(uint64(l))
+	if len(m.Args) > 0 {
+		for _, s := range m.Args {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Env) > 0 {
+		for _, s := range m.Env {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	l = len(m.Cwd)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Capabilities != nil {
+		l = m.Capabilities.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Rlimits) > 0 {
+		for _, e := range m.Rlimits {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.NoNewPrivileges {
+		n += 2
+	}
+	l = len(m.ApparmorProfile)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.OOMScoreAdj != 0 {
+		n += 1 + sovOci(uint64(m.OOMScoreAdj))
+	}
+	l = len(m.SelinuxLabel)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Box) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Height != 0 {
+		n += 1 + sovOci(uint64(m.Height))
+	}
+	if m.Width != 0 {
+		n += 1 + sovOci(uint64(m.Width))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *User) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.UID != 0 {
+		n += 1 + sovOci(uint64(m.UID))
+	}
+	if m.GID != 0 {
+		n += 1 + sovOci(uint64(m.GID))
+	}
+	if len(m.AdditionalGids) > 0 {
+		l = 0
+		for _, e := range m.AdditionalGids {
+			l += sovOci(uint64(e))
+		}
+		n += 1 + sovOci(uint64(l)) + l
+	}
+	l = len(m.Username)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxCapabilities) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Bounding) > 0 {
+		for _, s := range m.Bounding {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Effective) > 0 {
+		for _, s := range m.Effective {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Inheritable) > 0 {
+		for _, s := range m.Inheritable {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Permitted) > 0 {
+		for _, s := range m.Permitted {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Ambient) > 0 {
+		for _, s := range m.Ambient {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *POSIXRlimit) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Hard != 0 {
+		n += 1 + sovOci(uint64(m.Hard))
+	}
+	if m.Soft != 0 {
+		n += 1 + sovOci(uint64(m.Soft))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Mount) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Destination)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.Source)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Options) > 0 {
+		for _, s := range m.Options {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Root) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Path)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Readonly {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Hooks) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Prestart) > 0 {
+		for _, e := range m.Prestart {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Poststart) > 0 {
+		for _, e := range m.Poststart {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Poststop) > 0 {
+		for _, e := range m.Poststop {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Hook) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Path)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Args) > 0 {
+		for _, s := range m.Args {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Env) > 0 {
+		for _, s := range m.Env {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.Timeout != 0 {
+		n += 1 + sovOci(uint64(m.Timeout))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Linux) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.UIDMappings) > 0 {
+		for _, e := range m.UIDMappings {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.GIDMappings) > 0 {
+		for _, e := range m.GIDMappings {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Sysctl) > 0 {
+		for k, v := range m.Sysctl {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovOci(uint64(len(k))) + 1 + len(v) + sovOci(uint64(len(v)))
+			n += mapEntrySize + 1 + sovOci(uint64(mapEntrySize))
+		}
+	}
+	if m.Resources != nil {
+		l = m.Resources.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.CgroupsPath)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Namespaces) > 0 {
+		for _, e := range m.Namespaces {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Devices) > 0 {
+		for _, e := range m.Devices {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.Seccomp != nil {
+		l = m.Seccomp.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.RootfsPropagation)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.MaskedPaths) > 0 {
+		for _, s := range m.MaskedPaths {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.ReadonlyPaths) > 0 {
+		for _, s := range m.ReadonlyPaths {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	l = len(m.MountLabel)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.IntelRdt != nil {
+		l = m.IntelRdt.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Windows) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Dummy)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Solaris) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Dummy)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxIDMapping) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.HostID != 0 {
+		n += 1 + sovOci(uint64(m.HostID))
+	}
+	if m.ContainerID != 0 {
+		n += 1 + sovOci(uint64(m.ContainerID))
+	}
+	if m.Size_ != 0 {
+		n += 1 + sovOci(uint64(m.Size_))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxNamespace) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.Path)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxDevice) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Path)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Major != 0 {
+		n += 1 + sovOci(uint64(m.Major))
+	}
+	if m.Minor != 0 {
+		n += 1 + sovOci(uint64(m.Minor))
+	}
+	if m.FileMode != 0 {
+		n += 1 + sovOci(uint64(m.FileMode))
+	}
+	if m.UID != 0 {
+		n += 1 + sovOci(uint64(m.UID))
+	}
+	if m.GID != 0 {
+		n += 1 + sovOci(uint64(m.GID))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxResources) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Devices) > 0 {
+		for _, e := range m.Devices {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.Memory != nil {
+		l = m.Memory.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.CPU != nil {
+		l = m.CPU.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Pids != nil {
+		l = m.Pids.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.BlockIO != nil {
+		l = m.BlockIO.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.HugepageLimits) > 0 {
+		for _, e := range m.HugepageLimits {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.Network != nil {
+		l = m.Network.Size()
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxMemory) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Limit != 0 {
+		n += 1 + sovOci(uint64(m.Limit))
+	}
+	if m.Reservation != 0 {
+		n += 1 + sovOci(uint64(m.Reservation))
+	}
+	if m.Swap != 0 {
+		n += 1 + sovOci(uint64(m.Swap))
+	}
+	if m.Kernel != 0 {
+		n += 1 + sovOci(uint64(m.Kernel))
+	}
+	if m.KernelTCP != 0 {
+		n += 1 + sovOci(uint64(m.KernelTCP))
+	}
+	if m.Swappiness != 0 {
+		n += 1 + sovOci(uint64(m.Swappiness))
+	}
+	if m.DisableOOMKiller {
+		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxCPU) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Shares != 0 {
+		n += 1 + sovOci(uint64(m.Shares))
+	}
+	if m.Quota != 0 {
+		n += 1 + sovOci(uint64(m.Quota))
+	}
+	if m.Period != 0 {
+		n += 1 + sovOci(uint64(m.Period))
+	}
+	if m.RealtimeRuntime != 0 {
+		n += 1 + sovOci(uint64(m.RealtimeRuntime))
+	}
+	if m.RealtimePeriod != 0 {
+		n += 1 + sovOci(uint64(m.RealtimePeriod))
+	}
+	l = len(m.Cpus)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	l = len(m.Mems)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxWeightDevice) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Major != 0 {
+		n += 1 + sovOci(uint64(m.Major))
+	}
+	if m.Minor != 0 {
+		n += 1 + sovOci(uint64(m.Minor))
+	}
+	if m.Weight != 0 {
+		n += 1 + sovOci(uint64(m.Weight))
+	}
+	if m.LeafWeight != 0 {
+		n += 1 + sovOci(uint64(m.LeafWeight))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxThrottleDevice) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Major != 0 {
+		n += 1 + sovOci(uint64(m.Major))
+	}
+	if m.Minor != 0 {
+		n += 1 + sovOci(uint64(m.Minor))
+	}
+	if m.Rate != 0 {
+		n += 1 + sovOci(uint64(m.Rate))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxBlockIO) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Weight != 0 {
+		n += 1 + sovOci(uint64(m.Weight))
+	}
+	if m.LeafWeight != 0 {
+		n += 1 + sovOci(uint64(m.LeafWeight))
+	}
+	if len(m.WeightDevice) > 0 {
+		for _, e := range m.WeightDevice {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.ThrottleReadBpsDevice) > 0 {
+		for _, e := range m.ThrottleReadBpsDevice {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.ThrottleWriteBpsDevice) > 0 {
+		for _, e := range m.ThrottleWriteBpsDevice {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.ThrottleReadIOPSDevice) > 0 {
+		for _, e := range m.ThrottleReadIOPSDevice {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.ThrottleWriteIOPSDevice) > 0 {
+		for _, e := range m.ThrottleWriteIOPSDevice {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxPids) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Limit != 0 {
+		n += 1 + sovOci(uint64(m.Limit))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxDeviceCgroup) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Allow {
+		n += 2
+	}
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Major != 0 {
+		n += 1 + sovOci(uint64(m.Major))
+	}
+	if m.Minor != 0 {
+		n += 1 + sovOci(uint64(m.Minor))
+	}
+	l = len(m.Access)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxNetwork) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ClassID != 0 {
+		n += 1 + sovOci(uint64(m.ClassID))
+	}
+	if len(m.Priorities) > 0 {
+		for _, e := range m.Priorities {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxHugepageLimit) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Pagesize)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Limit != 0 {
+		n += 1 + sovOci(uint64(m.Limit))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxInterfacePriority) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.Priority != 0 {
+		n += 1 + sovOci(uint64(m.Priority))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxSeccomp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.DefaultAction)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Architectures) > 0 {
+		for _, s := range m.Architectures {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if len(m.Syscalls) > 0 {
+		for _, e := range m.Syscalls {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxSeccompArg) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Index != 0 {
+		n += 1 + sovOci(uint64(m.Index))
+	}
+	if m.Value != 0 {
+		n += 1 + sovOci(uint64(m.Value))
+	}
+	if m.ValueTwo != 0 {
+		n += 1 + sovOci(uint64(m.ValueTwo))
+	}
+	l = len(m.Op)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxSyscall) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Names) > 0 {
+		for _, s := range m.Names {
+			l = len(s)
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	l = len(m.Action)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if len(m.Args) > 0 {
+		for _, e := range m.Args {
+			l = e.Size()
+			n += 1 + l + sovOci(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *LinuxIntelRdt) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.L3CacheSchema)
+	if l > 0 {
+		n += 1 + l + sovOci(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func sovOci(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozOci(x uint64) (n int) {
+	return sovOci(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *Spec) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Spec: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Spec: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Version = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Process", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Process == nil {
+				m.Process = &Process{}
+			}
+			if err := m.Process.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Root", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Root == nil {
+				m.Root = &Root{}
+			}
+			if err := m.Root.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hostname", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Hostname = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Mounts", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Mounts = append(m.Mounts, Mount{})
+			if err := m.Mounts[len(m.Mounts)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hooks", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Hooks == nil {
+				m.Hooks = &Hooks{}
+			}
+			if err := m.Hooks.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Annotations", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Annotations == nil {
+				m.Annotations = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOci
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOci
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthOci
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthOci
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOci
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthOci
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthOci
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipOci(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthOci
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Annotations[mapkey] = mapvalue
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Linux", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Linux == nil {
+				m.Linux = &Linux{}
+			}
+			if err := m.Linux.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Solaris", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Solaris == nil {
+				m.Solaris = &Solaris{}
+			}
+			if err := m.Solaris.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Windows", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Windows == nil {
+				m.Windows = &Windows{}
+			}
+			if err := m.Windows.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Process) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Process: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Process: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Terminal", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Terminal = bool(v != 0)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ConsoleSize", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ConsoleSize == nil {
+				m.ConsoleSize = &Box{}
+			}
+			if err := m.ConsoleSize.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.User.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Args", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Args = append(m.Args, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Env", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Env = append(m.Env, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cwd", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cwd = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Capabilities", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Capabilities == nil {
+				m.Capabilities = &LinuxCapabilities{}
+			}
+			if err := m.Capabilities.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rlimits", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Rlimits = append(m.Rlimits, POSIXRlimit{})
+			if err := m.Rlimits[len(m.Rlimits)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NoNewPrivileges", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.NoNewPrivileges = bool(v != 0)
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ApparmorProfile", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ApparmorProfile = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OOMScoreAdj", wireType)
+			}
+			m.OOMScoreAdj = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.OOMScoreAdj |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SelinuxLabel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SelinuxLabel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Box) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Box: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Box: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
+			}
+			m.Height = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Height |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Width", wireType)
+			}
+			m.Width = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Width |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *User) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: User: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: User: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UID", wireType)
+			}
+			m.UID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GID", wireType)
+			}
+			m.GID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType == 0 {
+				var v uint32
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOci
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint32(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.AdditionalGids = append(m.AdditionalGids, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOci
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOci
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthOci
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.AdditionalGids) == 0 {
+					m.AdditionalGids = make([]uint32, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint32
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOci
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint32(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.AdditionalGids = append(m.AdditionalGids, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdditionalGids", wireType)
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Username = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxCapabilities) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxCapabilities: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxCapabilities: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bounding", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Bounding = append(m.Bounding, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Effective", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Effective = append(m.Effective, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Inheritable", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Inheritable = append(m.Inheritable, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permitted", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Permitted = append(m.Permitted, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ambient", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Ambient = append(m.Ambient, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *POSIXRlimit) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: POSIXRlimit: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: POSIXRlimit: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hard", wireType)
+			}
+			m.Hard = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Hard |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Soft", wireType)
+			}
+			m.Soft = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Soft |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Mount) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Mount: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Mount: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Destination", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Destination = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Source", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Source = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Options", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Options = append(m.Options, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Root) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Root: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Root: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Path = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Readonly", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Readonly = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Hooks) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Hooks: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Hooks: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Prestart", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Prestart = append(m.Prestart, Hook{})
+			if err := m.Prestart[len(m.Prestart)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Poststart", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Poststart = append(m.Poststart, Hook{})
+			if err := m.Poststart[len(m.Poststart)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Poststop", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Poststop = append(m.Poststop, Hook{})
+			if err := m.Poststop[len(m.Poststop)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Hook) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Hook: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Hook: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Path = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Args", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Args = append(m.Args, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Env", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Env = append(m.Env, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Timeout", wireType)
+			}
+			m.Timeout = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Timeout |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Linux) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Linux: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Linux: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UIDMappings", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.UIDMappings = append(m.UIDMappings, LinuxIDMapping{})
+			if err := m.UIDMappings[len(m.UIDMappings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GIDMappings", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.GIDMappings = append(m.GIDMappings, LinuxIDMapping{})
+			if err := m.GIDMappings[len(m.GIDMappings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sysctl", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Sysctl == nil {
+				m.Sysctl = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOci
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOci
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthOci
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthOci
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOci
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthOci
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthOci
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipOci(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthOci
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Sysctl[mapkey] = mapvalue
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Resources", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Resources == nil {
+				m.Resources = &LinuxResources{}
+			}
+			if err := m.Resources.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CgroupsPath", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CgroupsPath = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Namespaces", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Namespaces = append(m.Namespaces, LinuxNamespace{})
+			if err := m.Namespaces[len(m.Namespaces)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Devices", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Devices = append(m.Devices, LinuxDevice{})
+			if err := m.Devices[len(m.Devices)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Seccomp", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Seccomp == nil {
+				m.Seccomp = &LinuxSeccomp{}
+			}
+			if err := m.Seccomp.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RootfsPropagation", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RootfsPropagation = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaskedPaths", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MaskedPaths = append(m.MaskedPaths, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReadonlyPaths", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReadonlyPaths = append(m.ReadonlyPaths, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MountLabel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MountLabel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IntelRdt", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.IntelRdt == nil {
+				m.IntelRdt = &LinuxIntelRdt{}
+			}
+			if err := m.IntelRdt.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Windows) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Windows: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Windows: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dummy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Dummy = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Solaris) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Solaris: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Solaris: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dummy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Dummy = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxIDMapping) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxIDMapping: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxIDMapping: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HostID", wireType)
+			}
+			m.HostID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.HostID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContainerID", wireType)
+			}
+			m.ContainerID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ContainerID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Size_", wireType)
+			}
+			m.Size_ = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Size_ |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxNamespace) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxNamespace: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxNamespace: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Path = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxDevice) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxDevice: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxDevice: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Path = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
+			}
+			m.Major = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Major |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
+			}
+			m.Minor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Minor |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FileMode", wireType)
+			}
+			m.FileMode = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FileMode |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UID", wireType)
+			}
+			m.UID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GID", wireType)
+			}
+			m.GID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxResources) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxResources: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxResources: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Devices", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Devices = append(m.Devices, LinuxDeviceCgroup{})
+			if err := m.Devices[len(m.Devices)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Memory", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Memory == nil {
+				m.Memory = &LinuxMemory{}
+			}
+			if err := m.Memory.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CPU", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.CPU == nil {
+				m.CPU = &LinuxCPU{}
+			}
+			if err := m.CPU.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pids", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pids == nil {
+				m.Pids = &LinuxPids{}
+			}
+			if err := m.Pids.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BlockIO", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.BlockIO == nil {
+				m.BlockIO = &LinuxBlockIO{}
+			}
+			if err := m.BlockIO.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HugepageLimits", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.HugepageLimits = append(m.HugepageLimits, LinuxHugepageLimit{})
+			if err := m.HugepageLimits[len(m.HugepageLimits)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Network", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Network == nil {
+				m.Network = &LinuxNetwork{}
+			}
+			if err := m.Network.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxMemory) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxMemory: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxMemory: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reservation", wireType)
+			}
+			m.Reservation = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Reservation |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Swap", wireType)
+			}
+			m.Swap = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Swap |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Kernel", wireType)
+			}
+			m.Kernel = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Kernel |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KernelTCP", wireType)
+			}
+			m.KernelTCP = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KernelTCP |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Swappiness", wireType)
+			}
+			m.Swappiness = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Swappiness |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DisableOOMKiller", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.DisableOOMKiller = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxCPU) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxCPU: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxCPU: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Shares", wireType)
+			}
+			m.Shares = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Shares |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Quota", wireType)
+			}
+			m.Quota = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Quota |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Period", wireType)
+			}
+			m.Period = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Period |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RealtimeRuntime", wireType)
+			}
+			m.RealtimeRuntime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RealtimeRuntime |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RealtimePeriod", wireType)
+			}
+			m.RealtimePeriod = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RealtimePeriod |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cpus", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cpus = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Mems", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Mems = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxWeightDevice) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxWeightDevice: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxWeightDevice: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
+			}
+			m.Major = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Major |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
+			}
+			m.Minor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Minor |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Weight", wireType)
+			}
+			m.Weight = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Weight |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LeafWeight", wireType)
+			}
+			m.LeafWeight = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LeafWeight |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxThrottleDevice) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxThrottleDevice: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxThrottleDevice: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
+			}
+			m.Major = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Major |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
+			}
+			m.Minor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Minor |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Rate", wireType)
+			}
+			m.Rate = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Rate |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxBlockIO) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxBlockIO: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxBlockIO: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Weight", wireType)
+			}
+			m.Weight = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Weight |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LeafWeight", wireType)
+			}
+			m.LeafWeight = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LeafWeight |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field WeightDevice", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.WeightDevice = append(m.WeightDevice, LinuxWeightDevice{})
+			if err := m.WeightDevice[len(m.WeightDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleReadBpsDevice", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ThrottleReadBpsDevice = append(m.ThrottleReadBpsDevice, LinuxThrottleDevice{})
+			if err := m.ThrottleReadBpsDevice[len(m.ThrottleReadBpsDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleWriteBpsDevice", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ThrottleWriteBpsDevice = append(m.ThrottleWriteBpsDevice, LinuxThrottleDevice{})
+			if err := m.ThrottleWriteBpsDevice[len(m.ThrottleWriteBpsDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleReadIOPSDevice", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ThrottleReadIOPSDevice = append(m.ThrottleReadIOPSDevice, LinuxThrottleDevice{})
+			if err := m.ThrottleReadIOPSDevice[len(m.ThrottleReadIOPSDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ThrottleWriteIOPSDevice", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ThrottleWriteIOPSDevice = append(m.ThrottleWriteIOPSDevice, LinuxThrottleDevice{})
+			if err := m.ThrottleWriteIOPSDevice[len(m.ThrottleWriteIOPSDevice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxPids) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxPids: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxPids: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxDeviceCgroup) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxDeviceCgroup: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxDeviceCgroup: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Allow", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Allow = bool(v != 0)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Major", wireType)
+			}
+			m.Major = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Major |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Minor", wireType)
+			}
+			m.Minor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Minor |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Access", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Access = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxNetwork) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxNetwork: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxNetwork: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClassID", wireType)
+			}
+			m.ClassID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ClassID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Priorities", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Priorities = append(m.Priorities, LinuxInterfacePriority{})
+			if err := m.Priorities[len(m.Priorities)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxHugepageLimit) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxHugepageLimit: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxHugepageLimit: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagesize", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Pagesize = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxInterfacePriority) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxInterfacePriority: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxInterfacePriority: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Priority", wireType)
+			}
+			m.Priority = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Priority |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxSeccomp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxSeccomp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxSeccomp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DefaultAction", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DefaultAction = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Architectures", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Architectures = append(m.Architectures, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Syscalls", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Syscalls = append(m.Syscalls, LinuxSyscall{})
+			if err := m.Syscalls[len(m.Syscalls)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxSeccompArg) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxSeccompArg: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxSeccompArg: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
+			}
+			m.Index = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Index |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+			}
+			m.Value = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Value |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValueTwo", wireType)
+			}
+			m.ValueTwo = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ValueTwo |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Op", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Op = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxSyscall) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxSyscall: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxSyscall: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Names", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Names = append(m.Names, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Action", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Action = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Args", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Args = append(m.Args, LinuxSeccompArg{})
+			if err := m.Args[len(m.Args)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LinuxIntelRdt) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LinuxIntelRdt: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LinuxIntelRdt: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field L3CacheSchema", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOci
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOci
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.L3CacheSchema = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOci(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthOci
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipOci(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowOci
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowOci
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthOci
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupOci
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthOci
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthOci        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowOci          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupOci = fmt.Errorf("proto: unexpected end of group")
+)

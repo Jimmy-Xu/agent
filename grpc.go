@@ -1791,3 +1791,26 @@ func (a *agentGRPC) StopTracing(ctx context.Context, req *pb.StopTracingRequest)
 
 	return emptyResp, nil
 }
+
+func (a *agentGRPC) ExtendedStats(ctx context.Context, req *pb.ExtendedStatsRequest) (*pb.ExtendedStatsResponse, error) {
+	pod, err := a.sandbox.GetPodStats()
+	if err != nil {
+		return nil, err
+	}
+
+	var cstats []*pb.ContainerStats
+	// maybe need RLock on sandbox here?
+	for _, c := range a.sandbox.containers {
+		con, err : = c.GetContainerStats()
+		if err != nil {
+			continue
+		}
+
+		append(cstats, con)
+	}
+
+	return &pb.ExtendedStatsResponse {
+		PodStats: pod,
+		ConStats: cstats,
+	}, nil
+}

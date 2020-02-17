@@ -60,6 +60,7 @@ service AgentService {
 	rpc MemHotplugByProbe(MemHotplugByProbeRequest) returns (google.protobuf.Empty);
 	rpc SetGuestDateTime(SetGuestDateTimeRequest) returns (google.protobuf.Empty);
 	rpc CopyFile(CopyFileRequest) returns (google.protobuf.Empty);
+	rpc ExtendedStats(ExtendedStatsRequest) returns(ExtendedStatsResponse);
 }
 
 message CreateContainerRequest {
@@ -493,4 +494,612 @@ message StartTracingRequest {
 }
 
 message StopTracingRequest {
+}
+
+message ExtendedStatsRequest {
+}
+
+message ExtendedStatsResponse {
+	PodStats pod_stats = 1;
+	repeated ContainerStats con_stats = 2;
+}
+
+message PodStats{
+	PodBuddyStats buddy = 1;
+	repeated PodCpuStats cpu_stats = 2; // per cpu
+	repeated PodIOStats io_stats = 3;
+	repeated PodIrqStats irq_stats = 4;
+	PodLoadStats load_stats = 5;
+	PodMemStats mem_stats = 6;
+	PodMemxStats memx_stats = 7;
+	repeated PodPartitionStats part_stats = 8;
+	PodPcswStats pcsw_stats = 9;
+	repeated PodPercpuStats percpu_stats = 10;
+	repeated PodPercpuSchedStats percpu_sched_stats = 11;
+	PodSoftirqStats softirq_stats = 12;
+	PodSwapStats swap_stats = 13;
+	PodTcpStats tcp_stats = 14;
+	PodTcpxStats tcpx_stats = 15;
+	PodTrafficStats traffic_stats = 16;
+	PodUdpStats udp_stats = 17;
+	PodVmstatStats vmstat_stats = 18;
+	PodGpuInfo gpu_info = 19;
+}
+
+message PodBuddyStats {
+	int32 order0 = 1;
+	int32 order1 = 2;
+	int32 order2 = 3;
+	int32 order3 = 4;
+	int32 order4 = 5;
+	int32 order5 = 6;
+	int32 order6 = 7;
+	int32 order7 = 8;
+	int32 order8 = 9;
+	int32 order9 = 10;
+	int32 order10 = 11;
+}
+
+message PodCpuStats {
+	uint64 cpu_user = 1;
+	uint64 cpu_nice = 2;
+	uint64 cpu_sys = 3;
+	uint64 cpu_idle = 4;
+	uint64 cpu_iowait = 5;
+	uint64 cpu_steal = 6;
+	uint64 cpu_hardirq = 7;
+	uint64 cpu_softirq = 8;
+	uint64 cpu_guest = 9;
+	uint64 cpu_number = 10;
+}
+
+message PodIOStats {
+	PartInfo part = 1;
+	BlkIOInfo blkio = 2;
+}
+
+message PartInfo {
+	uint32 major = 1;
+	uint32 minor = 2;
+	string name = 3;
+}
+
+message BlkIOInfo {
+	uint64 rd_ios = 1;
+	uint64 rd_merges = 2;
+	uint64 rd_sectors = 3;
+	uint64 wr_ios = 4;
+	uint64 wr_merges = 5;
+	uint64 wr_sectors = 6;
+	uint64 wr_ticks = 7;
+	uint64 ticks = 8;
+	uint64 aveq = 9;
+}
+
+message PodIrqStats {
+	uint32 irq_num = 1;
+	repeated uint64 irq_count = 2;
+}
+
+message PodLoadStats {
+	uint64 nr_running = 1;
+	uint32 load_avg_1 = 2;
+	uint32 load_avg_5 = 3;
+	uint32 load_avg_15 = 4;
+	uint32 running_load_avg_1 = 5;
+	uint32 running_load_avg_5 = 6;
+	uint32 running_load_avg_15 = 7;
+	uint32 nr_threads = 8;
+}
+
+message PodMemStats {
+	uint64 frmkb = 1;
+	uint64 avmkb = 2;
+	uint64 bufkb = 3;
+	uint64 camkb = 4;
+	uint64 tlmkb = 5;
+	uint64 comkb = 6;
+	uint64 rsskb = 7;
+}
+
+message PodMemxStats {
+	uint64 afile = 1;
+	uint64 ifile = 2;
+	uint64 aanon = 3;
+	uint64 ianon = 4;
+	uint64 dirty = 5;
+	uint64 writeback = 6;
+	uint64 rslab = 7;
+	uint64 uslab = 8;
+	uint64 mpfile = 9;
+	uint64 shmem = 10;
+}
+
+message PodPartitionStats {
+	int32 bsize = 1;
+	uint64 blocks = 2;
+	uint64 bfree = 3;
+	uint64 bavail = 4;
+	uint64 itotal = 5;
+	uint64 ifree = 6;
+}
+
+message PodPcswStats {
+	uint64 context_switch = 1;
+	uint64 newtask = 2;
+	uint64 curtask = 3;
+	uint64 Rtsk = 4;
+	uint64 Dtsk = 5;
+	uint64 maxpid = 6;
+}
+
+message PodPercpuStats {
+	uint64 cpu_user = 1;
+	uint64 cpu_nice = 2;
+	uint64 cpu_sys = 3;
+	uint64 cpu_idle = 4;
+	uint64 cpu_iowait = 5;
+	uint64 cpu_steal = 6;
+	uint64 cpu_hardirq = 7;
+	uint64 cpu_softirq = 8;
+	uint64 cpu_guest = 9;
+	uint64 cpu_time = 10;
+	uint64 cpu_rundelay = 11;
+	uint64 cpu_pcount = 12;
+	string name = 13;
+}
+
+message PodPercpuSchedStats {
+	uint64 sched_yield = 1;
+	uint64 sched_expr = 2;
+	uint64 sched = 3;
+	uint64 sched_idle = 4;
+	uint32 sched_idle_percent = 5;
+	uint64 ttwu = 6;
+	uint64 ttwu_local = 7;
+	uint32 ttwu_local_percent = 8;
+	uint64 cputime = 9;
+	uint64 rundelay = 10;
+	uint64 slice_cnt = 11;
+	uint32 avg_cputime = 12;
+	uint32 avg_rundelay = 13;
+	string name = 14;
+}
+
+message PodSoftirqStats {
+	uint64 timer = 1;
+	uint64 nettx = 2;
+	uint64 netrx = 3;
+	uint64 block = 4;
+	uint64 sched = 5;
+	uint64 hrtim = 6;
+	uint64 rcu = 7;
+}
+
+message PodSwapStats {
+	uint64 pswpin = 1;
+	uint64 pswpout = 2;
+	uint64 swaptotal = 3;
+	uint64 swapfree = 4;
+}
+
+message PodTcpStats {
+	uint64 active_opens = 1;
+	uint64 passive_opens = 2;
+	uint64 in_segs = 3;
+	uint64 out_segs = 4;
+	uint64 attempt_fails = 5;
+	uint64 estab_resets = 6;
+	uint64 curr_estab = 7;
+	uint64 retrans_segs = 8;
+	uint64 in_errs = 9;
+	uint64 out_rsts = 10;
+}
+
+message PodTcpxStats {
+	uint64 tcprevq = 1;
+	uint64 tcpsendq = 2;
+	uint64 tcpest = 3;
+	uint64 tcptimewait = 4;
+	uint64 tcpfinwait1 = 5;
+	uint64 tcpfinwait2 = 6;
+	uint64 tcplistenq = 7;
+	uint64 tcplistenincq = 8;
+	uint64 tcplistenover = 9;
+	uint64 tcpconnest = 10;
+	uint64 tcpconndrop = 11;
+	uint64 tcpmbdrop = 12;
+	uint64 tcprexmitdrop = 13;
+	uint64 tcppersistdrop = 14;
+	uint64 tcpkadrop = 15;
+}
+
+message PodTrafficStats {
+	uint64 bytein = 1;
+	uint64 byteout = 2;
+	uint64 pktin = 3;
+	uint64 pktout = 4;
+	uint64 pkterrin = 5;
+	uint64 pktdrpin = 6;
+	uint64 pkterrout = 7;
+	uint64 pktdrpout = 8;
+}
+
+message PodUdpStats {
+	uint64 in_datagrams = 1;
+	uint64 out_datagrams = 2;
+	uint64 no_ports = 3;
+	uint64 in_errors = 4;
+}
+
+message PodVmstatStats {
+	uint64 pgin = 1;
+	uint64 pgout = 2;
+	uint64 pgfault = 3;
+	uint64 dirtied = 4;
+	uint64 allocno = 5;
+	uint64 cmpfail = 6;
+	uint64 cmpsucc = 7;
+	uint64 failcnt = 8;
+	uint64 scan = 9;
+	uint64 steal = 10;
+	uint64 dsteal = 11;
+	uint64 vmeff = 12;
+}
+
+message PodGpuInfo {
+	GStat stat = 1;
+	GMem st_mem = 2;
+	repeated uint64 uuid = 3;
+	GConfigInfo config = 4;
+	GOtherInfo info = 5;
+}
+
+message GStat {
+	uint64 util = 1;
+	uint64 mem_util = 2;
+	uint64 nr_data = 3;
+}
+
+message GMem {
+	uint64 used = 1;
+	uint64 free = 2;
+	uint64 total = 3;
+}
+
+message GConfigInfo {
+	string name = 1;
+	string vbios_version = 2;
+	string driver_version = 3;
+	uint64 mode = 4; //mode flags and 3 bytes reserved
+	bytes compute_mode = 5;
+	bytes pstate = 6;
+	uint64 power_limit = 7;
+	uint64 sm_max_clocks = 8;
+	uint64 mem_max_blocks = 9;
+}
+
+message GOtherInfo {
+	uint64 sm_clocks = 1;
+	uint64 mem_clocks = 2;
+	uint64 power_draw = 3;
+	uint64 temperature = 4;
+}
+
+message ContainerStats {
+	ContainerBaseStats base_stats = 1;
+	repeated ProcessStats proc_stats = 2;
+}
+
+message ContainerBaseStats {
+	string container_id = 1;
+	ContainerCgroupCpu cgroup_cpu = 2;
+	ContainerCgroupCpushare cgroup_cpushare = 3;
+	repeated ContainerCgroupIO cgroup_io = 4;
+	repeated ContainerCgroupIOTime cgroup_iotime = 5;
+	repeated ContainerCgroupIOX cgroup_iox = 6;
+	ContainerCgroupLoad cgroup_load = 7;
+	ContainerCgroupMem cgroup_mem = 8;
+	ContainerCgroupMemDelay cgroup_memdelay = 9;
+	ContainerCgroupLatencyStat cgroup_latency_stat = 10; // may be repeated or have three CgroupLatencyStat for direct_{compation,reclaim,throttle}_latency seperately.
+	ContainerCgroupMemx cgroup_memx = 11;
+	ContainerCgroupPcsw cgroup_pcsw = 12;
+	ContainerCgroupPercpu cgroup_percpu = 13;
+	ContainerCgroupSchedbvt cgroup_schedbvt = 14;
+	ContainerCgroupSchedcg cgroup_schedcg = 15;
+	ContainerCgroupSchedTask cgroup_task = 16;
+	ContainerCgroupTcpStats cgroup_tcp_stats = 17;
+	ContainerCgroupTcpxStats cgroup_tcpx_stats = 18;
+	ContainerCgroupTrafficStats cgroup_traffic_stats = 19; // Consider how to gather the statistics
+	ContainerCgroupUdpStats cgroup_udp_stats = 20;
+	ContainerCgroupVm cgroup_vm = 21;
+	ContainerPartitionStats partition_stats = 22;
+}
+
+message ContainerCgroupCpu {
+	uint64 user =1;
+	uint64 sys = 2;
+	uint64 nice = 3;
+	uint64 iowait = 4;
+	uint64 idle = 5;
+	uint64 hirq = 6;
+	uint64 sirq = 7;
+	uint64 steal = 8;
+	uint64 total_time = 9;
+	uint64 period = 10;
+	uint64 quota = 11;
+	uint64 ncpu = 12;
+	uint64 jdk_max_process_limit = 13;
+	uint64 shares = 14;
+	uint64 ori_steal = 15;
+}
+
+message ContainerCgroupCpushare {
+	uint64 nr_throttled = 1;
+	uint64 nr_period = 2;
+	uint64 period_time = 3;
+	uint64 throttle_time = 4;
+	uint64 os_serve = 5;
+	uint64 on_cpu = 6;
+	uint64 g_other = 7;
+	uint64 g_sibling = 8;
+}
+
+message ContainerCgroupIO {
+	uint64 rio = 1;
+	uint64 wio = 2;
+	uint64 rbytes = 3;
+	uint64 wbytes = 4;
+	uint64 io_queued = 5;
+	uint64 wait_time = 6;
+	uint64 service_time = 7;
+	int32 major = 8;
+	int32 minor = 9;
+}
+
+message ContainerCgroupIOTime {
+	uint64 read_service_time = 1;
+	uint64 write_service_time = 2;
+	uint64 read_wait_time =3;
+	uint64 write_wait_time = 4;
+	uint64 sync_service_time =5;
+	uint64 async_service_time = 6;
+	uint64 sync_wait_time = 7;
+	uint64 async_wait_time = 8;
+	uint64 io_read_complete = 9;
+	uint64 io_write_compelte = 10;
+	uint64 io_sync_complete = 11;
+	uint64 io_async_complete = 12;
+	int32 major = 13;
+	int32 minor = 14;
+}
+
+message ContainerCgroupIOX {
+	uint64 sio =1;
+	uint64 asio = 2;
+	uint64 syncbytes = 3;
+	uint64 asyncbytes = 4;
+	uint64 meta_writes = 5;
+	uint64 io_up = 6;
+	uint64 io_down = 7;
+	int32 major = 8;
+	int32 minor = 9;
+}
+
+message ContainerCgroupLoad {
+	uint64 load1 = 1;
+	uint64 load5 = 2;
+	uint64 load15 = 3;
+	uint64 r_load1 = 4;
+	uint64 r_load5 = 5;
+	uint64 r_load15 = 6;
+}
+
+message ContainerCgroupMem {
+	uint64 total = 1;
+	uint64 rss = 2;
+	uint64 cache = 3;
+	uint64 avail = 4;
+	uint64 slab = 5;
+	uint64 swap =6;
+	uint64 map = 7;
+}
+
+message ContainerCgroupMemDelay {
+	uint64 aggregate_direct = 1;
+	uint64 aggregate_backgroud = 2;
+	uint64 aggregate_total = 3;
+	uint64 mds_some_load1 = 4;
+	uint64 mds_some_load5 = 5;
+	uint64 mds_some_load15 = 6;
+	uint64 mds_full_load1 = 7;
+	uint64 mds_full_load5 = 8;
+	uint64 mds_full_load15 = 9;
+	repeated uint64 delay_data = 10;
+	uint64 wait_if = 11;
+	uint64 wb_wait = 12;
+	uint64 wait_on_page_wb = 13;
+}
+
+message ContainerCgroupLatencyStat {
+	repeated uint64 ticks = 1;
+}
+
+message ContainerCgroupMemx {
+	uint64 aanon = 1;
+	uint64 ianon = 2;
+	uint64 afile = 3;
+	uint64 ifile = 4;
+	uint64 mpfile = 5;
+	uint64 dirty = 6;
+	uint64 wback = 7;
+	uint64 slab = 8;
+	uint64 lock = 9;
+	uint64 rss = 10;
+	uint64 huge = 11;
+	uint64 swap = 12;
+}
+
+message ContainerCgroupPcsw {
+	uint64 n_tasks = 1;
+	uint64 n_running = 2;
+	uint64 n_drunning = 3;
+	uint64 n_swch = 4;
+	uint64 new_task = 5;
+	uint64 max_pid = 6;
+	uint64 nr_vol_swch = 7;
+	uint64 nr_invol_swch = 8;
+}
+
+message ContainerCgroupPercpu {
+	int32 ncpu = 1;
+	repeated ContainerPercpuStats percpu_stats = 2;
+}
+
+message ContainerPercpuStats {
+	uint64 cpu_user = 1;
+	uint64 cpu_sys = 2;
+	uint64 cpu_usage = 3;
+	string cpu_name = 4;
+}
+
+message ContainerCgroupSchedbvt {
+	uint64 batch_delay_strict = 1;
+	uint64 strict_noise_clean_batch = 2;
+	uint64 batch_noise_clean_delayed = 3;
+	uint64 ncpu = 4;
+}
+
+message ContainerCgroupSchedcg {
+	repeated uint64 cg_delay_ms = 1;
+}
+
+message ContainerCgroupSchedTask {
+	repeated uint64 tasks_delay_ms = 1;
+}
+
+message ContainerCgroupTcpStats {
+	uint64 active_opens = 1;
+	uint64 passive_opens = 2;
+	uint64 in_segs = 3;
+	uint64 out_segs = 4;
+	uint64 attempt_fails = 5;
+	uint64 estab_resets = 6;
+	uint64 curr_estab = 7;
+	uint64 retrans_segs = 8;
+	uint64 in_errs = 9;
+	uint64 out_rsts = 10;
+}
+
+message ContainerCgroupTcpxStats {
+	uint64 tcp_lost_retrans = 1;
+	uint64 tcp_syn_retrans = 2;
+	uint64 tcp_fast_retrans = 3;
+	uint64 tcp_forward_retrans = 4;
+	uint64 tcp_slowstart_retrans = 5;
+	uint64 tcp_listen_overflow = 6;
+	uint64 tcp_listen_drop = 7;
+	uint64 tcp_abort_data = 8;
+	uint64 tcp_abort_close = 9;
+	uint64 tcp_abort_mem = 10;
+	uint64 tcp_abort_timeout = 11;
+	uint64 tcp_abort_linger = 12;
+}
+
+message ContainerCgroupTrafficStats {
+	uint64 bytein = 1;
+	uint64 byteout = 2;
+	uint64 pktin = 3;
+	uint64 pktout = 4;
+	uint64 pkterrin = 5;
+	uint64 pktdrpin = 6;
+	uint64 pkterrout = 7;
+	uint64 pktdrpout = 8;
+}
+
+message ContainerCgroupUdpStats {
+	uint64 in_datagrams = 1;
+	uint64 out_datagrams = 2;
+	uint64 no_ports = 3;
+	uint64 in_errors = 4;
+}
+
+message ContainerCgroupVm {
+	uint64 page_in = 1;
+	uint64 page_out = 2;
+	uint64 page_fault = 3;
+	uint64 steal = 4;
+	uint64 dsteal = 5;
+	uint64 scan = 6;
+	uint64 dirty = 7;
+	uint64 failcnt = 8;
+	uint64 allocstall = 9;
+}
+
+message ContainerPartitionStats {
+	int32 bsize = 1;
+	uint64 blocks = 2;
+	uint64 bfree = 3;
+	uint64 bavail = 4;
+	uint64 itotal = 5;
+	uint64 ifree = 6;
+}
+
+message ProcessStats {
+	int32 pid = 1;
+	ProcessPidStats pid_stats = 2;
+	ProcessCgroupSched cgroup_sched = 3;
+	ProcessProcCpuStats proc_cpu_stats = 4;
+	ProcessProcIOStats proc_io_stats = 5;
+	ProcessProcMemStats proc_mem_stats = 6;
+	// There is still per process gpu info need here
+	// not sure how yet.
+}
+
+message ProcessPidStats {
+	uint64 user_cpu = 1;
+	uint64 sys_cpu = 2;
+	uint64 mem = 3;
+	uint64 read_bytes = 4;
+	uint64 write_bytes = 5;
+	uint64 fdcnt = 6;
+	uint64 minflt = 7;
+	uint64 majflt = 8;
+	uint64 thread = 9;
+}
+
+message ProcessCgroupSched {
+	repeated uint64 tasks_delay_ms = 1;
+	uint64 bvt_delay = 2;
+	uint64 noise_kick_delay = 3;
+	uint64 loss_time = 4;
+}
+
+message ProcessProcCpuStats {
+	uint64 user_cpu = 1;
+	uint64 sys_cpu = 2;
+	uint64 blkio_delay = 3;
+	uint64 run_on_cpu = 4;
+	uint64 wait_on_rq = 5;
+	uint64 n_threads = 6;
+}
+
+message ProcessProcIOStats {
+	uint64 rchar = 1;
+	uint64 wchar = 2;
+	uint64 rbytes = 3;
+	uint64 wbytes = 4;
+	uint64 iolat = 5;
+	uint64 syscr = 6;
+	uint64 syscw = 7;
+}
+
+message ProcessProcMemStats {
+	uint64 usage = 1;
+	uint64 cache = 2;
+	uint64 anon = 3;
+	uint64 shmem = 4;
+	uint64 lock = 5;
+	uint64 swp = 6;
+	uint64 total_swp = 7;
 }
