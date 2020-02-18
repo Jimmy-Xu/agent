@@ -801,7 +801,7 @@ message ContainerBaseStats {
 	ContainerCgroupLoad cgroup_load = 7;
 	ContainerCgroupMem cgroup_mem = 8;
 	ContainerCgroupMemDelay cgroup_memdelay = 9;
-	ContainerCgroupLatencyStat cgroup_latency_stat = 10; // may be repeated or have three CgroupLatencyStat for direct_{compation,reclaim,throttle}_latency seperately.
+	repeated ContainerCgroupLatencyStat cgroup_latency_stat = 10; // may be repeated or have three CgroupLatencyStat for direct_{compation,reclaim,throttle}_latency seperately.
 	ContainerCgroupMemx cgroup_memx = 11;
 	ContainerCgroupPcsw cgroup_pcsw = 12;
 	ContainerCgroupPercpu cgroup_percpu = 13;
@@ -922,7 +922,8 @@ message ContainerCgroupMemDelay {
 }
 
 message ContainerCgroupLatencyStat {
-	repeated uint64 ticks = 1;
+	string name = 1;
+	repeated uint64 ticks = 2;
 }
 
 message ContainerCgroupMemx {

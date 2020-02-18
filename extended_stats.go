@@ -140,7 +140,7 @@ func (c *container) GetContainerStats() (*pb.ContainerStats, error) {
 			continue
 		}
 
-		append(pstats, pstat)
+		pstats = append(pstats, pstat)
 	}
 
 	return &pb.ContainerStats {

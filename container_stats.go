@@ -30,6 +30,27 @@ const (
 	CgroupFileMemswFailcnt = "memory.memsw.failcnt"
 	CgroupFileMemorySwapiness = "memory.swapiness"
 	CgroupFileMemswLimit = "memory.memsw.limit_in_bytes"
+	CgroupFileMemoryMemDelay = "memory.memdelay"
+	CgroupFileMemoryReclaimDelay = "memory.reclaim.latency"
+	CgroupFileMemoryReclaimSched = "memory.direct_reclaim_sched_time"
+	CgroupFileMemoryCompactLatency = "memory.direct_compaction_latency"
+	CgroupFileMemoryReclaimLatency = "memory.direct_reclaim_latency"
+	CgroupFileMemoryThrottleLatency = "memory.dirty_throttle_latency"
+
+	// blkio files
+	CgroupFileBlkioServiced = "blkio.throttle.io_serviced"
+	CgroupFileBlkioServiceBytes = "blkio.throttle.io_service_bytes"
+	CgroupFileBlkioWaitTime = "blkio.throttle.io_wait_time"
+	CgroupFileBlkioServiceTime = "blkio.throttle.io_service_time"
+	CgroupFileBlkioQueued = "blkio.throttle.total_io_queued"
+	CgroupFileBlkioCompleted = "blkio.throttle.io_completed"
+	CgroupFileBlkioMetaWrite = "blkio.throttle.meta_write_serviced"
+	CgroupFileBlkioStateChange = "blkio.throttle.state_change_counter"
+
+	// Proc files
+	ProcFileMemInfo = "/proc/meminfo"
+	ProcFileVersion = "/proc/version"
+	ProcFileMemDelayEnable = "/proc/memdelay_enable"
 
 	// cgroup paths indexes
 	cpuacctCgroupIndex = "cpuacct"
@@ -111,10 +132,160 @@ const (
 	memSwFailNo = "memsw.failcnt"
 	memSwLimit = "memsw.limit"
 	memSwapiness = "swapiness"
+
+	// meminfo indexes
+	meminfoMemTotal = "MemTotal"
+	meminfoMemFree = "MemFree"
+	meminfoMemAvailable = "MemAvailable"
+	meminfoBuffers = "Buffers"
+	meminfoCached = "Cached"
+	meminfoSwapCached = "SwapCached"
+	meminfoActive = "Active"
+	meminfoInactive = "Inactive"
+	meminfoActive(anon) = "Active(anon)"
+	meminfoInactive(anon) = "Inactive(anon)"
+	meminfoActive(file) = "Active(file)"
+	meminfoInactive(file) = "Inactive(file)"
+	meminfoUnevictable = "Unevictable"
+	meminfoMlocked = "Mlocked"
+	meminfoSwapTotal = "SwapTotal"
+	meminfoSwapFree = "SwapFree"
+	meminfoDirty = "Dirty"
+	meminfoWriteback = "Writeback"
+	meminfoAnonPages = "AnonPages"
+	meminfoMapped = "Mapped"
+	meminfoShmem = "Shmem"
+	meminfoKReclaimable = "KReclaimable"
+	meminfoSlab = "Slab"
+	meminfoSReclaimable = "SReclaimable"
+	meminfoSUnreclaim = "SUnreclaim"
+	meminfoKernelStack = "KernelStack"
+	meminfoPageTables = "PageTables"
+	meminfoNFS_Unstable = "NFS_Unstable"
+	meminfoBounce = "Bounce"
+	meminfoWritebackTmp = "WritebackTmp"
+	meminfoCommitLimit = "CommitLimit"
+	meminfoCommitted_AS = "Committed_AS"
+	meminfoVmallocTotal = "VmallocTotal"
+	meminfoVmallocUsed = "VmallocUsed"
+	meminfoVmallocChunk = "VmallocChunk"
+	meminfoPercpu = "Percpu"
+	meminfoHardwareCorrupted = "HardwareCorrupted"
+	meminfoAnonHugePages = "AnonHugePages"
+	meminfoShmemHugePages = "ShmemHugePages"
+	meminfoShmemPmdMapped = "ShmemPmdMapped"
+	meminfoFileHugePages = "FileHugePages"
+	meminfoFilePmdMapped = "FilePmdMapped"
+	meminfoHugePages_Total = "HugePages_Total"
+	meminfoHugePages_Free = "HugePages_Free"
+	meminfoHugePages_Rsvd = "HugePages_Rsvd"
+	meminfoHugePages_Surp = "HugePages_Surp"
+	meminfoHugepagesize = "Hugepagesize"
+	meminfoHugetlb = "Hugetlb"
+	meminfoDirectMap4k = "DirectMap4k"
+	meminfoDirectMap2M = "DirectMap2M"
+	meminfoDirectMap1G = "DirectMap1G"
+
+	// kB KiB mB MB gB GB
+	factor map[string]uint64 = {
+		"kB": 1024,
+		"kiB": 1000,
+		"KB": 1024,
+		"KiB": 1000,
+		"mB": 1024 * 1024,
+		"MB": 1024 * 1024,
+		"miB": 1000 * 1000,
+		"MiB": 1000 * 1000,
+		"gB": 1024 * 1024 * 1024,
+		"GB": 1024 * 1024 * 1024,
+		"giB": 1000 * 1000 * 1000,
+		"GiB": 1000 * 1000 * 1000,
+		"tB": 1024 * 1024 * 1024 * 1024,
+		"TB": 1024 * 1024 * 1024 * 1024,
+		"tiB": 1000 * 1000 * 1000 * 1000,
+		"TiB": 1000 * 1000 * 1000 * 1000,
+	}
+
+	// delayIndex
+	delayIndex map[string]int = {
+		"0-50us:" : 0,
+		"50-100us:" : 1,
+		"100us-200us:" : 2,
+		"200-500us:" : 3,
+		"500-1000us:" : 4,
+		"1-5ms:" : 5,
+		"5-100ms:" : 6,
+		"10-100ms:" : 7,
+		"100ms-bigger:" : 8,
+	}
 )
 
 var (
+	kernelVersion int32 = 0
+	memDelay int32 = 0
 )
+
+func GetKernelVersion() (int32, error) {
+	if kernelVersion > 0 {
+		return kernelVersion, nil
+	}
+
+	rawdata, err := ioutil.ReadFile(ProcFileVersion)
+	if err != nil {
+		agentLog.Error("Read /proc/version failed")
+		return 0, err
+	}
+
+	content := string(rawdata)
+	if !strings.HasPrefix(content, "Linux version") {
+		return 0, errors.New("kernel version not found")
+	}
+
+	fields := strings.Fields(content)
+	// version in fields[2]
+	versions := strings.Split(fields[2], ".")
+	major, err := strconv.Atoi(strings.TrimSpace(versions[0]))
+	if err != nil {
+		return 0, errors.New("Invalid major version number")
+	}
+
+	minor, err := strconv.Atoi(strings.TrimSpace(versions[1]))
+	if err != nil {
+		return 0, errors.New("Invalid minor number")
+	}
+
+	kernelVersion = major * 100 + minor
+
+	return kernelVersion, nil
+}
+
+func memDelayEnabled() (bool) {
+	if memDelay > 0 {
+		return true
+	}
+
+	if memDelay < 0 {
+		return false
+	}
+
+	number, err := readCgroupFileInt64(ProcFileMemDelayEnable)
+	if err != nil {
+		if os.IsNotExist(err) {
+			memDelay = -1
+			return false
+		}
+		agentLog.Error("Cannot read /proc/memdelay_enable")
+		return false
+	}
+
+	if number != 0 {
+		memDelay = 1
+		return true
+	} else {
+		memDelay = -1
+		return false
+	}
+}
 
 func readCgroupFileInt64(file string) (int64, error) {
 	data, err := ioutil.ReadFile(file)
@@ -538,4 +709,766 @@ func getContainerCgroupCpushare(paths map[string]string) (*pb.ContainerCgroupCpu
 	}
 
 	return &result, nil
+}
+
+type blkioResult struct {
+	read uint64
+	write uint64
+	async uint64
+	sync uint64
+	up uint64
+	down uint64
+	meta uint64
+}
+
+func parseBlkioCgroupFile(file string) (map[string]blkioResult, error) {
+	result := make(map[string]blkioResult)
+	rawdata, err := ioutil.ReadFile(file)
+	if err != nil {
+		return result, nil
+	}
+
+	content := string(rawdata)
+	for _, line := range strings.Split(content, "\n") {
+		fields := strings.Fields(line)
+		if len(fields) != 3 {
+			continue
+		}
+
+		number, err := strconv.ParseUint(fields[2], 10, 64)
+		if err != nil {
+			continue
+		}
+
+		if _, ok := result[fields[0]]; !ok {
+			result[fields[0]] = blkioResult {
+				write: 0,
+				read: 0,
+				async: 0,
+				sync: 0,
+				up: 0,
+				down: 0,
+				meta: 0,
+			}
+		}
+
+		if strings.HasPrefix(fields[1], "R") {
+			result[fields[0]].read += number
+		}
+
+		if strings.HasPrefix(fields[1], "W") {
+			result[fields[0]].write += number
+		}
+
+		if strings.HasPrefix(fields[1], "A") {
+			result[fields[0]].async += number
+		}
+
+		if strings.HasPrefix(fields[1], "S") {
+			result[fields[0]].sync += number
+		}
+
+		if strings.HasPrefix(fields[1], "U") {
+			result[fields[0]].up += number
+		}
+
+		if strings.HasPrefix(fields[1], "D") {
+			result[fields[0]].down += number
+		}
+
+		result[fields[0]].meta += number
+	}
+
+	return result, nil
+}
+
+func getContainerCgroupIo(paths map[string]string) ([]*pb.ContainerCgroupIO, error) {
+	blkio, ok := paths[blkioCgroupIndex]
+	if !ok {
+		return []*pb.ContainerCgroupIO{}, status.Error(codes.Unavailable, "No blkio cgroup")
+	}
+
+	ioServiced, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioServiced)
+	if err != nil {
+		return []*pb.ContainerCgroupIO{}, err
+	}
+
+	serviceBytes, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioServiceBytes)
+	if err != nil {
+		return []*pb.ContainerCgroupIO{}, err
+	}
+
+	serviceTime, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioServiceTime)
+	if err != nil {
+		return []*pb.ContainerCgroupIO{}, err
+	}
+
+	waitTime, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioWaitTime)
+	if err != nil {
+		return []*pb.ContainerCgroupIO{}, err
+	}
+
+	queued, err := parseBlkiCgroupFile(blkio + CgroupFileBlkioQueued)
+	if err != nil {
+		return []*pb.ContainerCgroupIO{}, err
+	}
+
+	var result []*pb.ContainerCgroupIO
+	for key, _ := range ioServiced {
+		fields := strings.Split(key, ":")
+		if len(fields) != 2 {
+			continue
+		}
+
+		Major, err := strconv.ParseInt(fields[0], 10, 32)
+		if err != nil {
+			continue
+		}
+
+		Minor, err := strconv.ParseInt(fields[1], 10, 32)
+		if err != nil {
+			continue
+		}
+
+		Rio := 0
+		Wio := 0
+		if elem, ok := ioServiced[key]; ok {
+			Rio = elem.read
+			Wio = elem.write
+		}
+
+		Rbytes := 0
+		Wbytes := 0
+		if elem, ok = serviceBytes[key]; ok {
+			Rbytes = elem.read
+			Wbytes = elem.write
+		}
+
+		IoQueued := 0
+		if elem, ok = queued[key]; ok {
+			IoQueued = elem.read + elem.write
+		}
+
+		WaitTime : = 0
+		if elem, ok = waitTime[key]; ok {
+			WaitTime = elem.read + elem.write
+		}
+
+		ServiceTime := 0
+		if elem, ok = serviceTime[key]; ok {
+			ServiceTime = elem.read + elem.write
+		}
+
+		result = append(result, &pb.ContainerCgroupIO {
+			Rio,
+			Wio,
+			Rbyte,
+			Wbyte,
+			IoQueued,
+			WaitTime,
+			ServiceTime,
+			Major,
+			Minor,
+		})
+	}
+	return result, nil
+}
+
+func getContainerCgroupIoTime(paths map[string]string) ([]*pb.ContainerCgroupIOTime, error) {
+	blkio, ok := paths[blkioCgroupIndex]
+	if !ok {
+		return []*pb.ContainerCgroupIOTime{}, status.Error(codes.Unavailable, "No blkio cgroup")
+	}
+
+	serviceTime, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioServiceTime)
+	if err != nil {
+		return []*pb.ContainerCgroupIOTime{}, err
+	}
+
+	waitTime, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioWaitTime)
+	if err != nil {
+		return []*pb.ContainerCgroupIOTime{}, err
+	}
+
+	complete, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioCompleted)
+	if err != nil {
+		return []*pb.ContainerCgroupIOTime{}, err
+	}
+
+	var result []*pb.ContainerCgroupIOTime
+	for key, _ := range serviceTime {
+		fields := strings.Split(key, ":")
+		if len(fields) != 2 {
+			continue
+		}
+
+		Major, err := strconv.ParseInt(fields[0], 10, 32)
+		if err != nil {
+			continue
+		}
+
+		Minor, err := strconv.ParseInt(fields[1], 10, 32)
+		if err != nil {
+			continue
+		}
+
+		ReadServiceTime := 0
+		WriteServiceTime := 0
+		AsyncServiceTime := 0
+		SyncServiceTime : = 0
+		if elem, ok := serviceTime[key]; ok {
+			ReadServiceTime = elem.read
+			WriteServiceTime = elem.write
+			AsyncServiceTime = elem.async
+			SyncServiceTime = elem.sync
+		}
+
+		ReadWaitTime := 0
+		WriteWaitTime := 0
+		AsyncWaitTime := 0
+		SyncWaitTime := 0
+		if elem, ok = waitTime[key]; ok {
+			ReadWaitTime = elem.read
+			WriteWaitTime = elem.write
+			AsyncWaitTime = elem.async
+			SyncWaitTime = elem.sync
+		}
+
+		IoReadComplete := 0
+		IoWriteComplete := 0
+		IoAsyncComplete := 0
+		IoSyncComplete := 0
+		if elem, ok = complete[key]; ok {
+			IoReadComplete = elem.read
+			IoWriteComplete = elem.write
+			IoAsyncComplete = elem.async
+			IoSyncCompltete = elem.sync
+		}
+		result = append(result, &pn.ContainerCgroupIOTime {
+			ReadServiceTime,
+			WrtieServiceTime,
+			AsyncServiceTime,
+			SyncServiceTime,
+			ReadWaitTime,
+			WriteWaitTime,
+			AsyncWaitTime,
+			SyncWaitTime,
+			IoReadComplete,
+			IoWriteComplete,
+			IoAsyncComplete,
+			IoSyncComplete,
+			Major,
+			Minor,
+		})
+	}
+	return result, nil
+}
+
+func getContianerCgroupIox(paths map[string]string) ([]*pb.ContianerCgroupIOX, error) {
+	blkio, ok := paths[blkioCgroupIndex]
+	if !ok {
+		return []*pb.ContainerCgroupIOX{}, status.Error(codes.Unavailable, "No blkio cgroup")
+	}
+
+	ioServiced, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioServiced)
+	if err != nil {
+		return []*pb.ContainerCgroupIOX{}, err
+	}
+
+	serviceBytes, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioServiceBytes)
+	if err != nil {
+		return []*pb.ContainerCgroupIOX{}, err
+	}
+
+	metaWrite, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioMetaWrite)
+	if err != nil {
+		return []*pb.ContainerCgroupIOX{}, err
+	}
+
+	stateChange, err := parseBlkioCgroupFile(blkio + CgroupFileBlkioStateChange)
+	if err != nil {
+		return []*pb.ContainerCgroupIOX{}, err
+	}
+
+	var result []*pb.ContainerCgroupIOX
+	for key, _ := range ioServiced {
+		fields := strings.Split(key, ":")
+		if len(fields) != 2 {
+			continue
+		}
+
+		Major, err := strconv.ParseInt(fields[0], 10, 32)
+		if err != nil {
+			continue
+		}
+
+		Minor, err := strconv.ParseInt(fields[1], 10, 32)
+		if err != nil {
+			continue
+		}
+
+		Sio := 0
+		Asio := 0
+		if elem, ok := ioServiced[key]; ok {
+			Sio = elem.sync
+			Asio = elem.async
+		}
+
+		SyncBytes := 0
+		AsyncBytes := 0
+		if elem, ok := serviceBytes[key]; ok {
+			SyncBytes = elem.sync
+			AsyncBytes = elem.async
+		}
+
+		MetaWrites := 0
+		if elem, ok := metaWrite[key]; ok {
+			MetaWrites = elem.meta
+		}
+
+		IoUp := 0
+		IoDown := 0
+		if elem, ok = stateChange[key]; ok {
+			IoUp = elem.up
+			IoDown = elem.down
+		}
+		result = append(result, &pb.ContainerCgroupIOX {
+			Sio,
+			Asio,
+			Syncbytes: SyncBytes,
+			Asyncbytes: AsyncBytes,
+			MetaWrites,
+			IoUp,
+			IoDown,
+			Major,
+			Minor,
+		})
+	}
+	return result, nil
+}
+
+func getContianerCgroupLoad(paths map[string]string) (*pb.ContianerCgroupLoad, error) {
+	var data map[string]uint64
+	if !aliKernel() {
+		data = readAliCgroupCpuData(paths)
+	} else {
+		data = readCgroupCpuData(paths)
+	}
+
+	return &pb.ContainerCgroupLoad{
+		Load1: getAliCgroupElement(cpuLoad1, data),
+		Load5: getAliCgroupElement(cpuLoad5, data),
+		Load15: getAliCgroupElement(cpuLoad15, data),
+		RLoad1: getAliCgroupElement(cpuRLoad1, data),
+		RLoad5: getAliCgroupElement(cpuRLoad5, data),
+		RLoad15: getAliCgroupElement(cpuRLoad15, data),
+	}, nil
+}
+
+// read meminfo
+func readProcMemInfo() (map[string]uint64, error) {
+	rawdata, err := ioutil.ReadFile(ProcFileMemInfo)
+	if err != nil {
+		return make(map[string]uint64), err
+	}
+
+	data := make(map[string]uint64)
+	content := string(rawdata)
+	for _, line := range strings.Split(content, "\n") {
+		fields := strings.Fields(line)
+
+		key := strings.Trim(fields[0], ":")
+		nf := len(fields)
+		if nf != 3 && nf != 2 {
+			continue
+		}
+
+		value, err := strconv.ParseUint(strings.TrimSpace(fields[1]), 10, 64)
+		if err != nil {
+			continue
+		}
+
+		if len(fields) == 3 {
+			if elem, ok := factor[strings.Trim(fields[2])]; !ok {
+				agentLog.Info("Unknown factor!")
+				continue
+			}
+			data[key] = value * elem
+		}
+
+		if len(fields) == 2 {
+			data[key] = value
+		}
+	}
+
+	return data, nil
+}
+
+func getContainerCgroupMem(paths map[string]string) (*pb.ContainerCgroupMem, error) {
+	data, err := readAliCgroupMemoryData(paths)
+	if err != nil {
+		return nil, err
+	}
+
+	meminfo, err := readProcMemInfo()
+	if err != nil {
+		return nil, err
+	}
+
+	tmpTotal := getAliCgroupElement(memMemoryLimit, data)
+	Rss := getAliCgroupElement(memRss, data)
+	Cache := getAliCgroupElement(memCache, data)
+	activeFile := getAliCgroupElement(memActiveFile, data)
+	inactiveFile := getAliCgroupElement(memInactiveFile, data)
+	Slab := getAliCgroupElement(memSlab, data)
+	Swap := 0
+	Map := getAliCgroupElement(memMappedFile, data)
+	swapiness := getAliCgroupElement(memSwapiness, data)
+	if swapiness > 0 {
+		Swap = getAliCgroupElement(memSwap, data)
+		tmpTotal = getAliCgroupElement(memMemswLimit, data)
+	}
+
+	sysTotal := getAliCgroupElement(meminfoMemTotal, meminfo)
+	if tmpTotal > sysTotal {
+		tmpTotal = sysTotal
+	}
+
+	Total := tmpTotal
+	Avail := Total - Rss - Slab - Swap - Cache + activeFile + inactiveFile
+
+	return &pb.ContainerCgroupMem {
+		Total,
+		Rss,
+		Cache,
+		Avail,
+		Slab,
+		Swap,
+		Map,
+	}, nil
+}
+
+func parseOneMdsLoad(s string) (uint64, eror) {
+	fields := strings.Split(s, ".")
+	if len(fields) != 2 {
+		return 0, errors.New("corrupted string format")
+	}
+
+	major, err := strconv.ParseUint(strings.TrimSpace(fields[0]), 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	minor, err := strconv.ParseUint(strings.TrimSpace(fields[1]), 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return major * 100 + minor, nil
+}
+
+func parseMdsLoad(s string) (uint64, uint64, uint64, error) {
+	fields := strings.Fields(s)
+	if len(fields) != 3 {
+		return 0, 0, 0, errors.New("corrupted string format")
+	}
+
+	Load1, err := parseOneMdsLoad(fields[0])
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	Load5, err := parseOneMdsLoad(fields[1])
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	Load15, err := parseOneMdsLoad(fields[2])
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	return Load1, Load5, Load15, err
+}
+
+func getContainerCgroupMemDelay409(cgroup string) (*pb.ContainerCgroupMemDelay, error) {
+	rawdata, err := ioutil.ReadFile(cgroup + CgroupFileMemoryMemDelay)
+	if err != nil {
+		return nil, err
+	}
+
+	content := string(rawdata)
+	lines := strings.Split(content, "\n")
+
+	fields := strings.Fields(lines[0])
+	if len(fields) != 3 {
+		return nil, errors.New("Unknown data format")
+	}
+
+	AggregateTotal, err := strconv.ParseUint(strings.TrimSpace(fields[0]), 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	AggregateDirect, err : = strconv.ParseUint(strings.TrimSpace(fields[1]), 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	AggregateBackgroud, err := strconv.ParseUint(strings.TrimSpace(fields[2]), 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	MdsSomeLoad1, MdsSomeLoad5, MdsSomeLoad15, err := parseMdsLoad(lines[1])
+	if err != nil {
+		return nil, err
+	}
+
+	MdsFullLoad1, MdsFullLoad5, MdsFullLoad15, err := parseMdsLoad(lines[2])
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ContainerCgroupMemDelay {
+		AggregateTotal,
+		AggregateDirect,
+		AggregateBackgroud,
+		MdsSomeLoad1,
+		MdsSomeLoad5,
+		MdsSomeLoad15,
+		MdsFullLoad1,
+		MdsFullLoad5,
+		MdsFullLoad15,
+	}, nil
+}
+
+func parseReclaimDelay(s string) ([]uint64, error) {
+	var data []uint64
+	rawdata, err := ioutil.ReadFile(s + CgroupFileMemoryReclaimDelay)
+	if err != nil {
+		return data, nil
+	}
+
+	length := len(delayIndex)
+	data = make([]uint64, length)
+
+	content := string(rawdata)
+	for _, line := range strings.Split(content, "\n") {
+		fields := strings.Fields(line)
+		if len(fields) != 2 {
+			continue
+		}
+
+		value, err := strconv.ParseUint(strings.TrimSpace(fields[1]), 10, 64)
+		if err != nil {
+			agentLog.Error("cannot get memdelay's value")
+			continue
+		}
+
+		if index, ok := delayIndex[fields[0]]; !ok {
+			agentLog.Error("corrupted data, not in delayIndex")
+			continue
+		}
+
+		data[index] = value
+	}
+
+	return data, nil
+}
+
+func parseOneDirectReclaimSched(s string) (uint64, error) {
+	fields := strings.Fields(s)
+	if len(fields) != 6 {
+		return 0, errors.New("corrupted string!")
+	}
+
+	return strconv.ParseUint(strings.TrimSpace(fields[4]), 10, 64)
+}
+
+func parseDirectReclaimSched(s string) (uint64, uint64, uint64, error) {
+	rawdata, err := ioutil.ReadFile(s + CgroupFileMemoryReclaimSched)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	content := string(rawdata)
+	lines := strings.Split(content, "\n")
+	WaitIf, err := parseOneDirectReclaimSched(lines[1])
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	WbWait, err := parseOneDirectReclaimSched(lines[2])
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	WaitOnPageWb, err := parseOneDirectRecaimSched(lines[3])
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	return WaitIf, WbWait, WaitOnPageWb, nil
+}
+
+func getContainerCgroupMemDelayOther(cgroup string) (*pb.ContainerCgroupMemDelay, error) {
+	DelayData, err := parseReclaimDelay(cgroup)
+	if err != nil {
+		return nil, err
+	}
+
+	WaitIf, WbWait, WaitOnPageWb, err := parseDirectReclaimSched(cgroup)
+	if err != nil {
+		return nil ,err
+	}
+
+	return &pb.ContianerCgroupMemDelay {
+		DelayData,
+		WaitIf,
+		WbWait,
+		WaitOnPageWb,
+	}, nil
+}
+
+func getContianerCgroupMemDelay(paths map[string]string) (*pb.ContianerCgroupMemDelay, error) {
+	memory, ok := paths[memoryCgroupIndex]
+	if !ok {
+		return nil, errors.New("No memory cgroup")
+	}
+
+	if GetKernelVersion() == 409 {
+		if memDelayEnabled() {
+			return getContainerCgroupMemDelay409(memory)
+		}
+
+		return nil, nil
+	}
+
+	return getContainerCgroupMemDelayOther(memory)
+}
+
+func getLatencyInfoFromFile(f, name string) (*pb.ContainerCgroupLatencyStat, error) {
+	rawdata, err := ioutil.ReadFile(f)
+	if err != nil {
+		 return nil, err
+	}
+
+	content := string(rawdata)
+	data := make([]uint64, len(delayIndex2))
+	for _, line := range strings.Split(content, "\n") {
+		fields := strings.Fields(line)
+		length := len(fields)
+
+		if length != 3 && length != 2 {
+			agentLog.Info("mal-formatted line")
+			continue
+		}
+
+		index, ok := delayIndex2[strings.TrimSpace(fields[0])]
+		if !ok {
+			agentLog.Error("mal-formed data? no Index in delayIndex2")
+			continue
+		}
+
+		value1, err := strconv.ParseUint(strings.TrimSpace(fields[1]), 10, 64)
+		if err != nil {
+			continue
+		}
+
+		value2 := 0
+		if length == 3 {
+			value2, err := strconv.ParseUint(strings.TrimSpace(fields[2]), 10, 64)
+			if err != nil {
+			continue
+			}
+		}
+
+		data[index] = value1 + value2
+	}
+
+	return &pb.ContainerCgroupLatencyStats {
+		Name: name,
+		Ticks: data,
+	}, nil
+}
+
+func getContainerCgroupLatencyStats(paths map[string]string) ([]*pb.ContianerCgroupLatencyStat, error) {
+	memory, ok := paths[memoryCgroupIndex]
+	if !ok {
+		return []*pb.ContainerCgroupLatencyStats{}, errors.New("no memory cgroup")
+	}
+
+	var result []*pb.ContainerCgroupLatencyStats
+	compact, err := getLatencyInfoFromFile(memory + CgroupFileMmeoryCompactLatency, "compact")
+	if err == nil {
+		result = append(result, compact)
+	}
+
+	reclaim, err := getLatencyInfoFromFile(memory + CgroupFileMemoryReclaimLatency, "reclaim")
+	if err == nil {
+		result = append(result, reclaim)
+	}
+
+	throttle, err := getLatencyInfoFromFile(memory + CgroupFileMemoryThrottleLatency, "throttle")
+	if err == nil {
+		result = append(result, throttle)
+	}
+
+	return result, nil
+}
+
+func getContainerCgroupMemx(paths map[string]string) (*pb.ContainerCgroupMemx, error) {
+	data, err := readAliCgroupMemoryData(paths)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ContainerCgroupMemx {
+		Aanon: getAliCgroupElement(memActiveAnon,data),
+		Ianon: getAliCgroupElement(memInactiveAnon, data),
+		Afile: getAliCgroupElement(memActiveFile, data),
+		Ifile: getAliCgroupElement(memInactiveFile, data),
+		Mpfile: getAliCgroupElement(memMappedFile, data),
+		Dirty: getAliCgroupElement(memDirty, data),
+		Wback: getAliCgroupElement(memWriteback, data),
+		Slab: getAliCgroupElement(memKmem, data),
+		Lock: getAliCgroupelement(memUnevictable),
+		Rss: getAliCgroupElement(memRss, data),
+		Huge: getAliCgroupElement(memRssHuge, data),
+		Swap: getAliCgroupElement(memSwap, data),
+	}, nil
+}
+
+func getContianerCgroupPcsw(paths map[string]string) (*pb.ContainerCgroupPcsw, error) {
+}
+
+func getContianerCgroupPercpu(paths map[string]string) (*pb.ContianerCgroupPercpu, error) {
+}
+
+func getContianerCgroupSchedbvt(paths map[string]string) (*pb.ContianerCgroupSchedbvt, error) {
+}
+
+func getContainerCgroupSchedcg(paths map[string]string) *pb.ContianerCgroupSchedcg, error) {
+}
+
+func getContianerCgroupTask(patsh map[string]string) (*pb.ContainerCgroupSchedTask, error) {
+}
+
+func getContainerCgroupTcpStats(paths map[string]string) (*pb.ContianerTcpStats, error) {
+}
+
+func getContianerCgroupTcpxStats(paths map[string]string) (*pb.ContainerCgroupTcpxStats, error) {
+}
+
+func getContianerCgroupTrafficStats(paths map[string]string) (*pb.ContianerCgroupTrafficStats, error) {
+}
+
+func getContianerCgroupUdpStats(paths map[string]string) (*pb.ContainerCgroupUdpStats, error) {
+}
+
+func getContainerCgroupVm(paths map[string]string) (*pb.ContainerCgroupVm, error) {
+}
+
+func getContainerPartitionStats(paths map[string]string) ([]*pb.ContainerPartitionStats, error) {
 }
