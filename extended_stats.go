@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"errors"
 	pb "github.com/kata-containers/agent/protocols/grpc"
 	"google.golang.org/grpc"
@@ -292,14 +293,17 @@ func (c *container) GetContainerBaseStats() (*pb.ContainerBaseStats, error) {
 }
 
 func (p *process) GetProcessStats() (*pb.ProcessStats, error) {
-	Pid := p.process.Pid()
+	Pid, err := p.process.Pid()
+	if err != nil {
+		return nil, err
+	}
 
 	PidStats, err := getProcessPidStats(Pid)
 	if err != nil {
 		return nil, err
 	}
 
-	CgroupSched, errr := getProcessCgroupSched(Pid)
+	CgroupSched, err := getProcessCgroupSched(Pid)
 	if err != nil {
 		return nil, err
 	}
@@ -319,13 +323,13 @@ func (p *process) GetProcessStats() (*pb.ProcessStats, error) {
 		return nil, err
 	}
 
-	return &ProcessStats {
-		Pid,
-		PidStats,
-		CgroupSched,
-		ProcCpuStats,
-		ProcIoStats,
-		ProcMemStats,
+	return &pb.ProcessStats {
+		Pid: int32(Pid),
+		PidStats: PidStats,
+		CgroupSched: CgroupSched,
+		ProcCpuStats: ProcCpuStats,
+		ProcIoStats: ProcIoStats,
+		ProcMemStats: ProcMemStats,
 	}, nil
 }
 
