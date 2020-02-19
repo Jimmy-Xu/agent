@@ -624,7 +624,203 @@ read_cgroup_sched_stats(char *parameter, char *buf)
 
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// mod_proc_cpu.c
 
+#include <stdint.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+
+struct stats_proc_cpu {
+    unsigned long long user_cpu;
+    unsigned long long sys_cpu;
+    unsigned long long blkio_delay;
+    unsigned long long run_on_cpu;
+    unsigned long long wait_on_rq;
+    unsigned long long n_threads;
+    char container_id[64];
+};
+
+#define PID_STAT        "/proc/%u/stat"
+#define PID_STATUS      "/proc/%u/status"
+#define PID_SCHEDSTAT   "/proc/%u/schedstat"
+#define PROC_CGROUP     "/proc/%u/cgroup"
+#define MAX_PIDS        64
+#define STATS_PROC_SIZE (sizeof(struct stats_proc_cpu))
+
+#define MAX_PROC_COLLECT (512)
+
+#define STARTSWITH(str, subs) (!strncmp(str, subs, sizeof(subs) - 1))
+#define PASS_STRING(str, subs) (str + sizeof(subs) - 1)
+
+#define SIZE_1K (1<<10)
+#define SIZE_128K (128*SIZE_1K)
+#define PROC_BUFSIZE SIZE_128K
+
+
+static inline uint64_t to_u64(const char *s)
+{
+    uint64_t n = 0;
+
+    while(*s){
+        n = n * 10 + *s - '0';
+        s++;
+    }
+
+    return n;
+}
+
+
+static void
+read_proc_cpu_stats(char *parameter, char *buf)
+{
+    int     nb = 0, pid[MAX_PROC_COLLECT];
+    int     i, n_s;
+    int     ncpu;
+    //char    buf[PROC_BUFSIZE];
+    char    *result[64];
+    char    filename[128], line[1024];
+    FILE   *fp;
+    struct  stats_proc_cpu st_proc;
+    unsigned long long total_time = 0;
+    int pos = 0;
+    char *wp;
+    char new_parameter[256] = {0};
+
+    strcpy(new_parameter, parameter);
+
+    if (strlen(new_parameter) > 200 || new_parameter[0] == '\0') {
+        return;
+    }
+
+    char *p;
+    p = strtok_safe(new_parameter, " ");
+    while(p) {
+        pid[nb] = atoi(p);
+        if(pid[nb++] < 0){
+            return;
+        }
+        if(nb >= MAX_PIDS){
+            return;
+        }
+        p = strtok_safe(NULL, " ");
+    }
+
+    printf("read /proc/stat\n");
+    if ((fp = fopen("/proc/stat", "re")) == NULL){
+        return;
+    }
+    unsigned long long cpu_time[10];
+    bzero(cpu_time, sizeof(cpu_time));
+    if (fscanf(fp, "%*s %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu",
+                &cpu_time[0], &cpu_time[1], &cpu_time[2], &cpu_time[3],
+                &cpu_time[4], &cpu_time[5], &cpu_time[6], &cpu_time[7],
+                &cpu_time[8], &cpu_time[9]) == EOF) {
+        fclose(fp);
+        return;
+    }
+    fclose(fp);
+    for (i = 0; i < 10; i++) {
+        total_time += cpu_time[i];
+    }
+    if ((fp = fopen("/proc/stat", "re")) == NULL) {
+        return;
+    }
+    ncpu = 0;
+    while(fgets(line, 1024, fp) != NULL) {
+        printf("line: %s", line);
+        if(STARTSWITH(line, "cpu")) {
+            ncpu++;
+        } else {
+            break;
+        }
+    }
+    fclose(fp);
+    if(ncpu > 1) {
+        total_time /= (ncpu - 1);
+    }
+    printf("get all pid's info\n");
+    wp = buf;
+    for (i = 0; i < nb; ++i){
+        printf("read values from /proc/pid/stat\n");
+        memset(st_proc.container_id, 0, sizeof(st_proc));
+        printf("get container_id\n");
+#if IN_7U
+        if(get_container_id_from_pid(st_proc.container_id, 64, pid[i]) < 0) {
+            continue;
+        }
+#else
+        strcpy_safe(st_proc.container_id, "root", 64);
+#endif
+        sprintf(filename, PID_STAT, pid[i]);
+        if ((fp = fopen(filename, "re")) == NULL) {
+            continue;
+        }
+        if (fgets(line, 1024, fp) == NULL) {
+            fclose(fp);
+            return;
+        }
+        n_s = split_string(line, result, 64, ' ');
+        if(n_s < 42){
+            fclose(fp);
+            return;
+        }
+        st_proc.user_cpu = to_u64(result[13]) + to_u64(result[15]);
+        st_proc.sys_cpu = to_u64(result[14]) + to_u64(result[16]);
+        st_proc.blkio_delay = to_u64(result[41]);
+        fclose(fp);
+        printf("get number of threads\n");
+        sprintf(filename, PID_STATUS, pid[i]);
+        if ((fp = fopen(filename, "re")) == NULL){
+            continue;
+        }
+        while(fgets(line, 128, fp) != NULL){
+            if(STARTSWITH(line, "Threads:")){
+                sscanf(PASS_STRING(line, "Threads:"), "%llu", &st_proc.n_threads);
+                break;
+            }
+        }
+        fclose(fp);
+        printf("get run on rq & wait on rq\n");
+        sprintf(filename, PID_SCHEDSTAT, pid[i]);
+        if ((fp = fopen(filename, "re")) == NULL)
+            continue;
+        unsigned long long oncpu, wait_on_rq;
+        if(fscanf(fp, "%llu %llu %*u", &oncpu, &wait_on_rq) == EOF){
+            fclose(fp);
+            return;
+        }
+        st_proc.run_on_cpu = oncpu;
+        st_proc.wait_on_rq = wait_on_rq;
+        fclose(fp);
+        pos = snprintf(wp, PROC_BUFSIZE - (wp - buf + 1), "%.12s_%u=%llu,%llu,%llu,%llu,%llu,%llu,%llu;",
+                       st_proc.container_id,
+                       pid[i],
+                       st_proc.user_cpu,
+                       st_proc.sys_cpu,
+                       total_time,
+                       st_proc.blkio_delay,
+                       st_proc.run_on_cpu,
+                       st_proc.wait_on_rq,
+                       st_proc.n_threads
+                       );
+        if (wp + pos - buf >= PROC_BUFSIZE){
+            break;
+        }
+        wp += pos;
+    }
+
+    if (wp - buf < PROC_BUFSIZE) *wp = '\0';
+}
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
 import "C"
 
@@ -715,6 +911,7 @@ func getProcessCgroupSched(pid int) (*pb.ProcessCgroupSched, error) {
 		n, _ := strconv.ParseUint(cols[i], 10, 64)
 		tasksDelayMs = append(tasksDelayMs, n)
 	}
+
 	bvtDelay, _ = strconv.ParseUint(cols[12], 10, 64)
 	noiseKickDelay, _ = strconv.ParseUint(cols[13], 10, 64)
 	lossTime, _ = strconv.ParseUint(cols[14], 10, 64)
@@ -736,6 +933,31 @@ func getProcessProcCpuStats(pid int) (*pb.ProcessProcCpuStats, error) {
 		waitOnRq   uint64
 		nThreads   uint64
 	)
+
+	// call read_pid_stats
+	dst := ""
+	c_src := C.CString("1")
+	defer C.free(unsafe.Pointer(c_src))
+	c_dst := C.CString(dst)
+	//defer C.free(unsafe.Pointer(c_dst))
+	C.read_proc_cpu_stats(c_src, c_dst)
+
+	// show result
+	received := C.GoString(c_dst)
+	fmt.Printf("[go]received:   dst=%s\n", received)
+
+	// convert result
+	content := strings.Split(received, ITEM_SPSTART)[1]
+	item := strings.Split(content, ITEM_SPLIT)[0]
+	cols := strings.Split(item, DATA_SPLIT)
+
+	userCpu, _ = strconv.ParseUint(cols[0], 10, 64)
+	sysCpu, _ = strconv.ParseUint(cols[1], 10, 64)
+	blkioDelay, _ = strconv.ParseUint(cols[2], 10, 64)
+	runOnCpu, _ = strconv.ParseUint(cols[3], 10, 64)
+	waitOnRq, _ = strconv.ParseUint(cols[4], 10, 64)
+	nThreads, _ = strconv.ParseUint(cols[5], 10, 64)
+
 	return &pb.ProcessProcCpuStats{
 		UserCpu:    userCpu,
 		SysCpu:     sysCpu,
