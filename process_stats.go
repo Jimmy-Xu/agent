@@ -957,6 +957,141 @@ read_proc_io_stats(char *parameter, char *buf)
 
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//mod_proc_mem.c
+
+#include <stdint.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#define PROC_MEM_STATUS "/proc/%u/status"
+#define GLOBAL_MEMINFO  "/proc/meminfo"
+#define PROC_SMAPS      "/proc/%u/smaps"
+#define MAX_PIDS 64
+
+#define MAX_PROC_COLLECT (512)
+
+#define SIZE_1K (1<<10)
+#define SIZE_128K (128*SIZE_1K)
+#define PROC_BUFSIZE SIZE_128K
+
+#define STARTSWITH(str, subs) (!strncmp(str, subs, sizeof(subs) - 1))
+#define PASS_STRING(str, subs) (str + sizeof(subs) - 1)
+
+struct stats_proc_mem {
+    unsigned long long usage;
+    unsigned long long cache;
+    unsigned long long anon;
+    unsigned long long shmem;
+    unsigned long long lock;
+    unsigned long long swp;
+    unsigned long long total_swp;
+    char container_id[64];
+};
+
+
+static void
+read_proc_mem_stats(char *parameter, char *buf)
+{
+    int npids, pid[MAX_PROC_COLLECT];
+    int i, kernel_4_9 = 0;
+    char filename[128], line[128];
+    //static char buf[PROC_BUFSIZE];
+    FILE *fp;
+    struct stats_proc_mem st_mem;
+    char *wp;
+    int n;
+
+    char new_parameter[256] = {0};
+
+    strcpy(new_parameter, parameter);
+
+    if (strlen(new_parameter) > 200 || new_parameter[0] == '\0') {
+        return;
+    }
+
+    char *p;
+    npids = 0;
+    p = strtok_safe(new_parameter, " ");
+    while(p) {
+        pid[npids] = atoi(p);
+        if(pid[npids++] < 0)
+            return;
+        if(npids >= MAX_PIDS)
+            return;
+        p = strtok_safe(NULL, " ");
+    }
+    printf("get all pid's info\n");
+
+    wp = buf;
+    for(i = 0; i < npids; ++i){
+#if IN_7U
+        printf("get container id");
+        if(get_container_id_from_pid(st_mem.container_id, 64, pid[i]) < 0) {
+            continue;
+        }
+#else
+        strcpy_safe(st_mem.container_id, "root", 64);
+#endif
+        printf("collect data\n");
+        sprintf(filename, PROC_MEM_STATUS, pid[i]);
+        if ((fp = fopen(filename, "re")) == NULL)
+            continue;
+        while (fgets(line, 128, fp) != NULL) {
+            if(STARTSWITH(line, "VmRSS:")){
+                sscanf(PASS_STRING(line, "VmRSS:"), "%llu", &st_mem.usage);
+            } else if(STARTSWITH(line, "RssFile:")){
+                kernel_4_9++;
+                sscanf(PASS_STRING(line, "RssFile:"), "%llu", &st_mem.cache);
+            } else if(STARTSWITH(line, "RssAnon:")){
+                kernel_4_9++;
+                sscanf(PASS_STRING(line, "RssAnon:"), "%llu", &st_mem.anon);
+            } else if(STARTSWITH(line, "RssShmem:")) {
+                kernel_4_9++;
+                sscanf(PASS_STRING(line, "RssShmem:"), "%llu", &st_mem.shmem);
+            } else if(STARTSWITH(line, "VmLck:")){
+                sscanf(PASS_STRING(line, "VmLck:"), "%llu", &st_mem.lock);
+            } else if(STARTSWITH(line, "VmSwap:")) {
+                sscanf(PASS_STRING(line, "VmSwap:"), "%llu", &st_mem.swp);
+            }
+        }
+        fclose(fp);
+        printf("get total swap mem\n");
+        if ((fp = fopen(GLOBAL_MEMINFO, "re")) == NULL)
+            return;
+        while(fgets(line, 128, fp) != NULL){
+            if(!strncmp(line, "SwapTotal:", sizeof("SwapTotal:") - 1)){
+                sscanf(line + sizeof("SwapTotal:") - 1, "%llu", &st_mem.total_swp);
+                break;
+            }
+        }
+        fclose(fp);
+        n = snprintf(wp, PROC_BUFSIZE - (wp - buf + 1),
+                     "%.12s_%u=%llu,%llu,%llu,%llu,%llu,%llu,%llu;",
+                     st_mem.container_id,
+                     pid[i],
+                     st_mem.usage,
+                     st_mem.cache,
+                     st_mem.anon,
+                     st_mem.shmem,
+                     st_mem.lock,
+                     st_mem.swp,
+                     st_mem.total_swp);
+        if(wp + n - buf >= PROC_BUFSIZE){
+            break;
+        }
+        wp += n;
+    }
+    if(wp - buf < PROC_BUFSIZE) *wp = 0;
+}
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
 import "C"
 
@@ -1027,7 +1162,7 @@ func getProcessCgroupSched(pid int) (*pb.ProcessCgroupSched, error) {
 		lossTime       uint64
 	)
 
-	// call read_pid_stats
+	// call read_cgroup_sched_stats
 	dst := ""
 	c_src := C.CString("1")
 	defer C.free(unsafe.Pointer(c_src))
@@ -1070,7 +1205,7 @@ func getProcessProcCpuStats(pid int) (*pb.ProcessProcCpuStats, error) {
 		nThreads   uint64
 	)
 
-	// call read_pid_stats
+	// call read_proc_cpu_stats
 	dst := ""
 	c_src := C.CString("1")
 	defer C.free(unsafe.Pointer(c_src))
@@ -1115,7 +1250,7 @@ func getProcessProcIoStats(pid int) (*pb.ProcessProcIOStats, error) {
 		syscw  uint64
 	)
 
-	// call read_pid_stats
+	// call read_proc_io_stats
 	dst := ""
 	c_src := C.CString("1")
 	defer C.free(unsafe.Pointer(c_src))
@@ -1161,6 +1296,32 @@ func getProcessProcMemStats(pid int) (*pb.ProcessProcMemStats, error) {
 		swp      uint64
 		totalSwp uint64
 	)
+
+	// call read_proc_mem_stats
+	dst := ""
+	c_src := C.CString("1")
+	defer C.free(unsafe.Pointer(c_src))
+	c_dst := C.CString(dst)
+	//defer C.free(unsafe.Pointer(c_dst))
+	C.read_proc_mem_stats(c_src, c_dst)
+
+	// show result
+	received := C.GoString(c_dst)
+	fmt.Printf("[go]received:   dst=%s\n", received)
+
+	// convert result
+	content := strings.Split(received, ITEM_SPSTART)[1]
+	item := strings.Split(content, ITEM_SPLIT)[0]
+	cols := strings.Split(item, DATA_SPLIT)
+
+	usage, _ = strconv.ParseUint(cols[0], 10, 64)
+	cache, _ = strconv.ParseUint(cols[1], 10, 64)
+	anon, _ = strconv.ParseUint(cols[2], 10, 64)
+	shmem, _ = strconv.ParseUint(cols[3], 10, 64)
+	lock, _ = strconv.ParseUint(cols[4], 10, 64)
+	swp, _ = strconv.ParseUint(cols[5], 10, 64)
+	totalSwp, _ = strconv.ParseUint(cols[6], 10, 64)
+
 	return &pb.ProcessProcMemStats{
 		Usage:    usage,
 		Cache:    cache,
