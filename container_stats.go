@@ -18,6 +18,11 @@ const (
 	CgroupFileCpuacctStat = "cpuacct.stat"
 	CgroupFileCpuacctUsage = "cpuacct.usage"
 	CgroupFileCpuacctStatics = "cpuacct.sched_cfs_statistics"
+	CgroupfileCpuacctPercpu = "cpuacct.usage_percpu"
+	CgroupFileCpuacctPercpuSys = "cpuacct.usage_percpu_sys"
+	CgroupFileCpuacctPercpuUser = "cpuacct.usage_percpu_user"
+	CgroupFileCpuacctHistgramEnable = "cpuacct.sched_lat_histgram_enable"
+	CgroupFilecpuacctHistgram = "cpuacct.sched_lat_histgram_cfs"
 	CgroupFileCpuQuato = "cpu.cfs_quato_us"
 	CgroupFileCpuPeriod = "cpu.cfs_period_us"
 	CgroupFileCpuShares = "cpu.shares"
@@ -47,10 +52,19 @@ const (
 	CgroupFileBlkioMetaWrite = "blkio.throttle.meta_write_serviced"
 	CgroupFileBlkioStateChange = "blkio.throttle.state_change_counter"
 
+	// freezer files
+	CgroupFileFreezerTasks = "tasks"
+
 	// Proc files
 	ProcFileMemInfo = "/proc/meminfo"
 	ProcFileVersion = "/proc/version"
 	ProcFileMemDelayEnable = "/proc/memdelay_enable"
+	ProcSysfsPidMax = "/proc/sys/kernel/pid_max"
+	ProcFileSnmpStat = "/proc/%d/net/snmp"
+	ProcFileTcpxStat = "/proc/%d/net/netstat"
+	ProcFileNetDev = "/proc/%d/net/dev"
+	ProcFileLocalMount = "/proc/%d/mounts"
+	ProcFileGlobalMount = "/proc/mounts"
 
 	// cgroup paths indexes
 	cpuacctCgroupIndex = "cpuacct"
@@ -186,6 +200,155 @@ const (
 	meminfoDirectMap2M = "DirectMap2M"
 	meminfoDirectMap1G = "DirectMap1G"
 
+	// tcp Indexes
+	tcpRtoAlgorithm = "RtoAlgorithm"
+	tcpRtoMin = "RtoMin"
+	tcpRtoMax = "RtoMax"
+	tcpMaxConn = "MaxConn"
+	tcpActiveOpens = "ActiveOpens"
+	tcpPassiveOpens = "PassiveOpens"
+	tcpAttemptFails = "AttemptFails"
+	tcpEstabResets = "EstabResets"
+	tcpCurrEstab = "CurrEstab"
+	tcpInSegs = "InSegs"
+	tcpOutSegs = "OutSegs"
+	tcpRetransSegs = "RetransSegs"
+	tcpInErrs = "InErrs"
+	tcpOutRsts = "OutRsts"
+	tcpInCsumErrors = "InCsumErrors"
+
+	//tcpx Indexes
+	tcpxSyncookiesSent = "SyncookiesSent"
+	tcpxSyncookiesRecv = "SyncookiesRecv"
+	tcpxSyncookiesFailed = "SyncookiesFailed"
+	tcpxEmbryonicRsts = "EmbryonicRsts"
+	tcpxPruneCalled = "PruneCalled"
+	tcpxRcvPruned = "RcvPruned"
+	tcpxOfoPruned = "OfoPruned"
+	tcpxOutOfWindowIcmps = "OutOfWindowIcmps"
+	tcpxLockDroppedIcmps = "LockDroppedIcmps"
+	tcpxArpFilter = "ArpFilter"
+	tcpxTW = "TW"
+	tcpxTWRecycled = "TWRecycled"
+	tcpxTWKilled = "TWKilled"
+	tcpxPAWSActive = "PAWSActive"
+	tcpxPAWSEstab = "PAWSEstab"
+	tcpxDelayedACKs = "DelayedACKs"
+	tcpxDelayedACKLocked = "DelayedACKLocked"
+	tcpxDelayedACKLost = "DelayedACKLost"
+	tcpxListenOverflows = "ListenOverflows"
+	tcpxListenDrops = "ListenDrops"
+	tcpxTCPHPHits = "TCPHPHits"
+	tcpxTCPPureAcks = "TCPPureAcks"
+	tcpxTCPHPAcks = "TCPHPAcks"
+	tcpxTCPRenoRecovery = "TCPRenoRecovery"
+	tcpxTCPSackRecovery = "TCPSackRecovery"
+	tcpxTCPSACKReneging = "TCPSACKReneging"
+	tcpxTCPSACKReorder = "TCPSACKReorder"
+	tcpxTCPRenoReorder = "TCPRenoReorder"
+	tcpxTCPTSReorder = "TCPTSReorder"
+	tcpxTCPFullUndo = "TCPFullUndo"
+	tcpxTCPPartialUndo = "TCPPartialUndo"
+	tcpxTCPDSACKUndo = "TCPDSACKUndo"
+	tcpxTCPLossUndo = "TCPLossUndo"
+	tcpxTCPLostRetransmit = "TCPLostRetransmit"
+	tcpxTCPRenoFailures = "TCPRenoFailures"
+	tcpxTCPSackFailures = "TCPSackFailures"
+	tcpxTCPLossFailures = "TCPLossFailures"
+	tcpxTCPFastRetrans = "TCPFastRetrans"
+	tcpxTCPSlowStartRetrans = "TCPSlowStartRetrans"
+	tcpxTCPTimeouts = "TCPTimeouts"
+	tcpxTCPLossProbes = "TCPLossProbes"
+	tcpxTCPLossProbeRecovery = "TCPLossProbeRecovery"
+	tcpxTCPRenoRecoveryFail = "TCPRenoRecoveryFail"
+	tcpxTCPSackRecoveryFail = "TCPSackRecoveryFail"
+	tcpxTCPRcvCollapsed = "TCPRcvCollapsed"
+	tcpxTCPBacklogCoalesce = "TCPBacklogCoalesce"
+	tcpxTCPDSACKOldSent = "TCPDSACKOldSent"
+	tcpxTCPDSACKOfoSent = "TCPDSACKOfoSent"
+	tcpxTCPDSACKRecv = "TCPDSACKRecv"
+	tcpxTCPDSACKOfoRecv = "TCPDSACKOfoRecv"
+	tcpxTCPAbortOnData = "TCPAbortOnData"
+	tcpxTCPAbortOnClose = "TCPAbortOnClose"
+	tcpxTCPAbortOnMemory = "TCPAbortOnMemory"
+	tcpxTCPAbortOnTimeout = "TCPAbortOnTimeout"
+	tcpxTCPAbortOnLinger = "TCPAbortOnLinger"
+	tcpxTCPAbortFailed = "TCPAbortFailed"
+	tcpxTCPMemoryPressures = "TCPMemoryPressures"
+	tcpxTCPMemoryPressuresChrono = "TCPMemoryPressuresChrono"
+	tcpxTCPSACKDiscard = "TCPSACKDiscard"
+	tcpxTCPDSACKIgnoredOld = "TCPDSACKIgnoredOld"
+	tcpxTCPDSACKIgnoredNoUndo = "TCPDSACKIgnoredNoUndo"
+	tcpxTCPSpuriousRTOs = "TCPSpuriousRTOs"
+	tcpxTCPMD5NotFound = "TCPMD5NotFound"
+	tcpxTCPMD5Unexpected = "TCPMD5Unexpected"
+	tcpxTCPMD5Failure = "TCPMD5Failure"
+	tcpxTCPSackShifted = "TCPSackShifted"
+	tcpxTCPSackMerged = "TCPSackMerged"
+	tcpxTCPSackShiftFallback = "TCPSackShiftFallback"
+	tcpxTCPBacklogDrop = "TCPBacklogDrop"
+	tcpxPFMemallocDrop = "PFMemallocDrop"
+	tcpxTCPMinTTLDrop = "TCPMinTTLDrop"
+	tcpxTCPDeferAcceptDrop = "TCPDeferAcceptDrop"
+	tcpxIPReversePathFilter = "IPReversePathFilter"
+	tcpxTCPTimeWaitOverflow = "TCPTimeWaitOverflow"
+	tcpxTCPReqQFullDoCookies = "TCPReqQFullDoCookies"
+	tcpxTCPReqQFullDrop = "TCPReqQFullDrop"
+	tcpxTCPRetransFail = "TCPRetransFail"
+	tcpxTCPRcvCoalesce = "TCPRcvCoalesce"
+	tcpxTCPOFOQueue = "TCPOFOQueue"
+	tcpxTCPOFODrop = "TCPOFODrop"
+	tcpxTCPOFOMerge = "TCPOFOMerge"
+	tcpxTCPChallengeACK = "TCPChallengeACK"
+	tcpxTCPSYNChallenge = "TCPSYNChallenge"
+	tcpxTCPFastOpenActive = "TCPFastOpenActive"
+	tcpxTCPFastOpenActiveFail = "TCPFastOpenActiveFail"
+	tcpxTCPFastOpenPassive = "TCPFastOpenPassive"
+	tcpxTCPFastOpenPassiveFail = "TCPFastOpenPassiveFail"
+	tcpxTCPFastOpenListenOverflow = "TCPFastOpenListenOverflow"
+	tcpxTCPFastOpenCookieReqd = "TCPFastOpenCookieReqd"
+	tcpxTCPFastOpenBlackhole = "TCPFastOpenBlackhole"
+	tcpxTCPSpuriousRtxHostQueues = "TCPSpuriousRtxHostQueues"
+	tcpxBusyPollRxPackets = "BusyPollRxPackets"
+	tcpxTCPAutoCorking = "TCPAutoCorking"
+	tcpxTCPFromZeroWindowAdv = "TCPFromZeroWindowAdv"
+	tcpxTCPToZeroWindowAdv = "TCPToZeroWindowAdv"
+	tcpxTCPWantZeroWindowAdv = "TCPWantZeroWindowAdv"
+	tcpxTCPSynRetrans = "TCPSynRetrans"
+	tcpxTCPOrigDataSent = "TCPOrigDataSent"
+	tcpxTCPHystartTrainDetect = "TCPHystartTrainDetect"
+	tcpxTCPHystartTrainCwnd = "TCPHystartTrainCwnd"
+	tcpxTCPHystartDelayDetect = "TCPHystartDelayDetect"
+	tcpxTCPHystartDelayCwnd = "TCPHystartDelayCwnd"
+	tcpxTCPACKSkippedSynRecv = "TCPACKSkippedSynRecv"
+	tcpxTCPACKSkippedPAWS = "TCPACKSkippedPAWS"
+	tcpxTCPACKSkippedSeq = "TCPACKSkippedSeq"
+	tcpxTCPACKSkippedFinWait2 = "TCPACKSkippedFinWait2"
+	tcpxTCPACKSkippedTimeWait = "TCPACKSkippedTimeWait"
+	tcpxTCPACKSkippedChallenge = "TCPACKSkippedChallenge"
+	tcpxTCPWinProbe = "TCPWinProbe"
+	tcpxTCPKeepAlive = "TCPKeepAlive"
+	tcpxTCPMTUPFail = "TCPMTUPFail"
+	tcpxTCPMTUPSuccess = "TCPMTUPSuccess"
+	tcpxTCPDelivered = "TCPDelivered"
+	tcpxTCPDeliveredCE = "TCPDeliveredCE"
+	tcpxTCPAckCompressed = "TCPAckCompressed"
+	tcpxTCPZeroWindowDrop = "TCPZeroWindowDrop"
+	tcpxTCPRcvQDrop = "TCPRcvQDrop"
+	tcpxTCPWqueueTooBig = "TCPWqueueTooBig"
+	tcpxTCPFastOpenPassiveAltKey = "TCPFastOpenPassiveAltKey"
+	tcpxTCPForwardRetrans = "TCPForwardRetrans"
+
+	//udp Indexes
+	udpInDatagrams = "InDatagrams"
+	udpNoPorts = "NoPorts"
+	udpInErrors = "InErrors"
+	udpOutDatagrams = "OutDatagrams"
+	udpRcvbufErrors = "RcvbufErrors"
+	udpSndbufErrors = "SndbufErrors"
+	udpInCsumErrors = "InCsumErrors"
+	udpIgnoredMulti = "IgnoredMulti"
+
 	// kB KiB mB MB gB GB
 	factor map[string]uint64 = {
 		"kB": 1024,
@@ -217,6 +380,19 @@ const (
 		"5-100ms:" : 6,
 		"10-100ms:" : 7,
 		"100ms-bigger:" : 8,
+	}
+
+	// delayIndex2
+	delayIndex2 map[string]int = {
+		"0-50us:" : 0,
+		"50-100us:" : 1,
+		"100us-200us:" : 2,
+		"200-500us:" : 3,
+		"500-1000us:" : 4,
+		"1-5ms:" : 5,
+		"5-100ms:" : 6,
+		"10-100ms:" : 7,
+		">=100ms" : 8,
 	}
 )
 
@@ -1440,35 +1616,629 @@ func getContainerCgroupMemx(paths map[string]string) (*pb.ContainerCgroupMemx, e
 	}, nil
 }
 
+func parseCgroupFreezerTasks(cgroup string) (uint64, []uint64, error) {
+	rawdata, err := ioutil.ReadFile(cgroup + CgroupFileFreezerTasks)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	content := string(rawdata)
+	var result []uint64
+	var ntasks uint64 = 0
+
+	for _, line := range strings.Split(content, "\n") {
+		pid, err := strconv.ParseUint(strings.TrimSpace(line), 10, 64)
+		if err != nil {
+			agentLog.Error("Cannot parse pid!")
+			continue
+		}
+
+		ntasks++
+		result = append(result, pid)
+	}
+
+	return ntasks, result, nil
+}
+
 func getContianerCgroupPcsw(paths map[string]string) (*pb.ContainerCgroupPcsw, error) {
+	data, err := readAliCgroupCpuData(paths)
+	if err != nil {
+		return nil, err
+	}
+
+	maxPid, err := readCgroupFileUint64(ProcSysfsPidMax)
+	if err != nil {
+		return nil, err
+	}
+
+	NTasks := getAliCgroupElement(cpuNrTask, data)
+	NRunning := getaliCgroupElement(cpuNrRtask, data)
+	NDrunning := getAliCgroupElement(cpuNrDtask, data)
+	NSwch := getAliCgroupElement(cpuSwitch, data)
+	NewTask := getAliCgroupElement(cpuNrNewTask, data)
+	MaxPid := maxPid
+	NrVolSwch := getAliCgroupElement(cpuVswitch, data)
+	NrInvolSwch := getAliCgrou[pElement(cpuIswitch, data)
+
+	if NTasks == 0 {
+		if freezer, ok := paths[freezerCgroupIndex]; ok {
+			tasks, _, err := parseCgroupFreezerTasks(freezer)
+			if err == nil {
+				NTasks = tasks
+			}
+		}
+	}
+
+	return &pb.ContainerCgroupPcsw {
+		NTasks,
+		NRunning,
+		NDrunning,
+		NSwch,
+		NewTask,
+		MaxPid,
+		NrVolSwch,
+		NrInvolSwch,
+	}, nil
+}
+
+func parseCpuacctPercpuStats(file string) ([]uint64, error) {
+	rawdata, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil ,err
+	}
+
+	var result []uint64
+	content := string(rawdata)
+	for _, field := range strings.Fields(content) {
+		number, err := strconv.ParseUint(strings.TrimSpace(field), 10, 64)
+		if err != nil {
+			agentLog.WithField("file", file).Error("Cannot parse cpuacct percpu stats")
+			continue
+		}
+
+		result = append(result, number)
+	}
+}
+
+const (
+	CpuCpuset = "/sys/fs/cgroup/cpu/cpuset.cpus"
+	CpusetCpuset = "/sys/fs/cgroup/cpuset/cpuset.cpus"
+)
+
+func getTotalCpus() (int32, error) {
+	rawdata, err := ioutil.ReadFile(cpuCpuset)
+	if err != nil {
+		rawdata, err = ioutil.ReadFile(CpusetCpuset)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	content := string(rawdata)
+	fields := strings.Split(content, "-")
+	if len(fields) != 2 {
+		return 0, errors.New("Cannot parse cpu.cpuset")
+	}
+
+	start, err := strconv.Atoi(strings.TrimSpace(fields[0]))
+	if err != nil {
+		return 0, err
+	}
+
+	end, err := strconv.Atoi(strings.TrimSpace(fields[1]))
+	if err != nil {
+		return 0, err
+	}
+
+	return end - start + 1, nil
 }
 
 func getContianerCgroupPercpu(paths map[string]string) (*pb.ContianerCgroupPercpu, error) {
+	cpuacct, ok := paths[cpuacctCgroupIndex]
+	if !ok {
+		return nil, errors.New("No cpuacct cgroup")
+	}
+
+	usage, err := parseCpuacctPercpuStats(cpuacct + CgroupFileCpuacctPercpu)
+	if err != nil {
+		return nil, err
+	}
+
+	sys, err := parseCpuacctPercpuStats(cpuacct + CgroupFileCpuacctPercpuSys)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := parseCpuacctPercpustats(cpuacct + CgroupFileCpuacctPercpuUser)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []*pb.ContainerPercpuStats
+	for i, _ := range usage {
+		CpuUser := user[i]
+		CpuSys := sys[i]
+		CpuUsage := usage[i]
+		CpuName := fmt.Sprintf("cpu%d", i)
+
+		result = append(result, &pb.ContainerPercpuStats {
+			CpuUser,
+			CpuSys,
+			CpuUsage,
+			CpuName,
+		})
+	}
+
+	Ncpu := 0
+	ncpu, err := getTotalCpus()
+	if err == nil {
+		Ncpu = ncpu
+	}
+
+	return &pb.ContainerCgroupPercpu {
+		Ncpu,
+		PercpuStats: result,
+	}, nil
+}
+
+func stringToArrayUint64(s string) ([]uint64, error) {
+	var result []uint64
+	for _, field := range strings.Fields(s) {
+		number, err := strconv.ParseUint(strings.TrimSpace(field), 10, 64)
+		if err != nil {
+			agentLog.Error("Cannot parse string")
+			return nil, err
+		}
+
+		result = append(result, number)
+	}
+
+	return result, nil
 }
 
 func getContianerCgroupSchedbvt(paths map[string]string) (*pb.ContianerCgroupSchedbvt, error) {
+	kver, err:= GetKernelVersion()
+	if err != nil {
+		return nil, errors.New("Cannot get kernel version")
+	}
+
+	if kver < 409 {
+		return nil, nil
+	}
+
+	cpuacct, ok := paths[cpuacctCgroupIndex]
+	if !ok {
+		return nil, errors.New("No cpuacct cgroup")
+	}
+
+	rawdata, err := ioutil.ReadFile(cpuacct + CgroupFileCpuacctStatics)
+	if err != nil {
+		return nil, err
+	}
+
+	content := string(rawdata)
+	lines := strings.Split(content, "\n")
+
+	if len(lines) < 2 {
+		return nil, errore.New("No data")
+	}
+
+	data, err := stringToArrayUint64(lines[1])
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data) < 3 {
+		return nil, errors.New("No enough data")
+	}
+
+	Ncpu := 0
+	cpuset, ok := paths[cpusetCgroupIndex]
+	if ok {
+		ncpu, err := readCpuset(cpuset + CgroupFileCpuset)
+		if err == nil {
+			Ncpu = ncpu
+		}
+	}
+
+	return &pb.ContainerCgroupSchedbvt{
+		BatchDelayStrict: data[0],
+		StrictNoiseCleanBatch: data[1],
+		BatchNoiseCleanDelay: data[2],
+		Ncpu,
+	}, nil
 }
 
 func getContainerCgroupSchedcg(paths map[string]string) *pb.ContianerCgroupSchedcg, error) {
+	kver, err:= GetKernelVersion()
+	if err != nil {
+		return nil, errors.New("Cannot get kernel version")
+	}
+
+	if kver < 409 {
+		return nil, nil
+	}
+
+	cpuacct, ok := paths[cpuacctCgroupIndex]
+	if !ok {
+		return nil, errors.New("No cpuacct cgroup")
+	}
+
+	rawdata, err := ioutil.ReadFile(cpuacct + CgroupFileCpuacctStatics)
+	if err != nil {
+		return nil, err
+	}
+
+	content := string(data)
+	lines := strings.Split(content, "\n")
+	if len(fields) < 3) {
+		return nil, errors.New("No data")
+	}
+
+	data, err := stringToArrayUint64(lines[2])
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data) < 12 {
+		return nil, errors.New("No enough data")
+	}
+
+	return &pb.ContainerCgroupSchedcg {
+		CgDelayMs: data[:12],
+	}, nil
+}
+
+func testAndEnableCfsSched(cgroup string) (error){
+	rawdata, err := ioutil.ReadFile(cgroup + CgroupFileCpuacctHistgramEnable)
+	if err != nil {
+		return err
+	}
+
+	content := string(rawdata)
+
+	if strings.HasPrefix(content, "1") {
+		return nil
+	}
+
+	// enable it
+	return ioutil.WriteFile(cgroup + CgroupFileCpuacctHistgramEnable, []byte("1\n"))
+}
+
+func getCgroupSchedTask409(cgroup string) ([]uint64, error) {
+	rawdata,err := ioutil.ReadFile(cgroup + CgroupFileCpuacctStatics)
+	if err != nil {
+		return nil, err
+	}
+
+	lines := strings.Split(string(rawdata), "\n")
+	if len(lines) < 4 {
+		return nil, errors.New("No enough data")
+	}
+
+	return stringToArrayUint64(lines[3])
+}
+
+const (
+	DefaultLength = 12
+)
+
+func getCgroupSchedTaskOther(cgroup string) ([]uint64, error) {
+	rawdata, err := ioutil.ReadFile(cgroup + CgroupFileCpuacctHistgram)
+	if err != nil {
+		return nil, err
+	}
+
+	content := string(rawdata)
+	var data = make([]uint64, DefaultLength)
+	for _, line := range strings.Split(content, "\n") {
+		var _start, end int
+		var value uint64
+
+		n, err := fmt.Sscanf(line, "%dms-%dms %d", &_start, &end, &value)
+		if err != nil || n != 3 {
+			agentLod.Error("parse histgram failed")
+			continue
+		}
+
+		index := end / 10
+		for ; index > len(data); {
+			data = append(data, make([]uint64], DefaultLength))
+		}
+
+		data[index] += value
+	}
+	return data, nil
 }
 
 func getContianerCgroupTask(patsh map[string]string) (*pb.ContainerCgroupSchedTask, error) {
+	kver, err := GetKernelVersion()
+	if err != nil {
+		return nil, err
+	}
+
+	cpuacct, ok := paths[cpuacctCgroupIndex]
+	if !ok {
+		return nil, errors.New("No cpuacct gcgroup")
+
+	if kver != 409 {
+		err = testAndEnableCfsSched(cpuacct)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var data []uint64
+	if kver == 409 {
+		data, err = getCgroupSchedTask409(cpuacct)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		data, err = getCgroupSchedTaskOther(cpuacct)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if len(data) < 12 {
+		return nil, errors.New("No enough data")
+	}
+
+	return &pb.ContainerCgroupSchedTask {
+		TasksDelayMs: data[:12]
+	}, nil
 }
 
-func getContainerCgroupTcpStats(paths map[string]string) (*pb.ContianerTcpStats, error) {
+func stringsToMaps(index, data, prefix string) (map[string]uint64) {
+	idx := strings.Fields(strings.TrimPrefix(index, prefix))
+	nums := strings.Fields(strings.TrimPrefix(data, prefix))
+	result := make(map[string]uint64)
+
+	for i := 0; i < len(idx); i++ {
+		num, err := strconv.ParseUint(strings.TrimSpace(nums[i]), 10, 64)
+		if err != nil {
+			continue
+		}
+
+		result[strings.TrimSpace(idx[i])] = num
+	}
+
+	return result
 }
 
-func getContianerCgroupTcpxStats(paths map[string]string) (*pb.ContainerCgroupTcpxStats, error) {
+func readTcpUdpStatsFromSnmp(pid int32) (map[string]uint64, map[string]uint64, error) {
+	var tcp, udp map[string]uint64
+	tcp = make(map[string]uint64)
+	udp = make(map[string]uint64)
+
+	file := fmt.Sprintf(ProcFileSnmpstat, pid)
+
+	rawdata, err := ioutil.ReadFile(file)
+	if err != nil {
+		return tcp, udp, err
+	}
+
+	lines := strings.Split(string(rawdata), "\n")
+	for i := 0; i < len(lines); i++ {
+		if strings.HasPrefix(lines[i], "Tcp:") {
+			tcp = stringsToMaps(lines[i], lines[i + 1], "Tcp:")
+			i++
+		}
+
+		if strings.HasPrefix(lines[i], "Udp:") {
+			udp = stringsToMaps(lines[i], lines[i + 1], "Udp:")
+			i++
+		}
+	}
+
+	return tcp, udp, nil
 }
 
-func getContianerCgroupTrafficStats(paths map[string]string) (*pb.ContianerCgroupTrafficStats, error) {
+func getContainerCgroupTcpStats(paths map[string]string, pid int32) (*pb.ContainerCgroupTcpStats, error) {
+	tcp, _, err := readTcpUdpStatsFromSnmp(pid)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ContianerCgroupTcpStats {
+		ActiveOpens: getAliCgroupElement(tcpActiveOpens, tcp),
+		PassiveOpens: getAliCgroupElement(tcpPassiveOpens, tcp),
+		InSegs: getAliCgroupElement(tcpInSegs, tcp),
+		OutSegs: getAliCgroupElement(tcpOutSegs, tcp),
+		AttemptFails: getAliCgroupElement(tcpAttemtFails, tcp),
+		EstabResets: getAliCgroupElement(tcpEstabResets, tcp),
+		CurrEstab: getAliCgroupElement(tcpCurrEstab, tcp),
+		RetransSegs: getAliCgroupElement(tcpRetansSegs, tcp),
+		InErrs: getAliCgroupElement(tcpInErrs, tcp),
+		OutRsts: getAliCgroupelement(tcpOutRsts, tcp),
+	}, nil
 }
 
-func getContianerCgroupUdpStats(paths map[string]string) (*pb.ContainerCgroupUdpStats, error) {
+func readTcpxStats(pid int32) (map[string]uint64, error) {
+	file := fmt.Sprintf(ProcFileTcpxStat, pid)
+	rawdata, err := ioutil.ReadFile(file)
+	if err != nil {
+		return map[string]uint64 {}, err
+	}
+
+	lines := strings.Split(string(rawdata), "\n")
+	for i := 0; i < len(lines); i++ {
+		if strings.HasPrefix(lines[i], "TcpExt:") {
+			tcpx := stringsToMaps(lines[i], lines[i + 1], "TcpExt:")
+			return tcpx, nil
+		}
+	}
+}
+
+func getContianerCgroupTcpxStats(paths map[string]string, pid int32) (*pb.ContainerCgroupTcpxStats, error) {
+	tcpx, err := readTcpxStats(pid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ContainerCgroupTcpxStats {
+		TcpLostRetrans: getAliCgroupElement(tcpxTCPLostRetransmit, tcpx),
+		TcpSynRetrans: getAliCgroupElement(tcpxTCPSynRetrans, tcpx),
+		TcpFastRetrans: getAliCgroupElement(tcpxTCPFastRetrans, tcpx),
+		TcpForwardRetrans: getAliCgroupElement(tcpxTCPForwardRetrans, tcpx),
+		TcpSlowstartRetrans: getAliCgroupElement(tcpxTCPSlowStartRetrans, tcpx),
+		TcpListenOverFlow: getAliCgroupelement(tcpxTCPListenOverflows, tcpx),
+		TcpListenDrop: getAliCgroupElement(tcpxTCPListenDrops, tcpx),
+		TcpAbortData: getAliCgroupElement(tcpxTCPAbortOnData, tcpx),
+		TcpAbortClose: getAliCgroupElement(tcpxTCPAbortOnClose, tcpx),
+		TcpAbortMem: getAliCgroupElement(tcpxTCPAbortOnMemory, tcpx),
+		TcpAbortTimeout: getAliCgroupElement(tcpxTCPAbortOnTimeout, tcpx),
+		TcpAbortLinger: getAliCgroupElement(tcpxTCPAbortOnLinger, tcpx),
+	}, nil
+}
+
+func parseTrafficData(content string) (*pb.ContainerCgroupTrafficStats, error) {
+	Bytein := 0
+	byteout := 0
+	Pktin : =0
+	Pktout := 0
+	Pkterrin := 0
+	Pktdrpin := 0
+	Pkterrout := 0
+	Pktdrpout := 0
+
+	for _, line := range strings.Split(string(rawdata), "\n") {
+		fields := strings.Split(line, ":")
+		if len(fields) != 2 {
+			continue
+		}
+
+		// fields[0] is ifname, fields[1] are statistics
+		ifname = strings.TrimSpace(fields[0])
+		if strings.Contains(ifname, "eth") ||
+			strings.Contains(ifname, "em") ||
+			strings.Contains(ifname, "venet") ||
+			strings.Contains(ifname, "t1") ||
+			strings.Contains(ifname, "t2") {
+			if strings.Contains(ifname, "veth") {
+				continue
+			}
+
+			data, err := stringToArrayUint64(fields[1])
+			if err != nil {
+				continue
+			}
+
+			if len(data) < 16 {
+				continue
+			}
+
+			Bytein += data[0]
+			Pktin += data[1]
+			Pkterrin += data[2]
+			Pktdrpin += data[3]
+			Byteout += data[8]
+			Pktout += data[9]
+			Pkterrout += data[10]
+			Pktdrpout += data[11]
+		}
+	}
+
+	return &pb.ContainerCgroupTrafficStats {
+		Bytein,
+		Pktin,
+		Pkterrin,
+		Pktdrpin,
+		Byteout,
+		Pktout,
+		Pkterrout,
+		Pktdrpout,
+	}, nil
+}
+
+func getContianerCgroupTrafficStats(paths map[string]string, pid int32) (*pb.ContianerCgroupTrafficStats, error) {
+	rawdata, err := ioutil.ReadFile(fmt.Sprintf(ProcFileNetDev, pid))
+	if err != nil {
+		return nil, err
+	}
+
+	return parseTrafficData(string(rawdata))
+
+}
+
+func getContianerCgroupUdpStats(paths map[string]string, pid int32) (*pb.ContainerCgroupUdpStats, error) {
+	_, udp, err := readTcpUdpStatsFromSnmp(pid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ContainerCgroupUdpStats {
+		InDatagrams: getAliCgroupElement(udpInDatagrams, udp),
+		OutDatagrams: getAliCgroupElement(udpOutDatagrams, udp),
+		NoPorts: getAliCgroupElement(udpNoPorts, udp),
+		InErrors: getAliCgroupElement(udpInErrors, udp),
+	}, nil
 }
 
 func getContainerCgroupVm(paths map[string]string) (*pb.ContainerCgroupVm, error) {
+	data, err := readAliCgroupMemoryData(paths)
+	if err != nil {
+		return nil, err
+	}
+
+	Dsteal := getAliCgroupelement(memPgPgSteal, data)
+	return &pb.ContainerCgroupVm {
+		PageIn: getAliCgroupElement(memPgpgin, data),
+		PageOut: getAliCgroupElemnt(memPgpgout, data),
+		PageFault: getAliCgroupelement(memPgFault, data) + getAliCgroupElement(memPgmajFault, data),
+		Steal: Dsteal + getAliCgroupElement(memKswapdSteal, data),
+		Dsteal,
+		Scan: getAliCgroupElement(memPgPgScan, data) + getAliCgroupElement(memKswapdScan, data),
+		Dirty: getAliCgroupElement(memDirty, data),
+		Failcnt: getAliCgroupElement(memFailNo, data) + getAliCgroupElement(memSwFailNo, data),
+		Allocstall: getAliCgroupElement(memAllocstall, data),
+	}, nil
 }
 
-func getContainerPartitionStats(paths map[string]string) ([]*pb.ContainerPartitionStats, error) {
+func parseMountEntries(content string) ([]*pb.ContainerPartitionStats, error) {
+	var result []*pb.ContainerPartitionStats
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		fields := strings.Fields(line)
+		if len(fields) < 2 {
+			continue
+		}
+
+		mnt := strings.TrimSpace(fields[1])
+		if strings.HasPrefix(mnt, "/proc") ||
+			strings.HasPrefix(mnt, "/dev") ||
+			strings.HasPrefix(mnt, "/run") ||
+			strings.HasPrefix(mnt, "/sys") {
+			continue
+		}
+
+		var buf syscall.Statfs_t
+		err := syscall.Statfs(mnt, &buf)
+		if err != nil {
+			continue
+		}
+
+		result = append(result, &pb.ContainerPartitionStats{
+			Bsize: buf.Bsize,
+			Blocks: buf.Blocks,
+			Bfree: buf.Bfree,
+			Bavail: buf.Bavail,
+			Itotal: buf.Files,
+			Ifree: buf.Ffree,
+		})
+	}
+
+	return result, nil
+}
+
+// Looks like have to enter mnt ns to correctly get partition
+// information. what if read /proc/<main_pid>/mounts, and the 
+// stat some entry to get the information?
+func getContainerPartitionStats(paths map[string]string, pid int32) ([]*pb.ContainerPartitionStats, error) {
+	rawdata, err := ioutil.ReadFile(fmt.Sprintf(ProcFileLocalMount))
+	if err != nil {
+		return nil, err
+	}
+
+	return parseMountEntries(string(rawdata))
 }
