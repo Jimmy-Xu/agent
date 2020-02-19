@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -30,6 +31,9 @@ const (
 	CGTASKS      = "/sys/fs/cgroup/freezer/tasks"
 	SOFTIRQS     = "/proc/softirqs"
 	INTERRUPT    = "/proc/interrupts"
+	IO_FILE      = "/proc/diskstats"
+
+	ROOT_CPU_CGROUP_STAT = "/sys/fs/cgroup/cpu/cpuacct.proc_stat_v2"
 )
 
 func GetFileContent1MBAsStringLines(filePath string) ([]string, error) {
@@ -114,4 +118,213 @@ func getPodBuddyStats() (map[uint16]*pb.PodBuddyStats, error) {
 		}
 	}
 	return pbs, err
+}
+
+func getPodCpuStats() ([]*pb.PodCpuStats, error) {
+	strLines, err := GetFileContent1MBAsStringLines(STAT)
+	if err != nil {
+		return nil, err
+	}
+	pcs := []*pb.PodCpuStats{}
+	totalCpuStat := &pb.PodCpuStats{}
+	for _, eachLine := range strLines {
+		if strings.HasPrefix(eachLine, "cpu") {
+			fields := strings.Fields(eachLine)
+			statUint64Values := []uint64{}
+			for _, eachField := range fields[1:] {
+				v, err := strconv.ParseUint(eachField, 10, 64)
+				if err != nil {
+					return nil, err
+				}
+				statUint64Values = append(statUint64Values, v)
+			}
+			if len(statUint64Values) < 10 {
+				return nil, fmt.Errorf("invalid cpu stat info")
+			}
+			tmpPcs := &pb.PodCpuStats{
+				CpuUser:    statUint64Values[0],
+				CpuNice:    statUint64Values[1],
+				CpuSys:     statUint64Values[2],
+				CpuIdle:    statUint64Values[3],
+				CpuIowait:  statUint64Values[4],
+				CpuSteal:   statUint64Values[5],
+				CpuHardirq: statUint64Values[6],
+				CpuSoftirq: statUint64Values[7],
+				CpuGuest:   statUint64Values[8],
+			}
+			if fields[0] == "cpu" {
+				totalCpuStat = tmpPcs
+			} else {
+				pcs = append(pcs, tmpPcs)
+			}
+		}
+	}
+	totalCpuStat.CpuNumber = uint64(len(pcs))
+	pcs = append(pcs, totalCpuStat)
+	return pcs, err
+}
+
+func getPodIOStats() ([]*pb.PodIOStats, error) {
+	strLines, err := GetFileContent1MBAsStringLines(IO_FILE)
+	if err != nil {
+		return nil, err
+	}
+	pis := []*pb.PodIOStats{}
+	for _, eachLine := range strLines {
+		if eachLine == "" {
+			continue
+		}
+
+		fields := strings.Fields(eachLine)
+
+		major, err := strconv.Atoi(fields[0])
+		if err != nil {
+			return nil, err
+		}
+		minor, err := strconv.Atoi(fields[1])
+		if err != nil {
+			return nil, err
+		}
+		name := fields[2]
+		pi := &pb.PartInfo{
+			Major: uint32(major),
+			Minor: uint32(minor),
+			Name:  name,
+		}
+
+		statUint64Values := []uint64{}
+		for _, eachField := range fields[3:] {
+			v, err := strconv.ParseUint(eachField, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			statUint64Values = append(statUint64Values, v)
+		}
+		if len(statUint64Values) < 10 {
+			return nil, fmt.Errorf("invalid disk stat info")
+		}
+		bi := &pb.BlkIOInfo{
+			RdIos:     statUint64Values[0],
+			RdMerges:  statUint64Values[1],
+			RdSectors: statUint64Values[2],
+			RdTicks:   statUint64Values[3],
+			WrIos:     statUint64Values[4],
+			WrMerges:  statUint64Values[5],
+			WrSectors: statUint64Values[6],
+			WrTicks:   statUint64Values[7],
+			Ticks:     statUint64Values[8],
+			Aveq:      statUint64Values[9],
+		}
+		tmp := &pb.PodIOStats{
+			Part:  pi,
+			Blkio: bi,
+		}
+		pis = append(pis, tmp)
+	}
+	return pis, err
+}
+
+func getPodIrqStats() ([]*pb.PodIrqStats, error) {
+	strLines, err := GetFileContent1MBAsStringLines(INTERRUPT)
+	if err != nil {
+		return nil, err
+	}
+	pis := []*pb.PodIrqStats{}
+	for _, eachLine := range strLines {
+		if eachLine == "" {
+			continue
+		}
+
+		fields := strings.Fields(eachLine)
+
+		in, err := strconv.Atoi(strings.Trim(fields[0], ":"))
+		if err != nil {
+			continue
+		}
+
+		ic := []uint64{}
+		for _, eachField := range fields[1 : 1+runtime.NumCPU()] {
+			v, err := strconv.ParseUint(eachField, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			ic = append(ic, v)
+		}
+
+		tmp := &pb.PodIrqStats{
+			IrqNum:   uint32(in),
+			IrqCount: ic,
+		}
+		pis = append(pis, tmp)
+	}
+	return pis, err
+}
+
+func getPodLoadStats() (*pb.PodLoadStats, error) {
+	strLines, err := GetFileContent1MBAsStringLines(LOADAVG)
+	if err != nil {
+		return nil, err
+	}
+	fields := strings.Fields(strLines[0])
+
+	tmpSlice := []uint32{}
+	for _, eachField := range fields[:3] {
+		v, err := strconv.ParseFloat(eachField, 64)
+		if err != nil {
+			return nil, err
+		}
+		tmpSlice = append(tmpSlice, uint32(v*100))
+	}
+
+	pls := &pb.PodLoadStats{
+		LoadAvg_1:  tmpSlice[0],
+		LoadAvg_5:  tmpSlice[1],
+		LoadAvg_15: tmpSlice[2],
+	}
+
+	a := strings.Split(fields[3], "/")
+	nrr, err := strconv.ParseUint(a[0], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	nrt, err := strconv.ParseUint(a[1], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	if nrr > 0 {
+		// Do not take current process into account
+		nrr -= 1
+	}
+	pls.NrRunning = nrr
+	pls.NrThreads = uint32(nrt)
+
+	strLines, err = GetFileContent1MBAsStringLines(ROOT_CPU_CGROUP_STAT)
+	if err != nil {
+		return nil, err
+	}
+	for _, eachLine := range strLines {
+		if strings.HasPrefix(eachLine, "running load average(1min)") {
+			v, err := strconv.Atoi(strings.Fields(eachLine)[3])
+			if err != nil {
+				return nil, err
+			}
+			pls.RunningLoadAvg_1 = uint32(v)
+		}
+		if strings.HasPrefix(eachLine, "running load average(5min)") {
+			v, err := strconv.Atoi(strings.Fields(eachLine)[3])
+			if err != nil {
+				return nil, err
+			}
+			pls.RunningLoadAvg_5 = uint32(v)
+		}
+		if strings.HasPrefix(eachLine, "running load average(15min)") {
+			v, err := strconv.Atoi(strings.Fields(eachLine)[3])
+			if err != nil {
+				return nil, err
+			}
+			pls.RunningLoadAvg_15 = uint32(v)
+		}
+	}
+
+	return pls, err
 }
