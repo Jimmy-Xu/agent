@@ -107,3 +107,17 @@ func TestProcessGetCpuStats(*testing.T) {
 	rlt, _ := getProcessProcCpuStats(pid)
 	fmt.Printf("%v\n", *rlt)
 }
+
+/*
+$ go test -test.run TestProcessGetIoStats
+get all pid's info
+collect data
+[go]received:   dst=root_1=343909570530,64996516992,4630327808,36499460096,7,66388602,13556622;
+{343909570530 64996516992 4630327808 36499460096 7 66388602 13556622 {} [] 0}
+PASS
+ok  	github.com/kata-containers/agent	0.008s
+*/
+func TestProcessGetIoStats(*testing.T) {
+	rlt, _ := getProcessProcIoStats(pid)
+	fmt.Printf("%v\n", *rlt)
+}

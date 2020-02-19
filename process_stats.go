@@ -821,6 +821,142 @@ read_proc_cpu_stats(char *parameter, char *buf)
 
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// mod_proc_io.c
+
+#include <stdint.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#define PROC_IO_STATUS "/proc/%u/io"
+#define PROC_STAT "/proc/%u/stat"
+#define MAX_PIDS 64
+
+#define MAX_PROC_COLLECT (512)
+
+#define SIZE_1K (1<<10)
+#define SIZE_128K (128*SIZE_1K)
+#define PROC_BUFSIZE SIZE_128K
+
+#define ITEM_SPLIT  ";"
+
+struct stats_proc_io {
+    unsigned long long rchar;
+    unsigned long long wchar;
+    unsigned long long rbytes;
+    unsigned long long wbytes;
+    unsigned long long iolat;
+    unsigned long long syscr;
+    unsigned long long syscw;
+    char container_id[64];
+};
+
+static void
+read_proc_io_stats(char *parameter, char *buf)
+{
+    int npids, pid[MAX_PROC_COLLECT];
+    int i, n;
+    char filename[128], line[1024], *result[64];
+    //static char buf[PROC_BUFSIZE];
+    FILE *fp;
+    char *wp;
+    struct stats_proc_io st_io;
+
+    char new_parameter[256] = {0};
+
+    strcpy(new_parameter, parameter);
+
+    if (strlen(new_parameter) > 200 || new_parameter[0] == '\0') {
+        return;
+    }
+
+    char *p;
+    p = strtok_safe(new_parameter, " ");
+    npids = 0;
+    while(p) {
+        pid[npids] = atoi(p);
+        if(pid[npids++] < 0){
+            return;
+        }
+        if(npids >= MAX_PIDS){
+            return;
+        }
+        p = strtok_safe(NULL, " ");
+    }
+
+    printf("get all pid's info\n");
+    wp = buf;
+    for(i = 0; i < npids; ++i){
+        memset(&st_io, 0, sizeof(st_io));
+#if IN_7U
+        if(get_container_id_from_pid(st_io.container_id, 64, pid[i]) < 0) {
+            continue;
+        }
+#else
+        strcpy_safe(st_io.container_id, "root", 64);
+#endif
+        printf("collect data\n");
+        sprintf(filename, PROC_IO_STATUS, pid[i]);
+        if ((fp = fopen(filename, "re")) == NULL)
+            continue;
+        while(fgets(line, 128, fp) != NULL){
+            if(!strncmp(line, "rchar:", sizeof("rchar:") - 1)){
+                sscanf(line + sizeof("rchar:") - 1, "%llu", &st_io.rchar);
+            } else if(!strncmp(line, "wchar:", sizeof("wchar:") - 1)){
+                sscanf(line + sizeof("wchar:") - 1, "%llu", &st_io.wchar);
+            } else if(!strncmp(line, "syscr:", sizeof("syscr:") - 1)){
+                sscanf(line + sizeof("syscr:") - 1, "%llu", &st_io.syscr);
+            } else if(!strncmp(line, "syscw:", sizeof("syscw:") - 1)){
+                sscanf(line + sizeof("syscw:") - 1, "%llu", &st_io.syscw);
+            } else if(!strncmp(line, "read_bytes:", sizeof("read_bytes:") - 1)){
+                sscanf(line + sizeof("read_bytes:") - 1, "%llu", &st_io.rbytes);
+            } else if(!strncmp(line, "write_bytes:", sizeof("write_bytes:") - 1)){
+                sscanf(line + sizeof("write_bytes:") - 1, "%llu", &st_io.wbytes);
+            }
+        }
+        fclose(fp);
+        sprintf(filename, PROC_STAT, pid[i]);
+        if ((fp = fopen(filename, "re")) == NULL) {
+            continue;
+        }
+        if (fgets(line, 1024, fp) == NULL) {
+            fclose(fp);
+            continue;
+        }
+        n = split_string(line, result, 64, ' ');
+        if(n < 43){
+            fclose(fp);
+            // error
+            return;
+        }
+        st_io.iolat = strtoull(result[41], NULL, 0);
+        fclose(fp);
+        n = snprintf(wp, PROC_BUFSIZE - (wp - buf + 1),
+                     "%.12s_%u=%llu,%llu,%llu,%llu,%llu,%llu,%llu" ITEM_SPLIT,
+                     st_io.container_id,
+                     pid[i],
+                     st_io.rchar,
+                     st_io.wchar,
+                     st_io.rbytes,
+                     st_io.wbytes,
+                     st_io.iolat,
+                     st_io.syscr,
+                     st_io.syscw);
+        if(wp + n - buf >= PROC_BUFSIZE){
+            break;
+        }
+        wp += n;
+    }
+    if((wp - buf) < PROC_BUFSIZE) *wp = 0;
+}
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
 import "C"
 
@@ -978,6 +1114,32 @@ func getProcessProcIoStats(pid int) (*pb.ProcessProcIOStats, error) {
 		syscr  uint64
 		syscw  uint64
 	)
+
+	// call read_pid_stats
+	dst := ""
+	c_src := C.CString("1")
+	defer C.free(unsafe.Pointer(c_src))
+	c_dst := C.CString(dst)
+	//defer C.free(unsafe.Pointer(c_dst))
+	C.read_proc_io_stats(c_src, c_dst)
+
+	// show result
+	received := C.GoString(c_dst)
+	fmt.Printf("[go]received:   dst=%s\n", received)
+
+	// convert result
+	content := strings.Split(received, ITEM_SPSTART)[1]
+	item := strings.Split(content, ITEM_SPLIT)[0]
+	cols := strings.Split(item, DATA_SPLIT)
+
+	rchar, _ = strconv.ParseUint(cols[0], 10, 64)
+	wchar, _ = strconv.ParseUint(cols[1], 10, 64)
+	rbytes, _ = strconv.ParseUint(cols[2], 10, 64)
+	wbytes, _ = strconv.ParseUint(cols[3], 10, 64)
+	iolat, _ = strconv.ParseUint(cols[4], 10, 64)
+	syscr, _ = strconv.ParseUint(cols[5], 10, 64)
+	syscw, _ = strconv.ParseUint(cols[6], 10, 64)
+
 	return &pb.ProcessProcIOStats{
 		Rchar:  rchar,
 		Wchar:  wchar,
