@@ -1801,12 +1801,12 @@ func (a *agentGRPC) ExtendedStats(ctx context.Context, req *pb.ExtendedStatsRequ
 	var cstats []*pb.ContainerStats
 	// maybe need RLock on sandbox here?
 	for _, c := range a.sandbox.containers {
-		con, err : = c.GetContainerStats()
+		con, err := c.GetContainerStats()
 		if err != nil {
 			continue
 		}
 
-		append(cstats, con)
+		cstats = append(cstats, con)
 	}
 
 	return &pb.ExtendedStatsResponse {
