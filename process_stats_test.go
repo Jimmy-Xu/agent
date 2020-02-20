@@ -38,8 +38,11 @@ PASS
 ok  	github.com/kata-containers/agent	0.006s
 */
 func TestProcessGetPidStats(*testing.T) {
-	rlt, _ := getProcessPidStats(pid)
-	fmt.Printf("ProcessPidStats: %v\n", toJson(rlt))
+	rlt, _ := _getProcessPidStats(pid)
+	fmt.Printf("ProcessPidStats(c): %v\n", toJson(rlt))
+
+	rlt, _ = getProcessPidStats(pid)
+	fmt.Printf("ProcessPidStats(go): %v\n", toJson(rlt))
 }
 
 /*

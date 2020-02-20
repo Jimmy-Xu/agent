@@ -1,14 +1,5 @@
 package main
 
-import (
-	"fmt"
-	"strconv"
-	"strings"
-	"unsafe"
-
-	pb "github.com/kata-containers/agent/protocols/grpc"
-)
-
 /*
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #include <stdio.h>
@@ -165,6 +156,7 @@ read_pid_stats(char *parameter, char* buf)
             fclose(fp);
             continue;
         }
+        printf("line: %s\n", line);
         if (sscanf(p, "%*s %*c %*d %*d %*d %*d %*d %*u %llu %*u %llu %*u %llu %llu %llu %llu %*u %*u %llu %*u %*u %*u %llu ",
                &st_pid.minflt, &st_pid.majflt, &cpudata[0], &cpudata[1],
                &cpudata[2], &cpudata[3], &st_pid.thread, &st_pid.mem) == EOF) {
@@ -180,6 +172,7 @@ read_pid_stats(char *parameter, char* buf)
         sprintf(filename, PID_IO, pid[i]);
         if ((fp = fopen(filename, "re")) != NULL) {
             while (fgets(line, 256, fp) != NULL) {
+            	printf("line: %s", line);
                 if (!strncmp(line, "read_bytes:", 11))
                     sscanf(line + 11, "%llu", &st_pid.read_bytes);
                 else if (!strncmp(line, "write_bytes:", 12))
@@ -1094,14 +1087,230 @@ read_proc_mem_stats(char *parameter, char *buf)
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
 import "C"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"strconv"
+	"strings"
+	"syscall"
+	"unsafe"
 
-const (
-	ITEM_SPLIT   = ";"
-	ITEM_SPSTART = "="
-	DATA_SPLIT   = ","
+	pb "github.com/kata-containers/agent/protocols/grpc"
 )
 
+const (
+	PidIO     = "/proc/%d/io"
+	PidFd     = "/proc/%d/fd/"
+	PidStat   = "/proc/%d/stat"
+	PidStatus = "/proc/%d/status"
+
+	ItemSplit   = ";"
+	ItemSpStart = "="
+	DataSplit   = ","
+
+	readDirentBufSize = 4096 * 25
+)
+
+// struct for /proc/{pid}/stat
+type ProcStat struct {
+	PID        int
+	TaskName   string
+	State      string
+	PPID       int
+	PGID       int
+	SID        int
+	TtyNr      int
+	TtyPgrp    int
+	TaskFlags  uint
+	MinFlt     uint
+	CMinFlt    uint
+	MajFlt     uint
+	CMajFlt    uint
+	UTime      uint
+	STime      uint
+	CUTime     uint
+	CSTime     uint
+	Priority   int
+	Nice       int
+	NumThreads int
+	StartTime  uint64
+	VSize      uint
+	MMRss      int
+}
+
+// struct for /proc/{pid}/io
+type ProcIO struct {
+	RChar               uint64
+	WChar               uint64
+	SyscR               uint64
+	SyscW               uint64
+	ReadBytes           uint64
+	WriteBytes          uint64
+	CancelledWriteBytes int64
+}
+
+func readProcFile(filename string) ([]byte, error) {
+	const maxBufferSize = 1024 * 512
+
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	reader := io.LimitReader(f, maxBufferSize)
+	return ioutil.ReadAll(reader)
+}
+
+func readProcStat(pid int) (*ProcStat, error) {
+	data, err := readProcFile(fmt.Sprintf(PidStat, pid))
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		ignore int
+
+		ps = ProcStat{PID: pid}
+		l  = bytes.Index(data, []byte("("))
+		r  = bytes.LastIndex(data, []byte(")"))
+	)
+
+	if l < 0 || r < 0 {
+		return &ps, fmt.Errorf("unexpected format, couldn't extract comm: %s", data)
+	}
+
+	ps.TaskName = string(data[l+1 : r])
+	_, err = fmt.Fscan(
+		bytes.NewBuffer(data[r+2:]),
+		&ps.State,
+		&ps.PPID,
+		&ps.PGID,
+		&ps.SID,
+		&ps.TtyNr,
+		&ps.TtyPgrp,
+		&ps.TaskFlags,
+		&ps.MinFlt,
+		&ps.CMinFlt,
+		&ps.MajFlt,
+		&ps.CMajFlt,
+		&ps.UTime,
+		&ps.STime,
+		&ps.CUTime,
+		&ps.CSTime,
+		&ps.Priority,
+		&ps.Nice,
+		&ps.NumThreads,
+		&ignore,
+		&ps.StartTime,
+		&ps.VSize,
+		&ps.MMRss,
+	)
+	if err != nil {
+		return &ps, err
+	}
+
+	return &ps, nil
+}
+
+func readProcIO(pid int) (*ProcIO, error) {
+	pio := ProcIO{}
+
+	data, err := readProcFile(fmt.Sprintf(PidIO, pid))
+	if err != nil {
+		return &pio, err
+	}
+
+	ioFormat := "rchar: %d\nwchar: %d\nsyscr: %d\nsyscw: %d\n" +
+		"read_bytes: %d\nwrite_bytes: %d\n" +
+		"cancelled_write_bytes: %d\n"
+
+	_, err = fmt.Sscanf(string(data), ioFormat,
+		&pio.RChar, &pio.WChar, &pio.SyscR, &pio.SyscW,
+		&pio.ReadBytes, &pio.WriteBytes,
+		&pio.CancelledWriteBytes,
+	)
+
+	return &pio, err
+}
+
+func calcProcFdCount(pid int) (int, error) {
+	buf := make([]byte, readDirentBufSize)
+	dirPath := fmt.Sprintf(PidFd, pid)
+	d, err := os.Open(dirPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return -1, err
+		}
+		if strings.Contains(err.Error(), "not a directory") {
+			return -1, err
+		}
+		return -1, err
+	}
+	defer d.Close()
+
+	fd := int(d.Fd())
+	fdCnt := 0
+	for {
+		nbuf, err := syscall.ReadDirent(fd, buf)
+		if err != nil {
+			return -1, err
+		}
+		if nbuf <= 0 {
+			break
+		}
+
+		for off := 0; off < nbuf; {
+			dirent := (*syscall.Dirent)(unsafe.Pointer(&buf[off]))
+			off += int(dirent.Reclen)
+			if dirent.Type == syscall.DT_LNK {
+				fdCnt++
+			}
+		}
+	}
+
+	return fdCnt, nil
+}
+
 func getProcessPidStats(pid int) (*pb.ProcessPidStats, error) {
+	// read /proc/{pid}/stat
+	ps, err := readProcStat(pid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read proc stat of pid %d, error:%v", pid, err)
+	}
+	buf, _ := json.MarshalIndent(ps, "", " ")
+	fmt.Printf("%s\n", buf)
+
+	// read /proc/{pid}/id
+	pio, err := readProcIO(pid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read proc io of pid %d, error:%v", pid, err)
+	}
+
+	// calculate fd count
+	fdCnt, _ := calcProcFdCount(pid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get fd count of pid %d, error:%v", pid, err)
+	}
+
+	return &pb.ProcessPidStats{
+		UserCpu:    uint64(ps.UTime + ps.CUTime),
+		SysCpu:     uint64(ps.STime + ps.CSTime),
+		Mem:        uint64(ps.MMRss * 4096),
+		ReadBytes:  pio.ReadBytes,
+		WriteBytes: pio.WriteBytes,
+		Fdcnt:      uint64(fdCnt),
+		Minflt:     uint64(ps.MinFlt),
+		Majflt:     uint64(ps.MajFlt),
+		Thread:     uint64(ps.NumThreads),
+	}, nil
+}
+
+func _getProcessPidStats(pid int) (*pb.ProcessPidStats, error) {
 	var (
 		userCpu    uint64
 		sysCpu     uint64
@@ -1127,19 +1336,19 @@ func getProcessPidStats(pid int) (*pb.ProcessPidStats, error) {
 	fmt.Printf("[go]received:   dst=%s\n", received)
 
 	// convert result
-	content := strings.Split(received, ITEM_SPSTART)[1]
-	item := strings.Split(content, ITEM_SPLIT)[0]
-	cols := strings.Split(item, DATA_SPLIT)
+	content := strings.Split(received, ItemSpStart)[1]
+	item := strings.Split(content, ItemSplit)[0]
+	cols := strings.Split(item, DataSplit)
 
 	userCpu, _ = strconv.ParseUint(cols[0], 10, 64)
 	sysCpu, _ = strconv.ParseUint(cols[1], 10, 64)
 	mem, _ = strconv.ParseUint(cols[2], 10, 64)
-	readBytes, _ = strconv.ParseUint(cols[3], 10, 64)
-	writeBytes, _ = strconv.ParseUint(cols[4], 10, 64)
-	fdCnt, _ = strconv.ParseUint(cols[5], 10, 64)
-	minFlt, _ = strconv.ParseUint(cols[6], 10, 64)
-	majFlt, _ = strconv.ParseUint(cols[7], 10, 64)
-	thread, _ = strconv.ParseUint(cols[8], 10, 64)
+	thread, _ = strconv.ParseUint(cols[3], 10, 64)
+	readBytes, _ = strconv.ParseUint(cols[4], 10, 64)
+	writeBytes, _ = strconv.ParseUint(cols[5], 10, 64)
+	fdCnt, _ = strconv.ParseUint(cols[6], 10, 64)
+	minFlt, _ = strconv.ParseUint(cols[7], 10, 64)
+	majFlt, _ = strconv.ParseUint(cols[8], 10, 64)
 
 	return &pb.ProcessPidStats{
 		UserCpu:    userCpu,
@@ -1175,9 +1384,9 @@ func getProcessCgroupSched(pid int) (*pb.ProcessCgroupSched, error) {
 	fmt.Printf("[go]received:   dst=%s\n", received)
 
 	// convert result
-	content := strings.Split(received, ITEM_SPSTART)[1]
-	item := strings.Split(content, ITEM_SPLIT)[0]
-	cols := strings.Split(item, DATA_SPLIT)
+	content := strings.Split(received, ItemSpStart)[1]
+	item := strings.Split(content, ItemSplit)[0]
+	cols := strings.Split(item, DataSplit)
 	for i := 0; i < 11; i++ {
 		n, _ := strconv.ParseUint(cols[i], 10, 64)
 		tasksDelayMs = append(tasksDelayMs, n)
@@ -1218,9 +1427,9 @@ func getProcessProcCpuStats(pid int) (*pb.ProcessProcCpuStats, error) {
 	fmt.Printf("[go]received:   dst=%s\n", received)
 
 	// convert result
-	content := strings.Split(received, ITEM_SPSTART)[1]
-	item := strings.Split(content, ITEM_SPLIT)[0]
-	cols := strings.Split(item, DATA_SPLIT)
+	content := strings.Split(received, ItemSpStart)[1]
+	item := strings.Split(content, ItemSplit)[0]
+	cols := strings.Split(item, DataSplit)
 
 	userCpu, _ = strconv.ParseUint(cols[0], 10, 64)
 	sysCpu, _ = strconv.ParseUint(cols[1], 10, 64)
@@ -1263,9 +1472,9 @@ func getProcessProcIoStats(pid int) (*pb.ProcessProcIOStats, error) {
 	fmt.Printf("[go]received:   dst=%s\n", received)
 
 	// convert result
-	content := strings.Split(received, ITEM_SPSTART)[1]
-	item := strings.Split(content, ITEM_SPLIT)[0]
-	cols := strings.Split(item, DATA_SPLIT)
+	content := strings.Split(received, ItemSpStart)[1]
+	item := strings.Split(content, ItemSplit)[0]
+	cols := strings.Split(item, DataSplit)
 
 	rchar, _ = strconv.ParseUint(cols[0], 10, 64)
 	wchar, _ = strconv.ParseUint(cols[1], 10, 64)
@@ -1310,9 +1519,9 @@ func getProcessProcMemStats(pid int) (*pb.ProcessProcMemStats, error) {
 	fmt.Printf("[go]received:   dst=%s\n", received)
 
 	// convert result
-	content := strings.Split(received, ITEM_SPSTART)[1]
-	item := strings.Split(content, ITEM_SPLIT)[0]
-	cols := strings.Split(item, DATA_SPLIT)
+	content := strings.Split(received, ItemSpStart)[1]
+	item := strings.Split(content, ItemSplit)[0]
+	cols := strings.Split(item, DataSplit)
 
 	usage, _ = strconv.ParseUint(cols[0], 10, 64)
 	cache, _ = strconv.ParseUint(cols[1], 10, 64)
