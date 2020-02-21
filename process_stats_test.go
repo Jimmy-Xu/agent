@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
+
+	"github.com/sirupsen/logrus"
 )
 
 const CMD = "docker"
@@ -22,8 +25,6 @@ type ContainerState struct {
 
 // setup
 func setup() (int, string, error) {
-	fmt.Printf("> prepare container\n")
-
 	// run container
 	cmd := exec.Command(CMD, "run", "-d", "busybox", "top", "-b")
 	cidBuf, err := cmd.CombinedOutput()
@@ -47,7 +48,7 @@ func setup() (int, string, error) {
 		if len(inspect) == 0 {
 			log.Fatalf("failed to find container %s", cid)
 		}
-		fmt.Printf("Pid of container %s is %d\n\n", string(cid), inspect[0].State.Pid)
+		fmt.Printf("setup> container %s is created, pid is %d\n", string(cid), inspect[0].State.Pid)
 		return inspect[0].State.Pid, string(cid), nil
 	}
 	return -1, "", fmt.Errorf("failed to prepare container")
@@ -55,13 +56,12 @@ func setup() (int, string, error) {
 
 // teardown
 func tearDown(cid string) {
-	fmt.Printf("> clean container %s\n", cid)
 	cmd := exec.Command("docker", "rm", "-fv", cid)
 	_, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatalf("failed to clean container %s, error:%v", cid, err)
 	}
-	log.Printf("> clean container %s ok\n", cid)
+	fmt.Printf("teardown> container %s is removed\n", cid)
 }
 
 // main
@@ -70,6 +70,13 @@ func TestMain(m *testing.M) {
 		err error
 		cid string
 	)
+
+	for _, item := range os.Args {
+		if item == "-test.v=true" {
+			logrus.SetLevel(logrus.DebugLevel)
+		}
+	}
+
 	pid, cid, err = setup()
 	if err != nil {
 		log.Fatal(err)
@@ -82,39 +89,96 @@ func TestMain(m *testing.M) {
 //////////////////////////////////
 // test cases
 //////////////////////////////////
+func TestProcessGetProcCpuStats(t *testing.T) {
+	showSysFile(fmt.Sprintf(PidStat, pid))
+	showSysFile(fmt.Sprintf(PidStatus, pid))
+	showSysFile(fmt.Sprintf(PidSchedStat, pid))
+	rlt, err := getProcessProcCpuStats(pid)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.Infof("ProcessProcCpuStats : %v\n", toJson(rlt))
+}
+
+func TestProcessGetProcMemStats(t *testing.T) {
+	showSysFile(fmt.Sprintf(PidStatus, pid))
+	showSysFile(ProcMemInfo)
+	rlt, err := getProcessProcMemStats(pid)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.Infof("ProcessProcMemStats : %v\n", toJson(rlt))
+}
+
+func TestProcessGetProcIoStats(t *testing.T) {
+	showSysFile(fmt.Sprintf(PidIO, pid))
+	showSysFile(fmt.Sprintf(PidStat, pid))
+	rlt, err := getProcessProcIoStats(pid)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.Infof("ProcessProcIOStats : %v\n", toJson(rlt))
+}
+
 func TestProcessGetPidStats(t *testing.T) {
-	showProcFile()
-	rlt, _ := getProcessPidStats(pid)
-	fmt.Printf("ProcessPidStats : %v\n", toJson(rlt))
+	showSysFile(fmt.Sprintf(PidStat, pid))
+	showSysFile(fmt.Sprintf(PidIO, pid))
+	listFd(fmt.Sprintf(PidFd, pid))
+	rlt, err := getProcessPidStats(pid)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.Infof("ProcessPidStats : %v\n", toJson(rlt))
 }
 
 func TestProcessGetCgroupSched(t *testing.T) {
-	rlt, _ := getProcessCgroupSched(pid)
-	fmt.Printf("ProcessCgroupSched : %v\n", toJson(rlt))
+	rlt, err := getProcessCgroupSched(pid)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.Infof("ProcessCgroupSched : %v\n", toJson(rlt))
 }
 
 //////////////////////////////////
 // utilities
 //////////////////////////////////
-func showProcFile() {
-	// show proc/{pid}/stat
-	pidStat := fmt.Sprintf(PidStat, pid)
-	buf, err := readSysFile(pidStat)
+func showSysFile(filename string) {
+	buf, err := readSysFile(filename)
 	if err != nil {
-		log.Fatalf("failed to read %s", pidStat)
+		log.Fatalf("failed to read %s", filename)
 	}
-	fmt.Printf("[%s]\n%s\n", pidStat, buf)
+	logrus.Debugf(`
+================================
+file: [%s] begin
+================================
+%s--------------------------------
+file: [%s] end
+--------------------------------
 
-	// show proc/{pid}/ioo
-	pidIO := fmt.Sprintf(PidIO, pid)
-	buf, err = readSysFile(pidIO)
+`, filename, buf, filename)
+}
+
+func listFd(path string) {
+
+	cmd := exec.Command("ls", "-l", path)
+	buf, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatalf("failed to read %s", pidStat)
+		log.Fatalf("failed to list file in %s, error:%v", path, err)
 	}
-	fmt.Printf("[%s]\n%s\n", pidIO, buf)
+	logrus.Debugf(`
+================================
+dir: [%s]
+================================
+%s
+`, path, buf)
 }
 
 func toJson(data interface{}) string {
-	buf, _ := json.MarshalIndent(data, "", " ")
+	var buf []byte
+	if logrus.GetLevel() == logrus.DebugLevel {
+		buf, _ = json.MarshalIndent(data, "", " ")
+	} else {
+		buf, _ = json.Marshal(data)
+	}
 	return string(buf)
 }

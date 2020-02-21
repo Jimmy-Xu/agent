@@ -16,11 +16,15 @@ import (
 )
 
 const (
-	PidIO   = "/proc/%d/io"
-	PidFd   = "/proc/%d/fd/"
-	PidStat = "/proc/%d/stat"
+	PidIO        = "/proc/%d/io"
+	PidFd        = "/proc/%d/fd"
+	PidStat      = "/proc/%d/stat"
+	PidStatus    = "/proc/%d/status"
+	PidSchedStat = "/proc/%d/schedstat"
+	PidCgroup    = "/proc/%d/cgroup"
 
-	PidCgroup  = "/proc/%d/cgroup"
+	ProcMemInfo = "/proc/meminfo"
+
 	CfsBaseDir = "/sys/fs/cgroup"
 	CfsStatics = "cpuacct.sched_cfs_statistics"
 
@@ -88,7 +92,7 @@ type CgroupSchedLine4 struct {
 }
 
 func getProcessProcCpuStats(Pid int) (*pb.ProcessProcCpuStats, error) {
-	strLines, err := GetFileContent1MBAsStringLines(fmt.Sprintf("/proc/%d/stat", Pid))
+	strLines, err := GetFileContent1MBAsStringLines(fmt.Sprintf(PidStat, Pid))
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +117,7 @@ func getProcessProcCpuStats(Pid int) (*pb.ProcessProcCpuStats, error) {
 		BlkioDelay: tmpSlice[4],
 	}
 
-	strLines, err = GetFileContent1MBAsStringLines(fmt.Sprintf("/proc/%d/status", Pid))
+	strLines, err = GetFileContent1MBAsStringLines(fmt.Sprintf(PidStatus, Pid))
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +132,7 @@ func getProcessProcCpuStats(Pid int) (*pb.ProcessProcCpuStats, error) {
 		}
 	}
 
-	strLines, err = GetFileContent1MBAsStringLines(fmt.Sprintf("/proc/%d/schedstat", Pid))
+	strLines, err = GetFileContent1MBAsStringLines(fmt.Sprintf(PidSchedStat, Pid))
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +152,7 @@ func getProcessProcCpuStats(Pid int) (*pb.ProcessProcCpuStats, error) {
 }
 
 func getProcessProcIoStats(Pid int) (*pb.ProcessProcIOStats, error) {
-	strLines, err := GetFileContent1MBAsStringLines(fmt.Sprintf("/proc/%d/io", Pid))
+	strLines, err := GetFileContent1MBAsStringLines(fmt.Sprintf(PidIO, Pid))
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +178,7 @@ func getProcessProcIoStats(Pid int) (*pb.ProcessProcIOStats, error) {
 		Syscw:  tmpMap["syscw:"],
 	}
 
-	strLines, err = GetFileContent1MBAsStringLines(fmt.Sprintf("/proc/%d/stat", Pid))
+	strLines, err = GetFileContent1MBAsStringLines(fmt.Sprintf(PidStat, Pid))
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +196,7 @@ func getProcessProcIoStats(Pid int) (*pb.ProcessProcIOStats, error) {
 }
 
 func getProcessProcMemStats(Pid int) (*pb.ProcessProcMemStats, error) {
-	strLines, err := GetFileContent1MBAsStringLines(fmt.Sprintf("/proc/%d/status", Pid))
+	strLines, err := GetFileContent1MBAsStringLines(fmt.Sprintf(PidStatus, Pid))
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +229,7 @@ func getProcessProcMemStats(Pid int) (*pb.ProcessProcMemStats, error) {
 		Swp:   tmpMap["VmSwap:"],
 	}
 
-	strLines, err = GetFileContent1MBAsStringLines("/proc/meminfo")
+	strLines, err = GetFileContent1MBAsStringLines(ProcMemInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +254,7 @@ func getProcessPidStats(pid int) (*pb.ProcessPidStats, error) {
 		return nil, fmt.Errorf("failed to read proc stat of pid %d, error:%v", pid, err)
 	}
 
-	// read /proc/{pid}/id
+	// read /proc/{pid}/io
 	pio, err := readProcIO(pid)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read proc io of pid %d, error:%v", pid, err)
@@ -396,6 +400,8 @@ func readCGroupSchedCfsStat(path string) (*CgroupSchedLine2, *CgroupSchedLine4, 
 		return line2, line4, err
 	}
 
+	logrus.Debugf("%s:\n%s", path, data)
+
 	var ignore int
 	for i, line := range strings.Split(string(data), "\n") {
 		if i == 1 {
@@ -497,14 +503,4 @@ func getCgroupPathFromPid(pid int, controller string) (string, error) {
 		return cols[2], nil
 	}
 	return "", fmt.Errorf("no cgroup path found")
-}
-
-func getContainerIdFromPid(pid int) (string, error) {
-	cgPath, err := getCgroupPathFromPid(pid, "freezer")
-	if err != nil {
-		return "", err
-	}
-
-	buf := strings.Split(cgPath, "/")
-	return buf[len(buf)-1], nil
 }
